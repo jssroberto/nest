@@ -7,4 +7,10 @@
     <string name="password">Password</string>
     <string name="confirmPassword">Confirm Password</string>
     <string name="changeToSignIn">Already have an account? Sign in.</string>
+    <string name="settings_title">Account Settings</string>
+    <string name="settings_user_info">User Info</string>
+    <string name="settings_change_pass">Change Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="new_password">New Password</string>
+    <string name="save_changes">Save Changes</string>
 </resources>
