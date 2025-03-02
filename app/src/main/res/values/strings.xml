@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Nest</string>
+    <string name="slogan">Build your nest, grow your wealth.</string>
+    <string name="signUp">Sign Up</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="changeToSignIn">Already have an account? Sign in.</string>
+</resources>

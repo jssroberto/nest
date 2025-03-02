@@ -1,0 +1,12 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Nest" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Colores del tema para el modo claro -->
+        <item name="colorPrimary">@color/sloganBlue</item> <!-- Color principal -->
+        <item name="colorPrimaryDark">@color/darkerBlue</item> <!-- Color primario oscuro -->
+        <item name="colorAccent">@color/sloganBlue</item> <!-- Color de acento -->
+
+    </style>
+
+    <style name="Theme.Nest" parent="Base.Theme.Nest" />
+</resources>

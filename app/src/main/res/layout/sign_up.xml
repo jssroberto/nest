@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/offWhite"
+    tools:context=".`Sign Up`">
+
+    <ImageView
+        android:paddingTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/logo"
+        android:gravity="center_horizontal"
+        />
+    <TextView
+        android:paddingTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/slogan"
+        android:gravity="center_horizontal"
+        android:textSize="15sp"
+        android:fontFamily="@font/lexend_regular"
+        android:textColor="@color/sloganBlue"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="35sp"
+        android:text="@string/signUp"
+        android:textColor="@color/darkerBlue"
+        android:fontFamily="@font/lexend_medium"
+        android:gravity="center_horizontal"
+        android:paddingTop="25dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/name"
+        android:fontFamily="@font/lexend_regular"
+        android:layout_marginHorizontal="31dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/darkerBlue"
+        />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/edittext_rounded"
+        android:inputType="text"
+        android:paddingHorizontal="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="31dp"
+        android:fontFamily="@font/lexend_regular"
+        android:textColor="@color/darkerBlue"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/email"
+        android:fontFamily="@font/lexend_regular"
+        android:layout_marginHorizontal="31dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/darkerBlue"
+        />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/edittext_rounded"
+        android:paddingHorizontal="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="31dp"
+        android:fontFamily="@font/lexend_regular"
+        android:textColor="@color/darkerBlue"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/password"
+        android:fontFamily="@font/lexend_regular"
+        android:layout_marginHorizontal="31dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/darkerBlue"
+        />
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:inputType="textPassword"
+        android:background="@drawable/edittext_rounded"
+        android:drawableEnd="@drawable/eye"
+        android:paddingHorizontal="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="31dp"
+        android:fontFamily="@font/lexend_regular"
+        android:textColor="@color/darkerBlue"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="@string/confirmPassword"
+        android:fontFamily="@font/lexend_regular"
+        android:layout_marginHorizontal="31dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/darkerBlue"
+        />
+
+    <EditText
+        android:id="@+id/etConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:inputType="textPassword"
+        android:background="@drawable/edittext_rounded"
+        android:drawableEnd="@drawable/eye"
+        android:paddingHorizontal="8dp"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="31dp"
+        android:fontFamily="@font/lexend_regular"
+        android:textColor="@color/darkerBlue"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/alertIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/alert_circle"
+            android:contentDescription="Icono"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/txtAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ejemplo"
+            android:textSize="16sp"
+            android:textColor="@color/alertRed"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/lexend_light"
+            android:visibility="invisible"
+            />
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_sign"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:text="@string/signUp"
+        android:textAllCaps="true"
+        android:fontFamily="@font/lexend_medium"
+        />
+
+    <TextView
+        android:id="@+id/txtSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/changeToSignIn"
+        android:fontFamily="@font/lexend_light"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/darkerBlue"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        />
+
+
+
+
+</LinearLayout>
