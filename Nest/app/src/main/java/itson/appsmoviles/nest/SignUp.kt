@@ -12,7 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class Sign_up : AppCompatActivity() {
+class SignUp : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.sign_up)
@@ -25,13 +25,13 @@ class Sign_up : AppCompatActivity() {
         setupPasswordToggle(editConfirmPassword)
         setupPasswordToggle(editTextPassword)
 
-            signIn.setOnClickListener{
-                val intentSignIn = Intent(this, Sign_in::class.java)
-                startActivity(intentSignIn)
-            }
+        signIn.setOnClickListener {
+            val intentSignIn = Intent(this, SignIn::class.java)
+            startActivity(intentSignIn)
+        }
 
-            btnSignUp.setOnClickListener {
-                if (validarCampos()) {
+        btnSignUp.setOnClickListener {
+            if (validarCampos()) {
                 val intent = Intent(this, Main::class.java)
                 startActivity(intent)
             }
@@ -86,13 +86,9 @@ class Sign_up : AppCompatActivity() {
     }
 
 
-
     fun esEmailValido(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-
-
-
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -100,40 +96,42 @@ class Sign_up : AppCompatActivity() {
         var isPasswordVisible = false
 
         editText.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                val drawable = editText.compoundDrawables[2] ?: return@setOnTouchListener false
-                if (event.rawX >= (editText.right - drawable.bounds.width())) {
-
-                    v.performClick()
-
-                    isPasswordVisible = !isPasswordVisible
-                    if (isPasswordVisible) {
-                        editText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                        editText.setCompoundDrawablesWithIntrinsicBounds(
-                            0,
-                            0,
-                            R.drawable.eye_off,
-                            0
-                        )
-                    } else {
-                        editText.inputType =
-                            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                        editText.setCompoundDrawablesWithIntrinsicBounds(
-                            0,
-                            0,
-                            R.drawable.eye,
-                            0
-                        )
-                    }
-
-
-                    editText.setSelection(editText.text.length)
-                    return@setOnTouchListener true
-                }
+            if (event.action != MotionEvent.ACTION_UP) {
+                return@setOnTouchListener false
             }
-            false
+
+            val drawable = editText.compoundDrawables[2] ?: return@setOnTouchListener false
+            if (event.rawX < (editText.right - drawable.bounds.width())) {
+                return@setOnTouchListener false
+            }
+
+            v.performClick()
+
+            isPasswordVisible = !isPasswordVisible
+            if (!isPasswordVisible) {
+                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                editText.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.eye,
+                    0
+                )
+            } else {
+                editText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                editText.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.eye_off,
+                    0
+                )
+            }
+
+            editText.setSelection(editText.text.length)
+            return@setOnTouchListener true
         }
-    }}
+    }
+
+}
 
 
 
