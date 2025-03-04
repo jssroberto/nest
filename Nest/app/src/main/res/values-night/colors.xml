@@ -15,5 +15,6 @@
     <color name="black">#0F0F0F</color>
 
     <!--variables-->
-    <color name="edt_text">@color/light_gray</color>
+    <color name="edt_text">@color/dark_gray</color>
+
 </resources>

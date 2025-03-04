@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/offWhite"
+    android:background="@color/off_white"
     tools:context=".Settings">
 
     <TextView
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:text="@string/settings_title"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_medium"
         android:gravity="start"
         android:paddingTop="25dp"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_user_info"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="center_horizontal"
         android:paddingTop="35dp" />
@@ -37,7 +37,7 @@
         android:textSize="15sp"
         android:text="@string/name"
         android:textStyle="bold"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
@@ -55,7 +55,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:hint="Ramiro Arnoldo"/>
 
     <TextView
@@ -64,7 +64,7 @@
         android:textSize="15sp"
         android:text="@string/email"
         android:textStyle="bold"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
@@ -82,7 +82,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:hint="ramoldo1@gmail.com"/>
 
     <TextView
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_change_pass"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="center_horizontal"
         android:paddingTop="20dp" />
@@ -101,7 +101,7 @@
         android:textSize="15sp"
         android:text="@string/old_password"
         android:textStyle="bold"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
@@ -120,7 +120,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:hint="************"/>
 
     <TextView
@@ -129,7 +129,7 @@
         android:textSize="15sp"
         android:text="@string/new_password"
         android:textStyle="bold"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
@@ -148,7 +148,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darkerBlue"
+        android:textColor="@color/darker_blue"
         android:hint="************"/>
 
     <Button
@@ -184,7 +184,7 @@
             android:layout_height="wrap_content"
             android:text="Ejemplo"
             android:textSize="16sp"
-            android:textColor="@color/alertRed"
+            android:textColor="@color/red"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/lexend_light"
             android:visibility="invisible" />
