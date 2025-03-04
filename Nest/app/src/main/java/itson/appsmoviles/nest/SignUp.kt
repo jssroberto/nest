@@ -26,7 +26,7 @@ class SignUp : AppCompatActivity() {
         setupPasswordToggle(editTextPassword)
 
         signIn.setOnClickListener {
-            val intentSignIn = Intent(this, SignIn::class.java)
+            val intentSignIn = Intent(this, TotalExpenses::class.java)
             startActivity(intentSignIn)
         }
 

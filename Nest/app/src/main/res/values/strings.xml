@@ -13,4 +13,8 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="save_changes">Save Changes</string>
+    <string name="expensesTitle">Total Expenses Graphical Overview</string>
+    <string name="chooseCategory">Choose a category</string>
+    <string name="select_start_date">Select start date</string>
+    <string name="select_end_date">Select end date</string>
 </resources>
