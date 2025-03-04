@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/offWhite">
+    android:background="@color/off_white">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
@@ -28,7 +28,7 @@
                 android:text="@string/expensesTitle"
                 android:fontFamily="@font/lexend_medium"
                 android:textSize="25sp"
-                android:textColor="@color/darkerBlue"
+                android:textColor="@color/darker_blue"
                 android:layout_marginTop="@dimen/marginTop"
                 android:layout_marginHorizontal="@dimen/horizontalMargin" />
 
@@ -39,9 +39,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/edittext_rounded"
-                    android:backgroundTint="@color/lightBlue"
+                    android:backgroundTint="@color/lightest_blue"
                     android:paddingVertical="10dp"
-                    android:textColor="@color/darkerBlue"
+                    android:textColor="@color/darker_blue"
                     />
 
             <LinearLayout
@@ -52,17 +52,18 @@
                 <Button
                     android:id="@+id/startDate"
                     android:hint="@string/select_start_date"
-                    android:textColorHint="@color/sloganBlue"
+                    android:textColorHint="@color/dark_blue"
                     android:fontFamily="@font/lexend_regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginTop="10dp"
-                    android:backgroundTint="@color/lightBlue"
+                    android:backgroundTint="@color/lightest_blue"
+                    android:background="@drawable/edittext_rounded"
                     android:drawableEnd="@drawable/calendar"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    android:textAlignment="textStart"
+                    android:gravity="fill_vertical"
                     />
 
                 <View
@@ -75,14 +76,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-                    android:hint="@string/select_end_date"
-                    android:fontFamily="@font/lexend_regular"
-                    android:textColorHint="@color/sloganBlue"
-                    android:backgroundTint="@color/lightBlue"
+                    android:background="@drawable/edittext_rounded"
+                    android:backgroundTint="@color/lightest_blue"
                     android:drawableEnd="@drawable/calendar"
+                    android:fontFamily="@font/lexend_regular"
+                    android:hint="@string/select_end_date"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:textAlignment="textStart"/>
+                    android:gravity="fill_vertical"
+                    android:textColorHint="@color/dark_blue" />
 
             </LinearLayout>
 
@@ -98,10 +100,10 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/off_white"
         app:menu="@menu/menu_navigation"
-        app:itemIconTint="@color/darkerBlue"
-        app:itemTextColor="@color/darkerBlue"
+        app:itemIconTint="@color/darker_blue"
+        app:itemTextColor="@color/darker_blue"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 

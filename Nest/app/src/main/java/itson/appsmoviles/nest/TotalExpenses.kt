@@ -41,9 +41,9 @@ class TotalExpenses : AppCompatActivity() {
 
 
                 if (position == 0) {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.offWhite)) // Color más tenue
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white)) // Color más tenue
                 } else {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.darkerBlue)) // Color normal
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue)) // Color normal
                 }
 
                 return view
@@ -51,7 +51,7 @@ class TotalExpenses : AppCompatActivity() {
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getDropDownView(position, convertView, parent)
-                view.setBackgroundColor(ContextCompat.getColor(context, R.color.offWhite))
+                view.setBackgroundColor(ContextCompat.getColor(context, R.color.off_white))
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 textView.typeface = customFont
                 textView.textSize = 16f
@@ -59,9 +59,9 @@ class TotalExpenses : AppCompatActivity() {
 
 
                 if (position == 0) {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.offWhite))
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white))
                 } else {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.darkerBlue))
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue))
                 }
 
                 return view
@@ -75,7 +75,7 @@ class TotalExpenses : AppCompatActivity() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position == 0) {
-                    (view as TextView).setTextColor(ContextCompat.getColor(this@TotalExpenses, R.color.darkerBlue))
+                    (view as TextView).setTextColor(ContextCompat.getColor(this@TotalExpenses, R.color.darker_blue))
                 }
             }
 
