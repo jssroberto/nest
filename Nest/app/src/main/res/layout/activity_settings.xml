@@ -155,7 +155,7 @@
         android:id="@+id/buttonSaveChanges"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:background="@drawable/btn_sign"
+        android:background="@drawable/button"
         android:layout_marginTop="25dp"
         android:layout_gravity="center"
         android:text="@string/save_changes"

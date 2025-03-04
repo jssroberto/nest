@@ -40,11 +40,11 @@ class TotalExpenses : AppCompatActivity() {
                 textView.textSize = 16f
 
 
-                if (position == 0) {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white)) // Color más tenue
-                } else {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue)) // Color normal
-                }
+//                if (position == 0) {
+//                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white)) // Color más tenue
+//                } else {
+//                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue)) // Color normal
+//                }
 
                 return view
             }
@@ -58,11 +58,11 @@ class TotalExpenses : AppCompatActivity() {
                 textView.setPadding(20, 20, 20, 20) // Agregar padding para mejor diseño
 
 
-                if (position == 0) {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white))
-                } else {
-                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue))
-                }
+//                if (position == 0) {
+//                    textView.setTextColor(ContextCompat.getColor(context, R.color.off_white))
+//                } else {
+//                    textView.setTextColor(ContextCompat.getColor(context, R.color.darker_blue))
+//                }
 
                 return view
             }
@@ -74,9 +74,9 @@ class TotalExpenses : AppCompatActivity() {
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position == 0) {
-                    (view as TextView).setTextColor(ContextCompat.getColor(this@TotalExpenses, R.color.darker_blue))
-                }
+//                if (position == 0) {
+//                    (view as TextView).setTextColor(ContextCompat.getColor(this@TotalExpenses, R.color.darker_blue))
+//                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
