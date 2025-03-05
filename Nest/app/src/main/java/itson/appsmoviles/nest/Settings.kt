@@ -34,8 +34,8 @@ class Settings : AppCompatActivity() {
         setupPasswordToggle(editTextNewPass)
 
         buttonSaveChanges.setOnClickListener {
-            if (validarCampos()) {
-                val intent = Intent(this, Settings::class.java)
+            if (!validarCampos()) {
+                val intent = Intent(this, Budget::class.java)
                 startActivity(intent)
             }
         }
