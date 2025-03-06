@@ -1,9 +1,10 @@
-package itson.appsmoviles.nest
+package itson.appsmoviles.nest.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -11,11 +12,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.TotalExpenses
 
-class SignUp : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.sign_up)
+        setContentView(R.layout.activity_sign_up)
 
         val editTextPassword = findViewById<EditText>(R.id.etPassword)
         val editConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
@@ -87,7 +90,7 @@ class SignUp : AppCompatActivity() {
 
 
     fun esEmailValido(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
 

@@ -1,95 +1,87 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".presentation.ui.TotalExpensesFragment">
 
-    <androidx.core.widget.NestedScrollView
-            android:id="@+id/scrollView"
+
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <!-- Título -->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/expensesTitle"
+                android:fontFamily="@font/lexend_medium"
+                android:textSize="25sp"
+                android:layout_marginTop="@dimen/marginTop"
+                android:layout_marginHorizontal="@dimen/horizontalMargin" />
+
+
+        <Spinner
+                android:id="@+id/spinnerCategories"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:paddingVertical="10dp"
+                android:background="@drawable/edittext_rounded"
+                android:backgroundTint="@color/lightest_blue"
+
+                />
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-            <!-- Título -->
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/expensesTitle"
-                    android:fontFamily="@font/lexend_medium"
-                    android:textSize="25sp"
-                    android:layout_marginTop="@dimen/marginTop"
-                    android:layout_marginHorizontal="@dimen/horizontalMargin" />
-
-
-            <Spinner
-                    android:id="@+id/spinnerCategories"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="10dp"
-                    android:paddingVertical="10dp"
-                    android:background="@drawable/edittext_rounded"
-                    android:backgroundTint="@color/lightest_blue"
-
-                    />
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                <Button
-                        android:id="@+id/startDate"
-                        android:hint="@string/select_start_date"
-                        android:textColorHint="@color/dateButtonLetters"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/edittext_rounded"
-                        android:backgroundTint="@color/dateButton"
-                        android:drawableEnd="@drawable/calendar"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:textSize="@dimen/text_size_small"
-                        android:gravity="fill_vertical"
-                        />
-
-
-                <View
-                        android:layout_width="8dp"
-                        android:layout_height="0dp" />
-
-                <Button
-                        android:id="@+id/endDate"
-                        android:textSize="@dimen/text_size_small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="1"
-                        android:backgroundTint="@color/dateButton"
-                        android:background="@drawable/edittext_rounded"
-                        android:drawableEnd="@drawable/calendar"
-                        android:textColorHint="@color/dateButtonLetters"
-                        android:hint="@string/select_end_date"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:gravity="fill_vertical"
-                         />
-
-
-
-            </LinearLayout>
-
+                android:orientation="horizontal">
 
             <Button
+                    android:id="@+id/startDate"
+                    android:hint="@string/select_start_date"
+                    android:textColorHint="@color/dateButtonLetters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:backgroundTint="@color/dateButton"
+                    android:drawableEnd="@drawable/calendar"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:textSize="@dimen/text_size_small"
+                    android:gravity="fill_vertical" />
+
+
+            <View
+                    android:layout_width="8dp"
+                    android:layout_height="0dp" />
+
+            <Button
+                    android:id="@+id/endDate"
+                    android:textSize="@dimen/text_size_small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/dateButton"
+                    android:background="@drawable/edittext_rounded"
+                    android:drawableEnd="@drawable/calendar"
+                    android:textColorHint="@color/dateButtonLetters"
+                    android:hint="@string/select_end_date"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:gravity="fill_vertical" />
+
+
+        </LinearLayout>
+
+
+        <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:background="@drawable/edittext_rounded"
@@ -101,185 +93,178 @@
                 android:textAllCaps="true"
                 android:textColor="@color/lightest_blue"
                 android:fontFamily="@font/lexend_bold"
-                android:foregroundGravity="center_vertical"
-                />
+                android:foregroundGravity="center_vertical" />
 
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/graph"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:layout_gravity="center_horizontal">
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <TextView
+                android:layout_gravity="center_horizontal"></androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/total"
-                android:layout_gravity="end"
-                />
-            <TextView
+                android:layout_gravity="end" />
+
+        <TextView
                 android:id="@+id/totalExpenses"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$"
                 android:textSize="18sp"
-                android:layout_gravity="end"
-                />
+                android:layout_gravity="end" />
 
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_gravity="center"> <!-- Alinea todo el contenido verticalmente -->
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
                     android:layout_gravity="center"> <!-- Alinea los elementos de forma horizontal -->
 
-                    <View
+                <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue"/> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
 
-                    <View
+                <View
                         android:layout_marginTop="10dp"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue"/> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
 
-                </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_vertical"
                     android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/food"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
-                </LinearLayout>
-                <LinearLayout
+            </LinearLayout>
+
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"> <!-- Alinea los elementos de forma horizontal -->
 
-                    <View
+                <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue"/> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
 
-                    <View
+                <View
                         android:layout_marginTop="10dp"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue"/> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
 
-                </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_vertical"
                     android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/transport"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/recreation"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
-                </LinearLayout>
-                <LinearLayout
+            </LinearLayout>
+
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"> <!-- Alinea los elementos de forma horizontal -->
 
-                    <View
+                <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue"/> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
 
-                    <View
+                <View
                         android:layout_marginTop="10dp"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:backgroundTint="@color/darker_blue"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp"/> <!-- Centrado horizontalmente -->
+                        android:layout_marginHorizontal="8dp" /> <!-- Centrado horizontalmente -->
 
-                </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
+            <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_vertical"> <!-- Alinea los elementos verticalmente -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Health"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
-                    <TextView
+                <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Others"
-                        android:gravity="center_horizontal"/> <!-- Centrado horizontal del texto -->
-
-                </LinearLayout>
+                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
             </LinearLayout>
-
-
-
 
         </LinearLayout>
 
 
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
