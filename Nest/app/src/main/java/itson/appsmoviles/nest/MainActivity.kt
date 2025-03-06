@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_expenses -> replaceFragment(AddExpenseFragment())
+                R.id.nav_expenses -> replaceFragment(TotalExpensesFragment())
                 R.id.nav_profile -> replaceFragment(SettingsFragment())
                 R.id.nav_search -> replaceFragment(BudgetFragment())
             }

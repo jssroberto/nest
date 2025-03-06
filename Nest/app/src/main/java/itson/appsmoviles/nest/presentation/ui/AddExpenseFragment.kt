@@ -1,60 +1,103 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.app.DatePickerDialog
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import itson.appsmoviles.nest.R
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AddExpenseFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddExpenseFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_expense, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddExpense.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddExpenseFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        configurarSpinner(view)
+
+        view.findViewById<Button>(R.id.startDate)?.setOnClickListener {
+            showStartDatePicker()
+        }
+
+    }
+
+
+    private fun configurarSpinner(view: View) {
+        val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
+        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other", "All categories")
+
+        val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, categories) {
+
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
+                textView.textSize = 16f
+                return view
             }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                view.setBackgroundColor(ContextCompat.getColor(context, R.color.off_white))
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
+                textView.textSize = 16f
+                textView.setPadding(20, 20, 20, 20)
+                return view
+            }
+        }
+
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+    private fun showStartDatePicker() {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                val selectedDate = "$day/${month + 1}/$year"
+
+                view?.findViewById<Button>(R.id.startDate)?.apply {
+                    text = selectedDate
+                    setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
+                }
+            },
+            currentYear, currentMonth, currentDay
+        )
+
+        datePickerDialog.show()
     }
 }
