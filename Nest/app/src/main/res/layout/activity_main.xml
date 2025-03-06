@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Main">
+        tools:context=".MainActivity">
 
     <!-- Fragment container -->
     <FrameLayout
@@ -14,8 +13,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/bottomNavigation"
-            android:layout_margin="10dp"
-            />
+            android:layout_margin="10dp">
+
+        <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragment_container2"
+                android:name="itson.appsmoviles.nest.presentation.ui.AddFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_anchor="@id/bottomNavigation"
+                app:layout_anchorGravity="top" />
+
+    </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"
@@ -23,5 +32,5 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:menu="@menu/menu_navigation"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"/>
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

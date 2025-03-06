@@ -41,6 +41,7 @@
     <string name="total">Total</string>
     <string name="transport">Transport</string>
     <string name="recreation">Recreation</string>
-    <string name="home">Home</string>
     <string name="food">Food</string>
+    <string name="expense">Expense</string>
+    <string name="income">Income</string>
 </resources>
