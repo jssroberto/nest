@@ -37,4 +37,10 @@
     <string name="otros">Otros</string>
     <string name="search_for_an_expsense">search for an expsense...</string>
     <string name="movements_history">Movements History</string>
+    <string name="filter">FILTER</string>
+    <string name="total">Total</string>
+    <string name="transport">Transport</string>
+    <string name="recreation">Recreation</string>
+    <string name="home">Home</string>
+    <string name="food">Food</string>
 </resources>

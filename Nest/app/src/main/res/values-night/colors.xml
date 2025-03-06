@@ -5,6 +5,25 @@
     <color name="txt_income">@color/light_blue</color>
     <color name="txt_expenses">@color/light_orange</color>
     <color name="btn_filter">@color/blue_mid</color>
+    <!--paleta de colores oficiales-->
+    <color name="off_white">#F0F0F0</color>
+    <color name="light_gray">#E2E2E2</color>
+    <color name="lightest_blue">#D1DFDF</color>
+    <color name="lighter_blue">#ABDCDD</color>
+    <color name="light_blue">#81CDCF</color>
+    <color name="blue">#4EB4B7</color>
+    <color name="blue_mid">#1D9599</color>
+    <color name="dark_blue">#137578</color>
+    <color name="darker_blue">#064849</color>
+    <color name="red">#AD2224</color>
+    <color name="dark_gray">#434343</color>
+    <color name="black">#0F0F0F</color>
+
+
+    <!--variables-->
+    <color name="edt_text">@color/dark_gray</color>
+    <color name="dateButton">@color/darker_blue</color>
+    <color name="dateButtonLetters">@color/lightest_blue</color>
 
     <!--progress bar-->
     <color name="progress_vivienda">@color/dark_blue</color>

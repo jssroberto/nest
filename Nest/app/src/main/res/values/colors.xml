@@ -18,6 +18,8 @@
     <color name="dark_orange">#C86C6C</color>
     <color name="light_orange">#F2B8B8</color>
 
+
+
     <!--variables-->
     <color name="edt_text">@color/light_gray</color>
     <color name="txt_income">@color/blue_mid</color>
@@ -31,4 +33,6 @@
     <color name="progress_alimentacion">@color/blue</color>
     <color name="progress_salud">@color/light_blue</color>
     <color name="progress_otros">@color/lighter_blue</color>
+    <color name="dateButton">@color/lightest_blue</color>
+    <color name="dateButtonLetters">@color/darker_blue</color>
 </resources>
