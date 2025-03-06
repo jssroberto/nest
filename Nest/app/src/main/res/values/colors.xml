@@ -15,8 +15,10 @@
     <color name="red">#AD2224</color>
     <color name="dark_gray">#434343</color>
     <color name="black">#0F0F0F</color>
-    <color name="dark_orange">#C86C6C</color>
-    <color name="light_orange">#F2B8B8</color>
+    <color name="dark_orange">#C66B10</color>
+    <color name="light_orange">#F2CFAC</color>
+    <color name="cashLight">#7EAED7A9</color>
+    <color name="cashStrong">#1B5C0C</color>
 
 
 

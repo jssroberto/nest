@@ -1,15 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".presentation.ui.AddExpenseFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="117dp"
+        android:background="@drawable/button"
+        android:backgroundTint="@color/lightest_blue"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp">
+
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Add Expense" />
+            android:text="Change amount"
+            android:fontFamily="@font/lexend_bold"
+            android:textColor="@color/darker_blue"
+            android:layout_gravity="center"
+            android:textSize="16sp" />
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$"
+                android:textColor="@color/darker_blue"
+                android:gravity="top"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/editTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="0.00"
+                android:textColorHint="@color/darker_blue"
+                android:background="@color/lightest_blue"
+                android:textColor="@color/darker_blue"
+                android:textSize="48sp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="Category"
+        android:textColor="@color/darker_blue"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinnerCategories"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="10dp"
+        android:background="@drawable/edittext_rounded"
+        android:backgroundTint="@color/spinner"
+
+        />
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="Category"
+        android:textColor="@color/darker_blue"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="117dp"
+        android:background="@drawable/button"
+        android:backgroundTint="@color/lightest_blue"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:padding="10dp">
+
+            <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add a description for your expense"
+                android:textColorHint="@color/darker_blue"
+                android:background="@color/lightest_blue"
+                android:textColor="@color/darker_blue"
+                android:textSize="16sp"
+                android:gravity="start"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:text="Payment Method"
+        android:textColor="@color/darker_blue"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:weightSum="2">  <!-- Especificamos el peso total de 2 para las dos vistas -->
+
+        <!-- Primer LinearLayout para el primer RadioButton -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/cashLight"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="9dp">  <!-- Peso para distribuir igualmente -->
+
+            <RadioButton
+                android:id="@+id/cash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cash"
+                android:textColor="@color/cashStrong"
+                android:textSize="20sp"
+                android:gravity="start"
+                android:buttonTint="@color/cashStrong" />
+
+        </LinearLayout>
+
+        <!-- Segundo LinearLayout para el segundo RadioButton -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/light_orange"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:layout_weight="1">  <!-- Peso para distribuir igualmente -->
+
+            <RadioButton
+                android:id="@+id/card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Card"
+                android:textColor="@color/dark_orange"
+                android:textSize="20sp"
+                android:gravity="start"
+                android:buttonTint="@color/dark_orange" />  <!-- RadioButton en lugar de EditText -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
