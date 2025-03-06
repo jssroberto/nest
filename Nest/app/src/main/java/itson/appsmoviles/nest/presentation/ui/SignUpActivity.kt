@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
 
 class SignUpActivity : AppCompatActivity() {
@@ -28,7 +29,7 @@ class SignUpActivity : AppCompatActivity() {
         setupPasswordToggle(editTextPassword)
 
         signIn.setOnClickListener {
-            val intentSignIn = Intent(this, TotalExpenses::class.java)
+            val intentSignIn = Intent(this, MainActivity::class.java)
             startActivity(intentSignIn)
         }
 

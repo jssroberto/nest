@@ -1,60 +1,95 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.utilities.PieChartDrawable
+import itson.appsmoviles.nest.utilities.Categoria
+import itson.appsmoviles.nest.utilities.ExpensesDrawable
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TotalExpensesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TotalExpensesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val categorias = arrayListOf(
+        Categoria("Health", 25.0f, R.color.lightest_blue, 156.0f),
+        Categoria("Home", 15.0f, R.color.lighter_blue, 78.0f),
+        Categoria("Food", 10.0f, R.color.light_blue, 62.4f),
+        Categoria("Recreation", 20.0f, R.color.dark_blue, 104.0f),
+        Categoria("Transport", 15.0f, R.color.darker_blue, 104.0f),
+        Categoria("Others", 15.0f, R.color.blue, 104.0f)
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_total_expenses, container, false)
+        return inflater.inflate(R.layout.total_expenses, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TotalExpensesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TotalExpensesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        configurarSpinner(view)
+        val totalExpensesTextView = view.findViewById<TextView>(R.id.totalExpenses)
+        totalExpensesTextView.text = "$${calcularTotal()}"
+
+        configurarGrafico(view)
+
+    }
+
+
+
+    private fun calcularTotal(): Float {
+        return categorias.sumOf { it.total.toDouble() }.toFloat()
+    }
+
+
+    private fun configurarGrafico(view: View) {
+        val graph = view.findViewById<View>(R.id.graph)
+        val pieChartDrawable = PieChartDrawable(requireContext(), categorias)
+        graph.background = pieChartDrawable
+
+
+
+    }
+
+    private fun configurarSpinner(view: View) {
+        val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
+        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
+
+        val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, categories) {
+            override fun isEnabled(position: Int): Boolean = position != 0
+
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
+                textView.textSize = 16f
+                return view
             }
+
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                view.setBackgroundColor(ContextCompat.getColor(context, R.color.off_white))
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
+                textView.textSize = 16f
+                textView.setPadding(20, 20, 20, 20)
+                return view
+            }
+        }
+
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
     }
 }

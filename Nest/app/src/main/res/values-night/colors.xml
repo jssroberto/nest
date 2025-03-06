@@ -20,7 +20,6 @@
 
 
     <!--variables-->
-    <color name="edt_text">@color/dark_gray</color>
     <color name="dateButton">@color/darker_blue</color>
     <color name="dateButtonLetters">@color/lightest_blue</color>
 

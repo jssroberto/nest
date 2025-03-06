@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".presentation.ui.TotalExpensesFragment">
 
 
@@ -40,22 +40,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <Button
-                    android:id="@+id/startDate"
-                    android:hint="@string/select_start_date"
-                    android:textColorHint="@color/dateButtonLetters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/edittext_rounded"
-                    android:backgroundTint="@color/dateButton"
-                    android:drawableEnd="@drawable/calendar"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:textSize="@dimen/text_size_small"
-                    android:gravity="fill_vertical" />
 
+            <Button
+                android:id="@+id/startDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_rounded"
+                android:backgroundTint="@color/lighter_blue"
+                android:drawableEnd="@drawable/calendar"
+                android:gravity="fill_vertical"
+                android:hint="@string/select_start_date"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:textColorHint="@color/dateButtonLetters"
+                android:textSize="@dimen/text_size_small" />
 
             <View
                     android:layout_width="8dp"
@@ -97,10 +97,10 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/graph"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center_horizontal"></androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/graph"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center_horizontal" />
 
         <TextView
                 android:layout_width="wrap_content"
@@ -114,7 +114,9 @@
                 android:layout_height="wrap_content"
                 android:text="$"
                 android:textSize="18sp"
-                android:layout_gravity="end" />
+                android:layout_gravity="end"
+                android:layout_marginBottom="10dp"
+            />
 
         <LinearLayout
                 android:layout_width="wrap_content"
@@ -136,7 +138,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/lightest_blue" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
@@ -145,7 +147,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/lighter_blue" /> <!-- Centrado horizontalmente -->
 
             </LinearLayout>
 
@@ -182,7 +184,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/light_blue" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
@@ -191,7 +193,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/light_blue" /> <!-- Centrado horizontalmente -->
 
             </LinearLayout>
 
@@ -228,7 +230,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/darker_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/dark_blue" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
@@ -261,10 +263,16 @@
 
             </LinearLayout>
 
+
+
+
         </LinearLayout>
+
 
 
     </LinearLayout>
 
 
-</androidx.core.widget.NestedScrollView>
+
+
+</ScrollView>
