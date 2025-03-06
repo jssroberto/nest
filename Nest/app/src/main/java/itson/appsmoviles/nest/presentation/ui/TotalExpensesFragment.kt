@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.utilities.PieChartDrawable
 import itson.appsmoviles.nest.utilities.Categoria
 import itson.appsmoviles.nest.utilities.ExpensesDrawable
+import java.util.Calendar
 
 class TotalExpensesFragment : Fragment() {
 
@@ -37,6 +39,7 @@ class TotalExpensesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         configurarSpinner(view)
+
         val totalExpensesTextView = view.findViewById<TextView>(R.id.totalExpenses)
         totalExpensesTextView.text = "$${calcularTotal()}"
 
@@ -44,8 +47,68 @@ class TotalExpensesFragment : Fragment() {
 
         calculateFoodExpended(view, 100f, 33.33f)
         calculateTransportExpended(view, 100f, 14.33f)
+        calculateHealthExpended(view, 100f, 28.00f)
+        calculateOtherExpended(view, 100f, 15.00f)
+        calculateHomeExpended(view, 100f, 51.00f)
+        calculateRecreationExpended(view, 100f, 89.00f)
+
+        view.findViewById<Button>(R.id.endDate)?.setOnClickListener {
+            showEndDatePicker()
+        }
+
+        view.findViewById<Button>(R.id.startDate)?.setOnClickListener {
+            showStartDatePicker()
+        }
 
     }
+
+
+
+    private fun showEndDatePicker() {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                val selectedDate = "$day/${month + 1}/$year"
+
+                view?.findViewById<Button>(R.id.endDate)?.apply {
+                    text = selectedDate
+                    setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
+                }
+            },
+            currentYear, currentMonth, currentDay
+        )
+
+        datePickerDialog.show()
+    }
+
+
+    private fun showStartDatePicker() {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, day ->
+                val selectedDate = "$day/${month + 1}/$year"
+
+                view?.findViewById<Button>(R.id.startDate)?.apply {
+                    text = selectedDate
+                    setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
+                }
+            },
+            currentYear, currentMonth, currentDay
+        )
+
+        datePickerDialog.show()
+    }
+
 
 
     private fun calculateFoodExpended(view: View, total: Float, current: Float){
@@ -66,6 +129,87 @@ class TotalExpensesFragment : Fragment() {
 
         foodExpended.background = expendedFood
         foodTotal.background = budgetFood
+    }
+
+    private fun calculateHealthExpended(view: View, total: Float, current: Float){
+        val healthExpended = view.findViewById<View>(R.id.healthExpended)
+        val healthTotal = view.findViewById<View>(R.id.budgetHealth)
+        val estimatedBudgetHealth = view.findViewById<TextView>(R.id.estimatedBudgetHealth)
+        val actualExpensesHealth = view.findViewById<TextView>(R.id.actualExpensesHealth)
+
+        estimatedBudgetHealth.text =  "$${total}"
+        actualExpensesHealth.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        healthExpended.background = expendedFood
+        healthTotal.background = budgetFood
+    }
+
+    private fun calculateOtherExpended(view: View, total: Float, current: Float){
+        val otherExpended = view.findViewById<View>(R.id.othersExpended)
+        val otherTotal = view.findViewById<View>(R.id.budgetOthers)
+        val estimatedBudgetOthers = view.findViewById<TextView>(R.id.estimatedBudgetOthers)
+        val actualExpensesOthers = view.findViewById<TextView>(R.id.actualExpensesOthers)
+
+        estimatedBudgetOthers.text =  "$${total}"
+        actualExpensesOthers.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        otherExpended.background = expendedFood
+        otherTotal.background = budgetFood
+    }
+
+
+    private fun calculateRecreationExpended(view: View, total: Float, current: Float){
+        val recreationExpended = view.findViewById<View>(R.id.recreationExpended)
+        val recreationTotal = view.findViewById<View>(R.id.budgetRecreation)
+        val estimatedBudgetRecreation = view.findViewById<TextView>(R.id.estimatedBudgetRecreation)
+        val actualExpensesRecreation = view.findViewById<TextView>(R.id.actualExpensesRecreation)
+
+        estimatedBudgetRecreation.text =  "$${total}"
+        actualExpensesRecreation.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        recreationExpended.background = expendedFood
+        recreationTotal.background = budgetFood
+    }
+
+    private fun calculateHomeExpended(view: View, total: Float, current: Float){
+        val homeExpended = view.findViewById<View>(R.id.homeExpended)
+        val homeTotal = view.findViewById<View>(R.id.budgetHome)
+        val estimatedBudgetHome = view.findViewById<TextView>(R.id.estimatedBudgetHome)
+        val actualExpensesHome = view.findViewById<TextView>(R.id.actualExpensesHome)
+
+        estimatedBudgetHome.text =  "$${total}"
+        actualExpensesHome.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        homeExpended.background = expendedFood
+        homeTotal.background = budgetFood
     }
 
     private fun calculateTransportExpended(view: View, total: Float, current: Float){
@@ -104,10 +248,10 @@ class TotalExpensesFragment : Fragment() {
 
     private fun configurarSpinner(view: View) {
         val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
-        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
+        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other", "All categories")
 
         val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, categories) {
-            override fun isEnabled(position: Int): Boolean = position != 0
+
 
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent)

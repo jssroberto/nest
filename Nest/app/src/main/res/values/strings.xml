@@ -45,4 +45,5 @@
     <string name="expense">Expense</string>
     <string name="income">Income</string>
     <string name="estimated_budget">Estimated Budget: </string>
+    <string name="health">Health</string>
 </resources>
