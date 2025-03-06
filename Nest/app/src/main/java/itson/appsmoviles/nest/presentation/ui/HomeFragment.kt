@@ -1,13 +1,23 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.domain.model.Movement
+import itson.appsmoviles.nest.domain.model.enums.Category
+import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
+import java.time.LocalDateTime
 import kotlin.collections.iterator
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,7 +48,12 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+
+
+        return view
+
     }
 
     companion object {
@@ -61,6 +76,7 @@ class HomeFragment : Fragment() {
             }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -93,5 +109,18 @@ class HomeFragment : Fragment() {
             }
             progressContainer.addView(barSegment)
         }
+
+
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
+
+        val movements = listOf(
+            Movement(1, Category.FOOD, "Groceries", 10.0f, LocalDateTime.now()),
+            Movement(2, Category.TRANSPORT, "Gasoline", 20.0f, LocalDateTime.now()),
+            Movement(3, Category.RECREATION, "Movie", 15.0f, LocalDateTime.now())
+        )
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = MovementAdapter(movements)
     }
 }

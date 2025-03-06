@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.presentation.ui.HomeFragment
 import itson.appsmoviles.nest.presentation.ui.TotalExpensesFragment
 
@@ -16,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
+        replaceFragment(HomeFragment())
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -31,5 +31,5 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
-    }
+}
 

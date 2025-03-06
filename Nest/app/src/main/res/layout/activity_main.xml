@@ -15,15 +15,6 @@
             android:layout_above="@id/bottomNavigation"
             android:layout_margin="10dp">
 
-        <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragment_container2"
-                android:name="itson.appsmoviles.nest.presentation.ui.TotalExpensesFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_anchor="@id/bottomNavigation"
-                app:layout_anchorGravity="top" />
-
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
