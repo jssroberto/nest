@@ -42,9 +42,51 @@ class TotalExpensesFragment : Fragment() {
 
         configurarGrafico(view)
 
+        calculateFoodExpended(view, 100f, 33.33f)
+        calculateTransportExpended(view, 100f, 14.33f)
+
     }
 
 
+    private fun calculateFoodExpended(view: View, total: Float, current: Float){
+        val foodExpended = view.findViewById<View>(R.id.foodExpended)
+        val foodTotal = view.findViewById<View>(R.id.foodBudget)
+        val estimatedBudgetFood = view.findViewById<TextView>(R.id.estimatedBudgetFood)
+        val actualExpensesFood = view.findViewById<TextView>(R.id.actualExpensesFood)
+
+        estimatedBudgetFood.text =  "$${total}"
+        actualExpensesFood.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        foodExpended.background = expendedFood
+        foodTotal.background = budgetFood
+    }
+
+    private fun calculateTransportExpended(view: View, total: Float, current: Float){
+        val transportExpended = view.findViewById<View>(R.id.transportExpended)
+        val transportTotal = view.findViewById<View>(R.id.transportBudget)
+        val estimatedBudgetTransport = view.findViewById<TextView>(R.id.estimatedBudgetTransport)
+        val actualExpensesTransport = view.findViewById<TextView>(R.id.actualExpensesTransport)
+
+        estimatedBudgetTransport.text =  "$${total}"
+        actualExpensesTransport.text =  "$${current}"
+
+        val progressColor = ContextCompat.getColor(requireContext(), R.color.blue)
+        val progressTotalColor = ContextCompat.getColor(requireContext(), R.color.darker_blue)
+        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.off_white)
+
+        val budgetFood = ExpensesDrawable(total, total, progressTotalColor, backgroundColor)
+        val expendedFood = ExpensesDrawable(total, current, progressColor, backgroundColor)
+
+        transportExpended.background = expendedFood
+        transportTotal.background = budgetFood
+    }
 
     private fun calcularTotal(): Float {
         return categorias.sumOf { it.total.toDouble() }.toFloat()
