@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import itson.appsmoviles.nest.presentation.ui.BudgetFragment
 import itson.appsmoviles.nest.presentation.ui.HomeFragment
+import itson.appsmoviles.nest.presentation.ui.SettingsFragment
 import itson.appsmoviles.nest.presentation.ui.TotalExpensesFragment
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +23,8 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_expenses -> replaceFragment(TotalExpensesFragment())
+                R.id.nav_profile -> replaceFragment(SettingsFragment())
+                R.id.nav_search -> replaceFragment(BudgetFragment())
             }
             true
         }
