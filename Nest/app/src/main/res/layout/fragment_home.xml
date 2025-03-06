@@ -157,7 +157,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_vivienda" />
+                        android:backgroundTint="@color/category_vivienda" />
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -180,7 +180,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_entretenimiento" />
+                        android:backgroundTint="@color/category_entretenimiento" />
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_transporte" />
+                        android:backgroundTint="@color/category_transporte" />
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -227,7 +227,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_alimentacion" />
+                        android:backgroundTint="@color/category_alimentacion" />
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -248,7 +248,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_salud" />
+                        android:backgroundTint="@color/category_salud" />
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -270,7 +270,7 @@
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
                         android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/progress_otros" />
+                        android:backgroundTint="@color/category_otros" />
 
                 <TextView
                         android:layout_width="wrap_content"

@@ -19,4 +19,10 @@
         <item name="itemActiveIndicatorStyle">@color/off_white</item>
     </style>
 
+    <style name="Nest.DateButton">
+        <item name="android:background">@drawable/edittext_rounded</item>
+        <item name="android:backgroundTint">@color/lightest_blue</item>
+    </style>
+
+
 </resources>
