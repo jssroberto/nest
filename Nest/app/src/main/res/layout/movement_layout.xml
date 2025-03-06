@@ -4,15 +4,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/movement_background"
-        android:padding="5dp"
+        android:paddingVertical="12dp"
         >
 
     <ImageView
             android:id="@+id/movement_icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/alert_circle"
+            android:src="@drawable/icon_category_food"
             android:layout_gravity="center"
             android:layout_marginHorizontal="10dp"
             android:layout_weight="0.1"
@@ -40,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:text="martes 20/02/2025"
                 android:textSize="@dimen/text_size_small"
+                android:textColor="@color/txt_secondary"
+
                 />
 
     </LinearLayout>
