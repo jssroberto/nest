@@ -17,4 +17,24 @@
     <string name="chooseCategory">Choose a category</string>
     <string name="select_start_date">Select start date</string>
     <string name="select_end_date">Select end date</string>
+    <string name="title_activity_main">Main</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="home">Home</string>
+    <string name="budget">Budget</string>
+    <string name="expenses">Expenses</string>
+    <string name="profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_example">Hi Ramiro Arnoldo \nhere\'s your monthly overview</string>
+    <string name="this_months_budget">This month\'s budget:</string>
+    <string name="budget_example">$520</string>
+    <string name="entretenimiento">Entretenimiento</string>
+    <string name="transporte">Transporte</string>
+    <string name="alimentacion">Alimentación</string>
+    <string name="salud">Salud</string>
+    <string name="otros">Otros</string>
+    <string name="search_for_an_expsense">search for an expsense...</string>
+    <string name="movements_history">Movements History</string>
 </resources>

@@ -8,7 +8,15 @@
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:fontFamily">@font/lexend_regular</item>
         <item name="android:textColorHint">@color/light_gray</item>
+        <item name="bottomNavigationStyle">@style/Nest.BottomNavigation</item>
 
+    </style>
+
+    <style name="Nest.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/black</item>
+        <item name="itemTextColor">@color/blue</item>
+        <item name="itemIconTint">@color/blue</item>
+        <item name="itemActiveIndicatorStyle">@color/off_white</item>
     </style>
 
 </resources>

@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--paleta de colores oficiales-->
-    <color name="off_white">#F0F0F0</color>
+    <color name="off_white">#F6F6F6</color>
     <color name="light_gray">#E2E2E2</color>
+    <color name="gray">#D9D9D9</color>
     <color name="lightest_blue">#D1DFDF</color>
     <color name="lighter_blue">#ABDCDD</color>
     <color name="light_blue">#81CDCF</color>
     <color name="blue">#4EB4B7</color>
-    <color name="blue_50">#804EB4B7</color>
     <color name="blue_mid">#1D9599</color>
     <color name="dark_blue">#137578</color>
+    <color name="blue_50">#804EB4B7</color>
     <color name="darker_blue">#0C5A5C</color>
     <color name="red">#AD2224</color>
     <color name="dark_gray">#434343</color>
     <color name="black">#0F0F0F</color>
+    <color name="dark_orange">#C86C6C</color>
+    <color name="light_orange">#F2B8B8</color>
 
     <!--variables-->
     <color name="edt_text">@color/light_gray</color>
+    <color name="txt_income">@color/blue_mid</color>
+    <color name="txt_expenses">@color/dark_orange</color>
+    <color name="btn_filter">@color/darker_blue</color>
+
+    <!--progress bar-->
+    <color name="progress_vivienda">@color/darker_blue</color>
+    <color name="progress_entretenimiento">@color/dark_blue</color>
+    <color name="progress_transporte">@color/blue_mid</color>
+    <color name="progress_alimentacion">@color/blue</color>
+    <color name="progress_salud">@color/light_blue</color>
+    <color name="progress_otros">@color/lighter_blue</color>
 </resources>

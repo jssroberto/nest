@@ -7,6 +7,7 @@
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             android:fillViewport="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
@@ -31,7 +32,7 @@
             <Spinner
                     android:id="@+id/spinnerCategories"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_marginTop="10dp"
                     android:paddingVertical="10dp"
                     android:background="@drawable/edittext_rounded"
@@ -93,9 +94,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/menu_navigation"
-            app:itemIconTint="@color/darker_blue"
-            app:itemTextColor="@color/darker_blue"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

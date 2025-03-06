@@ -31,10 +31,10 @@ class SignUp : AppCompatActivity() {
         }
 
         btnSignUp.setOnClickListener {
-            if (validarCampos()) {
-                val intent = Intent(this, Main::class.java)
-                startActivity(intent)
-            }
+//            if (validarCampos()) {
+//                val intent = Intent(this, Main::class.java)
+//                startActivity(intent)
+//            }
         }
     }
 
