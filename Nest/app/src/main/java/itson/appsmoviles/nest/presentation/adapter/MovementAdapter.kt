@@ -1,11 +1,18 @@
 package itson.appsmoviles.nest.presentation.adapter
 
+import android.R.attr.category
 import android.R.attr.text
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.Movement
+import itson.appsmoviles.nest.domain.model.enums.Category
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MovementAdapter(private val items: List<Movement>) : RecyclerView.Adapter<MovementViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovementViewHolder {
@@ -13,11 +20,25 @@ class MovementAdapter(private val items: List<Movement>) : RecyclerView.Adapter<
         return MovementViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MovementViewHolder, position: Int) {
         val item = items[position]
+        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy - HH:mm", Locale.getDefault())
         holder.description.text = item.description
-        holder.amount.text = item.amount.toString()
-        holder.date.text = item.date.toString()
+        holder.amount.text = "$${item.amount}"
+        holder.date.text = item.date.format(formatter)
+
+
+        val iconResId = when (item.category) {
+            Category.LIVING -> R.drawable.icon_category_living
+            Category.RECREATION -> R.drawable.icon_category_recreation
+            Category.TRANSPORT -> R.drawable.icon_category_transport
+            Category.FOOD -> R.drawable.icon_category_food
+            Category.HEALTH -> R.drawable.icon_category_health
+            Category.OTHER -> R.drawable.icon_category_other
+        }
+        holder.icon.setImageResource(iconResId)
+
     }
 
 

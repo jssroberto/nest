@@ -6,19 +6,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.Movement
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
 import java.time.LocalDateTime
-import kotlin.collections.iterator
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,6 +36,10 @@ class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var progressContainer: LinearLayout
+    private val totalBudget = 100.0f
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var btnAdd: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,47 +86,130 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val progressContainer = view.findViewById<LinearLayout>(R.id.progress_bar)
+        progressContainer = view.findViewById<LinearLayout>(R.id.progress_bar)
+        recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
+        btnAdd = view.findViewById<ImageButton>(R.id.btn_add)
 
-        val totalBudget = 100
+        val expenses = getExpenses()
+
+        paintBudget(expenses)
+
+        val movements = getMovements()
+
+        initRecyclerView(movements)
+
+        btnAdd.setOnClickListener {
+            changeAddFragment()
+        }
 
 
-        val expenses = mapOf(
-            "Food" to 10,
-            "Gas" to 20,
-            "Entertainment" to 15
-        )
+    }
 
-        val categoryColors = mapOf(
-            "Food" to "#FFA500", // Orange
-            "Gas" to "#00BFFF",  // Blue
-            "Entertainment" to "#32CD32" // Green
-        )
+    private fun initRecyclerView(movements: List<Movement>) {
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = MovementAdapter(movements)
+        val dividerItemDecoration =
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
 
-        // Dynamically create segments
+        if (divider != null) {
+            dividerItemDecoration.setDrawable(divider)
+        }
+
+        recyclerView.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun paintBudget(expenses: Map<Category, Float>) {
+        val categoryColors = getCategoryColors()
         for ((category, amount) in expenses) {
             val barSegment = View(requireContext()).apply {
                 setBackgroundColor(Color.parseColor(categoryColors[category]))
                 layoutParams = LinearLayout.LayoutParams(
-                    0,  // Width is weighted dynamically
+                    0,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    amount.toFloat() / totalBudget // Weight proportionally
+                    amount.toFloat() / totalBudget
                 )
             }
             progressContainer.addView(barSegment)
         }
 
+        val usedBudget = expenses.values.sum()
 
+        paintRemainingBudget(usedBudget)
+    }
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
+    private fun paintRemainingBudget(usedBudget: Float) {
+        val remainingBudget = totalBudget - usedBudget
+        if (remainingBudget > 0) {
+            val emptySegment = View(requireContext()).apply {
+                setBackgroundColor(Color.TRANSPARENT)
+                layoutParams = LinearLayout.LayoutParams(
+                    0,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    remainingBudget.toFloat() / totalBudget
+                )
+            }
+            progressContainer.addView(emptySegment)
+        }
+    }
 
-        val movements = listOf(
-            Movement(1, Category.FOOD, "Groceries", 10.0f, LocalDateTime.now()),
-            Movement(2, Category.TRANSPORT, "Gasoline", 20.0f, LocalDateTime.now()),
-            Movement(3, Category.RECREATION, "Movie", 15.0f, LocalDateTime.now())
+    private fun getExpenses(): Map<Category, Float> {
+        //TODO replace this with actual data
+        return mapOf(
+            Category.LIVING to 10.0f,
+            Category.RECREATION to 20.0f,
+            Category.TRANSPORT to 15.0f,
+            Category.FOOD to 5.0f,
+            Category.HEALTH to 10.0f,
+            Category.OTHER to 10.0f
+
         )
+    }
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = MovementAdapter(movements)
+    private fun getCategoryColors(): Map<Category, String> {
+        fun colorToHex(colorResId: Int): String {
+            val colorInt = ContextCompat.getColor(requireContext(), colorResId)
+            return String.format("#%06X", 0xFFFFFF and colorInt)
+        }
+
+        return mapOf(
+            Category.LIVING to colorToHex(R.color.category_living),
+            Category.RECREATION to colorToHex(R.color.category_recreation),
+            Category.TRANSPORT to colorToHex(R.color.category_transport),
+            Category.FOOD to colorToHex(R.color.category_food),
+            Category.HEALTH to colorToHex(R.color.category_health),
+            Category.OTHER to colorToHex(R.color.category_other)
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getMovements(): List<Movement> {
+        //TODO replace this with actual data
+        return listOf(
+            Movement(1, Category.FOOD, "Groceries", 50.0f, LocalDateTime.now().minusDays(1)),
+            Movement(2, Category.TRANSPORT, "Bus Ticket", 2.5f, LocalDateTime.now().minusDays(2)),
+            Movement(3, Category.RECREATION, "Cinema", 12.0f, LocalDateTime.now().minusDays(3)),
+            Movement(4, Category.LIVING, "Rent", 500.0f, LocalDateTime.now().minusDays(4)),
+            Movement(5, Category.HEALTH, "Medicine", 30.0f, LocalDateTime.now().minusDays(5)),
+            Movement(6, Category.OTHER, "Gift", 25.0f, LocalDateTime.now().minusDays(6)),
+            Movement(7, Category.FOOD, "Restaurant", 60.0f, LocalDateTime.now().minusDays(7)),
+            Movement(8, Category.TRANSPORT, "Taxi", 15.0f, LocalDateTime.now().minusDays(8)),
+            Movement(9, Category.RECREATION, "Concert", 100.0f, LocalDateTime.now().minusDays(9)),
+            Movement(10, Category.LIVING, "Utilities", 80.0f, LocalDateTime.now().minusDays(10))
+        )
+    }
+
+    private fun changeAddFragment(){
+        val newFragment = AddFragment()
+
+        // Start a fragment transaction
+        val transaction = parentFragmentManager.beginTransaction()
+
+        // Optionally, add this transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment)  // Replace the container's content with the new fragment
+        transaction.addToBackStack(null)  // Optional, adds this transaction to the back stack
+
+        // Commit the transaction to apply the change
+        transaction.commit()
     }
 }

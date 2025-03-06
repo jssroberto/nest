@@ -38,7 +38,7 @@
     <string name="alimentacion">Alimentación</string>
     <string name="salud">Salud</string>
     <string name="otros">Otros</string>
-    <string name="search_for_an_expsense">search for an expsense...</string>
+    <string name="search_for_an_movement">search for a movement...</string>
     <string name="movements_history">Movements History</string>
     <string name="filter">FILTER</string>
     <string name="total">Total</string>
@@ -49,4 +49,7 @@
     <string name="income">Income</string>
     <string name="estimated_budget">Estimated Budget: </string>
     <string name="health">Health</string>
+    <string name="other">Other</string>
+    <string name="living">Living</string>
+
 </resources>

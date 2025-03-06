@@ -1,319 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".presentation.ui.HomeFragment">
+        android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/welcome_example"
-                android:textSize="@dimen/text_size_medium_large" />
+            android:layout_height="match_parent"
+            tools:context=".presentation.ui.HomeFragment">
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp"
-                android:gravity="center">
+                android:orientation="vertical">
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_example"
+                    android:textSize="@dimen/text_size_medium_large" />
 
             <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp"
                     android:gravity="center">
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/income"
+                            android:gravity="center"
+                            android:textColor="@color/txt_income"
+
+                            />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+ $999"
+                            android:textSize="@dimen/text_size_medium_large"
+                            android:textColor="@color/txt_income"
+                            android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+
+                        >
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Expenses"
+                            android:gravity="center"
+                            android:textColor="@color/txt_expenses" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="- $999"
+                            android:textSize="@dimen/text_size_medium_large"
+                            android:gravity="center"
+                            android:textColor="@color/txt_expenses" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+
+                        >
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Net Balance"
+                            android:gravity="center" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$999"
+                            android:textSize="@dimen/text_size_medium_large"
+                            android:gravity="center" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/income"
+                        android:text="@string/this_months_budget"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="6dp" />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/budget_example"
+                        android:textSize="@dimen/text_size_medium_large"
+                        android:fontFamily="@font/lexend_medium" />
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/progress_bar"
+                    android:layout_marginTop="10dp" />
+
+            <GridLayout
+                    android:id="@+id/categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowCount="3"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_gravity="center"
+
+                    >
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:gravity="center"
-                        android:textColor="@color/txt_income"
+                        android:layout_gravity="start">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_living" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/living" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="20dp">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_recreation" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/recreation" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_gravity="start"
+
+                        >
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_transport" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/transport" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="20dp"
+
+                        >
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_food" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/food" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_gravity="start">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_health" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/health" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:layout_gravity="start">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/circle"
+                            android:layout_marginEnd="5dp"
+                            android:backgroundTint="@color/category_other" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/other" />
+
+                </LinearLayout>
+
+            </GridLayout>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/movements_history"
+                    android:textSize="@dimen/text_size_medium_large"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/lexend_medium"
+                    android:layout_gravity="center" />
+
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp">
+
+
+                <EditText
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edittext_rounded"
+                        android:hint="@string/search_for_an_movement"
+                        android:drawablePadding="7dp"
+                        android:autofillHints=""
+                        android:inputType="text"
+                        android:layout_weight=".85"
+                        android:layout_marginEnd="5dp"
+                        android:drawableStart="@drawable/icon_search"
 
                         />
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+ $999"
-                        android:textSize="@dimen/text_size_medium_large"
-                        android:textColor="@color/txt_income"
-                        android:gravity="center" />
+                <ImageButton
+                        android:id="@+id/home_btn_filter"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="@drawable/btn_filter"
+                        android:layout_gravity="center"
+
+                        />
+
 
             </LinearLayout>
 
-            <LinearLayout
-                    android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/home_recycler_view"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
+                    android:layout_marginTop="10dp"
 
                     >
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Expenses"
-                        android:gravity="center"
-                        android:textColor="@color/txt_expenses" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="- $999"
-                        android:textSize="@dimen/text_size_medium_large"
-                        android:gravity="center"
-                        android:textColor="@color/txt_expenses" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center"
-
-                    >
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Net Balance"
-                        android:gravity="center" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$999"
-                        android:textSize="@dimen/text_size_medium_large"
-                        android:gravity="center" />
-
-            </LinearLayout>
+            </androidx.recyclerview.widget.RecyclerView>
 
 
         </LinearLayout>
 
+    </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
-
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/this_months_budget"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="6dp" />
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/budget_example"
-                    android:textSize="@dimen/text_size_medium_large"
-                    android:fontFamily="@font/lexend_medium" />
-        </LinearLayout>
-
-        <LinearLayout
-                android:id="@+id/progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:orientation="horizontal"
-                android:background="@drawable/progress_bar"
-                android:layout_marginTop="10dp" />
-
-        <GridLayout
-                android:id="@+id/categories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:rowCount="3"
-                android:layout_marginTop="10dp"
-                android:layout_marginHorizontal="10dp"
-
-                >
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="start">
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_vivienda" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Vivienda" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="20dp"
-                    >
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_entretenimiento" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/entretenimiento" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="start"
-
-                    >
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_transporte" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/transporte" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="20dp"
-
-                    >
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_alimentacion" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/alimentacion" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_gravity="start">
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_salud" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/salud" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginStart="20dp"
-                    android:layout_gravity="start">
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@color/category_otros" />
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/otros" />
-
-            </LinearLayout>
-
-        </GridLayout>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/movements_history"
-                android:textSize="@dimen/text_size_medium_large"
-                android:layout_marginTop="30dp"
-                android:fontFamily="@font/lexend_medium"
-                android:layout_gravity="center" />
+    <ImageButton
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_add"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="70dp"
 
 
-        <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edittext_rounded"
-                android:hint="@string/search_for_an_expsense"
-                android:layout_marginTop="10dp"
-                android:drawableEnd="@drawable/btn_filter"
-                android:drawablePadding="7dp"
-                android:drawableStart="@drawable/icon_search"
-                android:autofillHints=""
+            />
 
-                />
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-
-
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

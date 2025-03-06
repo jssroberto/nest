@@ -10,8 +10,7 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
         <!-- Título -->
         <TextView
@@ -53,8 +52,7 @@
                     android:paddingEnd="10dp"
                     android:textColorHint="@color/dateButtonLetters"
                     android:textSize="@dimen/text_size_small"
-                    android:theme="@style/Nest.DateButton"
-                    />
+                    android:theme="@style/Nest.DateButton" />
 
             <View
                     android:layout_width="8dp"
@@ -265,479 +263,492 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/lightest_blue"
-                android:layout_gravity="center_vertical" />
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/lightest_blue"
+                    android:layout_gravity="center_vertical" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/food"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
         </LinearLayout>
 
 
         <View
-            android:id="@+id/foodBudget"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/foodBudget"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/estimatedBudgetFood"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+            <TextView
+                    android:id="@+id/estimatedBudgetFood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
         <View
-            android:id="@+id/foodExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/foodExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/actualExpensesFood"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesFood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
+
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
+
+            <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/category_transport"
+                    android:layout_gravity="center_vertical" />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/transport"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+
+        <View
+                android:id="@+id/transportBudget"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+            <TextView
+                    android:id="@+id/estimatedBudgetTransport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
+
+        </LinearLayout>
+
+
+        <View
+                android:id="@+id/transportExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesTransport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
+
+        </LinearLayout>
+
 
         //////////////////////////////////////////////////
 
 
-
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/category_transporte"
-                android:layout_gravity="center_vertical" />
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/category_transport"
+                    android:layout_gravity="center_vertical" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/transport"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/health"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
         </LinearLayout>
 
 
         <View
-            android:id="@+id/transportBudget"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/budgetHealth"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
-            <TextView
-                android:id="@+id/estimatedBudgetTransport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
-
-        </LinearLayout>
-
-
-        <View
-            android:id="@+id/transportExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
-            <TextView
-                android:id="@+id/actualExpensesTransport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
-
-        </LinearLayout>
-
-
-
-        //////////////////////////////////////////////////
-
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
-
-            <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/category_transporte"
-                android:layout_gravity="center_vertical" />
+                android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/health"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
 
-
-        <View
-            android:id="@+id/budgetHealth"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
-            <TextView
-                android:id="@+id/estimatedBudgetHealth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:id="@+id/estimatedBudgetHealth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
         <View
-            android:id="@+id/healthExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/healthExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/actualExpensesHealth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesHealth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
         ////////////////////////////////////////////
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/category_vivienda"
-                android:layout_gravity="center_vertical" />
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/category_living"
+                    android:layout_gravity="center_vertical" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/home"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
         </LinearLayout>
 
 
         <View
-            android:id="@+id/budgetHome"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/budgetHome"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/estimatedBudgetHome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+            <TextView
+                    android:id="@+id/estimatedBudgetHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
         <View
-            android:id="@+id/homeExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/homeExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/actualExpensesHome"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
         ////////////////////////////////////////////
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/category_entretenimiento"
-                android:layout_gravity="center_vertical" />
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/category_recreation"
+                    android:layout_gravity="center_vertical" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/entretenimiento"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/entretenimiento"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
         </LinearLayout>
 
 
         <View
-            android:id="@+id/budgetRecreation"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/budgetRecreation"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/estimatedBudgetRecreation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+            <TextView
+                    android:id="@+id/estimatedBudgetRecreation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
         <View
-            android:id="@+id/recreationExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/recreationExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/actualExpensesRecreation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesRecreation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
         ////////////////////////////////////////////
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_gravity="start"
-            android:layout_marginTop="12dp">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="start"
+                android:layout_marginTop="12dp">
 
             <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/category_otros"
-                android:layout_gravity="center_vertical" />
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/category_other"
+                    android:layout_gravity="center_vertical" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/otros"
-                android:gravity="center_vertical"
-                android:layout_marginStart="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/otros"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp" />
         </LinearLayout>
 
 
         <View
-            android:id="@+id/budgetOthers"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/budgetOthers"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/estimatedBudgetOthers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/estimated_budget"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp" />
+
+            <TextView
+                    android:id="@+id/estimatedBudgetOthers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
         <View
-            android:id="@+id/othersExpended"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/black"/>
+                android:id="@+id/othersExpended"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/black" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Actual expenses:"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="20dp"/>
+                android:layout_height="wrap_content">
+
             <TextView
-                android:id="@+id/actualExpensesOthers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$"
-                android:gravity="center_vertical"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Actual expenses:"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="20dp" />
+
+            <TextView
+                    android:id="@+id/actualExpensesOthers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="center_vertical" />
 
         </LinearLayout>
 
 
-
-
-
-        ///////////////////////////////////////////
         <View
-            android:layout_width="wrap_content"
-            android:layout_height="150dp"
-            android:backgroundTint="@color/black"
-            />
-
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/black" />
 
 
     </LinearLayout>
-
-
-
-
-
-
 
 
 </ScrollView>

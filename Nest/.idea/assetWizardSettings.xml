@@ -19,8 +19,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="icon_search" />
-                            <entry key="sourceFile" value="C:\Users\rover\Downloads\icon_search.svg" />
+                            <entry key="outputName" value="icon_category_transport" />
+                            <entry key="sourceFile" value="C:\Users\rover\Downloads\icons\transport.svg" />
                           </map>
                         </option>
                       </PersistentState>
