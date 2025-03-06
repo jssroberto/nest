@@ -13,24 +13,17 @@
         android:theme="@style/Nest"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.Budget"
-            android:exported="false">
-        </activity>
-        <activity
-            android:name=".presentation.ui.Settings"
-            android:exported="false">
-        </activity>
-        <activity
             android:name=".presentation.ui.SignInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false">
         </activity>
         <activity
             android:name=".presentation.ui.SignUpActivity"
