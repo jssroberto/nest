@@ -13,16 +13,16 @@
         android:theme="@style/Nest"
         tools:targetApi="31">
         <activity
-            android:name=".Budget"
+            android:name=".presentation.ui.Budget"
             android:exported="true">
         </activity>
         <activity
-            android:name=".TotalExpenses"
+            android:name=".presentation.ui.TotalExpenses"
             android:exported="true">
 
         </activity>
         <activity
-            android:name=".Settings"
+            android:name=".presentation.ui.Settings"
             android:exported="true">
         </activity>
         <activity

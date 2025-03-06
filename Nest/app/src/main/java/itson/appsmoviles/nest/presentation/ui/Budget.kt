@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest
+package itson.appsmoviles.nest.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -12,6 +12,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import itson.appsmoviles.nest.presentation.ui.CategoryExpense
+import itson.appsmoviles.nest.R
 
 class Budget : AppCompatActivity() {
 

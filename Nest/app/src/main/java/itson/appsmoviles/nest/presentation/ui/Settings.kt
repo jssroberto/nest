@@ -1,9 +1,10 @@
-package itson.appsmoviles.nest
+package itson.appsmoviles.nest.presentation.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
@@ -14,6 +15,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import itson.appsmoviles.nest.presentation.ui.Budget
+import itson.appsmoviles.nest.R
 
 class Settings : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +93,7 @@ class Settings : AppCompatActivity() {
     }
 
     fun esEmailValido(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     @SuppressLint("ClickableViewAccessibility")

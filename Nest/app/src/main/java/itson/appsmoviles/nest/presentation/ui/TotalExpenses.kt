@@ -1,19 +1,16 @@
-package itson.appsmoviles.nest
+package itson.appsmoviles.nest.presentation.ui
 
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.utilities.Categoria
 import itson.appsmoviles.nest.utilities.PieChartDrawable
 
