@@ -6,57 +6,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/off_white"
-    tools:context=".presentation.ui.Settings">
+    tools:context=".presentation.ui.SettingsFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:textSize="@dimen/text_size_large"
         android:text="@string/settings_title"
-        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_medium"
         android:gravity="start"
-        android:paddingTop="25dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"/>
+        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_user_info"
-        android:textColor="@color/darker_blue"
-        android:fontFamily="@font/lexend_bold"
-        android:gravity="center_horizontal"
-        android:paddingTop="35dp" />
+        android:fontFamily="@font/lexend_medium"
+        android:paddingTop="26dp" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:text="@string/name"
-        android:textStyle="bold"
-        android:textColor="@color/darker_blue"
-        android:fontFamily="@font/lexend_bold"
-        android:gravity="start"
-        android:paddingTop="10dp"
-        android:paddingStart="40dp"
-        android:paddingEnd="0dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/name"
+            android:textStyle="bold"
+            android:fontFamily="@font/lexend_medium"
+            android:gravity="start"
+            android:paddingTop="10dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="0dp" />
 
     <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@drawable/edittext_rounded"
-        android:inputType="text"
-        android:paddingHorizontal="8dp"
-        android:textSize="16sp"
-        android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="30dp"
-        android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darker_blue"
-        android:hint="Ramiro Arnoldo"/>
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_rounded"
+            android:inputType="text"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/lexend_regular"
+            android:hint="Ramiro Arnoldo" />
 
     <TextView
         android:layout_width="match_parent"
@@ -64,25 +53,20 @@
         android:textSize="15sp"
         android:text="@string/email"
         android:textStyle="bold"
-        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
-        android:paddingStart="40dp"
+        android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
     <EditText
         android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
         android:inputType="text"
-        android:paddingHorizontal="8dp"
-        android:textSize="16sp"
         android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_regular"
-        android:textColor="@color/darker_blue"
         android:hint="ramoldo1@gmail.com"/>
 
     <TextView
@@ -90,10 +74,8 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_change_pass"
-        android:textColor="@color/darker_blue"
-        android:fontFamily="@font/lexend_bold"
-        android:gravity="center_horizontal"
-        android:paddingTop="20dp" />
+        android:fontFamily="@font/lexend_medium"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -101,26 +83,21 @@
         android:textSize="15sp"
         android:text="@string/old_password"
         android:textStyle="bold"
-        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
-        android:paddingStart="40dp"
+        android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
     <EditText
         android:id="@+id/editTextOldPass"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
         android:drawableEnd="@drawable/eye"
         android:inputType="text"
-        android:paddingHorizontal="8dp"
-        android:textSize="16sp"
         android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/darker_blue"
         android:hint="************"/>
 
     <TextView
@@ -129,26 +106,21 @@
         android:textSize="15sp"
         android:text="@string/new_password"
         android:textStyle="bold"
-        android:textColor="@color/darker_blue"
         android:fontFamily="@font/lexend_bold"
         android:gravity="start"
         android:paddingTop="10dp"
-        android:paddingStart="40dp"
+        android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
     <EditText
         android:id="@+id/editTextNewPass"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
         android:drawableEnd="@drawable/eye"
         android:inputType="textPassword"
-        android:paddingHorizontal="8dp"
-        android:textSize="16sp"
         android:layout_marginTop="5dp"
-        android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/lexend_bold"
-        android:textColor="@color/darker_blue"
         android:hint="************" />
 
     <Button
@@ -161,7 +133,7 @@
         android:text="@string/save_changes"
         android:textAllCaps="true"
         android:fontFamily="@font/lexend_bold"
-        android:textSize="16sp" />
+ />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -183,7 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ejemplo"
-            android:textSize="16sp"
+    
             android:textColor="@color/red"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/lexend_light"

@@ -5,6 +5,7 @@
         <item name="colorOnPrimary">@color/off_white</item>
         <item name="android:windowBackground">@color/black</item>
         <item name="android:textColor">@color/light_gray</item>
+        <item name="android:editTextColor">@color/light_gray</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:fontFamily">@font/lexend_regular</item>
         <item name="android:textColorHint">@color/light_gray</item>

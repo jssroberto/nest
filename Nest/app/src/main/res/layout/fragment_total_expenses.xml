@@ -136,7 +136,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/lightest_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/category_food" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
@@ -145,7 +145,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/lighter_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/category_living" /> <!-- Centrado horizontalmente -->
 
             </LinearLayout>
 
@@ -182,7 +182,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/light_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/category_transport" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
@@ -191,7 +191,7 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/light_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/category_recreation" /> <!-- Centrado horizontalmente -->
 
             </LinearLayout>
 
@@ -228,14 +228,14 @@
                         android:background="@drawable/circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/dark_blue" /> <!-- Centrado horizontalmente -->
+                        android:backgroundTint="@color/category_health" /> <!-- Centrado horizontalmente -->
 
                 <View
                         android:layout_marginTop="10dp"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/circle"
-                        android:backgroundTint="@color/darker_blue"
+                        android:backgroundTint="@color/category_other"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="8dp" /> <!-- Centrado horizontalmente -->
 
