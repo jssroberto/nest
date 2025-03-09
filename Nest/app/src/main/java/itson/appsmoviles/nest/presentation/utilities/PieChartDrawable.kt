@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.utilities
+package itson.appsmoviles.nest.presentation.utilities
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,7 +8,6 @@ import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import itson.appsmoviles.nest.R
 
 class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) : Drawable() {
 

@@ -3,7 +3,6 @@ package itson.appsmoviles.nest.presentation.ui
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.utilities.PieChartDrawable
-import itson.appsmoviles.nest.utilities.Categoria
-import itson.appsmoviles.nest.utilities.ExpensesDrawable
+import itson.appsmoviles.nest.presentation.utilities.PieChartDrawable
+import itson.appsmoviles.nest.presentation.utilities.Categoria
+import itson.appsmoviles.nest.presentation.utilities.ExpensesDrawable
 import java.util.Calendar
 
 class TotalExpensesFragment : Fragment() {

@@ -447,7 +447,7 @@
                 android:text="Expenses by category"
                 android:textSize="@dimen/text_size_medium_large" />
 
-        <itson.appsmoviles.nest.utilities.ScrollDisabledListView
+        <itson.appsmoviles.nest.presentation.utilities.ScrollDisabledListView
                 android:id="@+id/listViewCategoryExpenses"
                 android:layout_width="match_parent"
                 android:layout_height="600dp"

@@ -1,14 +1,15 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.Movement
 import itson.appsmoviles.nest.domain.model.enums.Category
@@ -40,6 +42,7 @@ class HomeFragment : Fragment() {
     private val totalBudget = 100.0f
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnAdd: ImageButton
+    private lateinit var bottonNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +92,7 @@ class HomeFragment : Fragment() {
         progressContainer = view.findViewById<LinearLayout>(R.id.progress_bar)
         recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
         btnAdd = view.findViewById<ImageButton>(R.id.btn_add)
+        bottonNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
         val expenses = getExpenses()
 
@@ -101,6 +105,8 @@ class HomeFragment : Fragment() {
         btnAdd.setOnClickListener {
             changeAddFragment()
         }
+
+        applyBtnAddMargin()
 
 
     }
@@ -212,4 +218,22 @@ class HomeFragment : Fragment() {
         // Commit the transaction to apply the change
         transaction.commit()
     }
+
+    private fun applyBtnAddMargin(){
+        bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                bottonNav.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                val bottonNavHeight = bottonNav.height
+
+                val params = btnAdd.layoutParams as FrameLayout.LayoutParams
+
+                params.bottomMargin = bottonNavHeight + 10.dp
+                btnAdd.layoutParams = params
+            }
+        })
+    }
+
+    val Int.dp: Int
+        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 }
