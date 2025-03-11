@@ -1,6 +1,8 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,9 +27,9 @@ class AddFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var switchOnOff: SwitchCompat
-    private lateinit var tvSwitchYes: TextView
-    private lateinit var tvSwitchNo: TextView
+    private lateinit var switchAdd: SwitchCompat
+    private lateinit var txtIncome: TextView
+    private lateinit var txtExpense: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,22 +45,26 @@ class AddFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_add, container, false)
-        switchOnOff = view.findViewById(R.id.add_switch)
-        tvSwitchYes = view.findViewById(R.id.tvSwitchYes)
-        tvSwitchNo = view.findViewById(R.id.tvSwitchNo)
+        switchAdd = view.findViewById(R.id.switch_add)
+        txtIncome = view.findViewById(R.id.txt_income)
+        txtExpense = view.findViewById(R.id.txt_expense)
 
         replaceFragment(AddIncomeFragment())
 
-        switchOnOff.setOnCheckedChangeListener { _, isChecked ->
+        switchAdd.setOnCheckedChangeListener { _, isChecked ->
             when {
                 isChecked -> {
-                    tvSwitchYes.setTextColor(ContextCompat.getColor(requireContext(),R.color.blue))
-                    tvSwitchNo.setTextColor(ContextCompat.getColor(requireContext(),R.color.off_white))
+                        txtIncome.setTextColor(ContextCompat.getColor(requireContext(),R.color.primary_color))
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        txtExpense.setTextColor(ContextCompat.getColor(requireContext(),R.color.background))
+                    }, 50)
                     replaceFragment(AddExpenseFragment())
                 }
                 else -> {
-                    tvSwitchYes.setTextColor(ContextCompat.getColor(requireContext(),R.color.off_white))
-                    tvSwitchNo.setTextColor(ContextCompat.getColor(requireContext(),R.color.blue))
+                        txtExpense.setTextColor(ContextCompat.getColor(requireContext(),R.color.primary_color))
+                    Handler(Looper.getMainLooper()).postDelayed({
+                    txtIncome.setTextColor(ContextCompat.getColor(requireContext(),R.color.background))
+                    }, 50)
                     replaceFragment(AddIncomeFragment())
                 }
             }

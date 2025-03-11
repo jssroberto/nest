@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Nest" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/blue_mid</item>
+        <item name="colorPrimary">@color/blue</item>
         <item name="colorOnPrimary">@color/off_white</item>
         <item name="android:windowBackground">@color/black</item>
         <item name="android:textColor">@color/light_gray</item>

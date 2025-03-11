@@ -9,49 +9,50 @@
 
     <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="33dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
             >
 
         <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/add_switch"
+                android:id="@+id/switch_add"
                 android:layout_width="wrap_content"
-                android:layout_height="45dp"
+                android:layout_height="match_parent"
                 android:checked="false"
-                android:textColor="@color/off_white"
-                android:thumb="@drawable/thumb_selector"
-                app:switchMinWidth="150dp"
                 app:track="@drawable/track_selector"
+                android:thumb="@drawable/thumb_selector"
+                app:thumbTint="@color/primary_color"
+                app:trackTint="@color/edt_text"
+                app:switchMinWidth="100dp"
                 />
 
+
         <LinearLayout
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
+                android:layout_width="240dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
             <TextView
-                    android:id="@+id/tvSwitchYes"
+                    android:id="@+id/txt_income"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/income"
-                    android:textColor="#4282DC"
                     android:textSize="@dimen/text_size_large"
-                    android:layout_weight="1"
+                    android:textColor="@color/edt_text"
                      />
 
             <TextView
-                    android:id="@+id/tvSwitchNo"
+                    android:id="@+id/txt_expense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/expense"
-                    android:textColor="@color/off_white"
                     android:textSize="@dimen/text_size_large"
                     />
 
