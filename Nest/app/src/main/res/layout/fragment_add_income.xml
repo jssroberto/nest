@@ -1,147 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".presentation.ui.AddExpenseFragment">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".presentation.ui.AddExpenseFragment">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change amount" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="117dp"
-        android:background="@drawable/button"
-        android:backgroundTint="@color/lightest_blue"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal"
-        android:padding="10dp">
-
-
-        <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Change amount"
-            android:fontFamily="@font/lexend_bold"
-            android:textColor="@color/darker_blue"
-            android:layout_gravity="center"
-            android:textSize="16sp" />
+            android:background="@drawable/edittext_rounded"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            android:layout_marginTop="7dp">
+
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="$"
-                android:textColor="@color/darker_blue"
-                android:gravity="top"
-                android:textSize="18sp" />
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$"
+                    android:gravity="top" />
 
             <EditText
-                android:id="@+id/editTextInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="0.00"
-                android:textColorHint="@color/darker_blue"
-                android:background="@color/lightest_blue"
-                android:textColor="@color/darker_blue"
-                android:textSize="48sp"
-                android:gravity="center"/>
+                    android:id="@+id/editTextInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="0.00"
+                    android:background="@color/edt_text"
+                    android:textSize="@dimen/text_size_x_large"
+                    android:gravity="center"
+                    android:autofillHints=""
+                    android:inputType="number"
+                    />
 
         </LinearLayout>
 
     </LinearLayout>
 
     <TextView
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="Category"
-        android:textColor="@color/darker_blue"
-        android:textSize="18sp" />
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:text="Category" />
 
     <Spinner
-        android:id="@+id/spinnerCategories"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/edittext_rounded"
-        android:backgroundTint="@color/spinner"
-        android:paddingVertical="10dp"
-
-        />
-
-    <TextView
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="Description"
-        android:textColor="@color/darker_blue"
-        android:textSize="18sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="117dp"
-        android:background="@drawable/button"
-        android:backgroundTint="@color/lightest_blue"
-        android:orientation="vertical"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:padding="10dp">
-
-        <EditText
-            android:id="@+id/etDescription"
+            android:id="@+id/spinnerCategories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Add a description for your expense"
-            android:textColorHint="@color/darker_blue"
-            android:background="@color/lightest_blue"
-            android:textColor="@color/darker_blue"
-            android:textSize="16sp"
-            android:gravity="start"/>
+            android:layout_marginTop="7dp"
+            android:background="@drawable/edittext_rounded"
+            android:backgroundTint="@color/edt_text"
+            android:paddingVertical="10dp"
+
+            />
+
+    <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:text="Description" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="117dp"
+            android:background="@drawable/edittext_rounded"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="7dp"
+            android:padding="10dp">
+
+        <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add a description for your expense"
+                android:background="@color/edt_text"
+                android:gravity="start" />
 
     </LinearLayout>
 
 
+    <!--    <TextView-->
+    <!--            android:layout_marginTop="15dp"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:gravity="top"-->
+    <!--            android:text="Date"-->
+    <!--            android:textColor="@color/darker_blue"-->
+    <!--            />-->
 
-
-    <TextView
-        android:layout_marginTop="15dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:text="Date"
-        android:textColor="@color/darker_blue"
-        android:textSize="18sp" />
     <Button
-        android:id="@+id/startDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:drawableEnd="@drawable/calendar"
-        android:gravity="fill_vertical"
-        android:hint="@string/select_start_date"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:textColorHint="@color/dateButtonLetters"
-        android:theme="@style/Nest.DateButton" />
+            android:id="@+id/startDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:drawableEnd="@drawable/calendar"
+            android:gravity="fill_vertical"
+            android:text="@string/select_date"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/button" />
 
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Add income"
-        android:textAllCaps="true"
-        android:layout_gravity="center_horizontal"
-        />
-
-
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Add income"
+            android:textAllCaps="true"
+            android:background="@drawable/button"
+            android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

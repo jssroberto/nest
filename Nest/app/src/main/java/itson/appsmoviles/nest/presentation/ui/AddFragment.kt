@@ -3,13 +3,13 @@ package itson.appsmoviles.nest.presentation.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -52,22 +52,7 @@ class AddFragment : Fragment() {
         replaceFragment(AddIncomeFragment())
 
         switchAdd.setOnCheckedChangeListener { _, isChecked ->
-            when {
-                isChecked -> {
-                        txtIncome.setTextColor(ContextCompat.getColor(requireContext(),R.color.primary_color))
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        txtExpense.setTextColor(ContextCompat.getColor(requireContext(),R.color.background))
-                    }, 50)
-                    replaceFragment(AddExpenseFragment())
-                }
-                else -> {
-                        txtExpense.setTextColor(ContextCompat.getColor(requireContext(),R.color.primary_color))
-                    Handler(Looper.getMainLooper()).postDelayed({
-                    txtIncome.setTextColor(ContextCompat.getColor(requireContext(),R.color.background))
-                    }, 50)
-                    replaceFragment(AddIncomeFragment())
-                }
-            }
+            toggleSwitchTextColors(isChecked)
         }
 
         return view
@@ -103,5 +88,25 @@ class AddFragment : Fragment() {
         childFragmentManager.beginTransaction()
             .replace(R.id.fragment_add_container, fragment)
             .commit()
+    }
+
+    private fun toggleSwitchTextColors(isChecked: Boolean) {
+        if (isChecked) {
+            setTextColor(txtIncome, R.color.primary_color)
+            Handler(Looper.getMainLooper()).postDelayed({
+                setTextColor(txtExpense, R.color.off_white)
+            }, 50)
+            replaceFragment(AddExpenseFragment())
+        } else {
+            setTextColor(txtExpense, R.color.primary_color)
+            Handler(Looper.getMainLooper()).postDelayed({
+                setTextColor(txtIncome, R.color.off_white)
+            }, 50)
+            replaceFragment(AddIncomeFragment())
+        }
+    }
+
+    private fun setTextColor(textView: TextView, color: Int) {
+        textView.setTextColor(ContextCompat.getColor(requireContext(), color))
     }
 }

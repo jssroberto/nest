@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--paleta de colores oficiales-->
-    <color name="off_white">#F6F6F6</color>
-    <color name="light_gray">#E2E2E2</color>
+    <color name="off_white">#FAFAFA</color>
+    <color name="light_gray">#EFEFEF</color>
     <color name="light_gray_low">#AAE2E2E2</color>
     <color name="gray">#D9D9D9</color>
     <color name="lightest_blue">#D1DFDF</color>

@@ -14,10 +14,10 @@
     </style>
     <style name="Nest.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
 
-        <item name="android:background">@color/off_white</item>
-        <item name="itemTextColor">@color/darker_blue</item>
-        <item name="itemIconTint">@color/darker_blue</item>
-        <item name="itemActiveIndicatorStyle">@color/off_white</item>
+        <item name="android:background">@color/background</item>
+        <item name="itemTextColor">@color/primary_color</item>
+        <item name="itemIconTint">@color/primary_color</item>
+        <item name="itemActiveIndicatorStyle">@color/background</item>
     </style>
 
     <style name="Nest.DateButton">

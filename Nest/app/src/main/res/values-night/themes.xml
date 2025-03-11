@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Nest" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimary">@color/blue_mid</item>
         <item name="colorOnPrimary">@color/off_white</item>
         <item name="android:windowBackground">@color/black</item>
         <item name="android:textColor">@color/light_gray</item>
@@ -14,10 +14,10 @@
     </style>
 
     <style name="Nest.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/black</item>
-        <item name="itemTextColor">@color/blue</item>
-        <item name="itemIconTint">@color/blue</item>
-        <item name="itemActiveIndicatorStyle">@color/off_white</item>
+        <item name="android:background">@color/background</item>
+        <item name="itemTextColor">@color/primary_color</item>
+        <item name="itemIconTint">@color/primary_color</item>
+        <item name="itemActiveIndicatorStyle">@color/background</item>
     </style>
 
     <style name="Nest.DateButton">

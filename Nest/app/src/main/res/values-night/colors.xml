@@ -4,12 +4,12 @@
     <color name="edt_text">@color/dark_gray</color>
     <color name="txt_income">@color/light_blue</color>
     <color name="txt_expenses">@color/light_orange</color>
-    <color name="primary_color">@color/blue</color>
+    <color name="primary_color">@color/blue_mid</color>
     <color name="dateButton">@color/darker_blue</color>
     <color name="dateButtonLetters">@color/lightest_blue</color>
     <color name="spinner">@color/blue_mid</color>
     <color name="txt_secondary">@color/light_gray_low</color>
-    <color name="background">@color/off_white</color>
+    <color name="background">@color/black</color>
 
     <!--categories-->
     <color name="category_living">@color/dark_blue</color>

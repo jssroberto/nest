@@ -51,5 +51,6 @@
     <string name="health">Health</string>
     <string name="other">Other</string>
     <string name="living">Living</string>
+    <string name="select_date">Select date</string>
 
 </resources>
