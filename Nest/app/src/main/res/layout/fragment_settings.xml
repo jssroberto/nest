@@ -45,7 +45,7 @@
             android:inputType="text"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/lexend_regular"
-            android:hint="Ramiro Arnoldo" />
+            android:text="Ramiro Arnoldo" />
 
     <TextView
         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
         android:inputType="text"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/lexend_regular"
-        android:hint="ramoldo1@gmail.com"/>
+        android:text="ramoldo1@gmail.com"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -95,10 +95,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
         android:drawableEnd="@drawable/eye"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/lexend_bold"
-        android:hint="************"/>
+        android:text="password"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -121,7 +121,7 @@
         android:inputType="textPassword"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/lexend_bold"
-        android:hint="************" />
+        android:text="password" />
 
     <Button
         android:id="@+id/buttonSaveChanges"
