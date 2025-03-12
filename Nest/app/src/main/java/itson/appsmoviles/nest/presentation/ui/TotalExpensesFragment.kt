@@ -55,7 +55,7 @@ class TotalExpensesFragment : Fragment() {
             showEndDatePicker()
         }
 
-        view.findViewById<Button>(R.id.startDate)?.setOnClickListener {
+        view.findViewById<Button>(R.id.btn_date_income)?.setOnClickListener {
             showStartDatePicker()
         }
 
@@ -97,7 +97,7 @@ class TotalExpensesFragment : Fragment() {
             { _, year, month, day ->
                 val selectedDate = "$day/${month + 1}/$year"
 
-                view?.findViewById<Button>(R.id.startDate)?.apply {
+                view?.findViewById<Button>(R.id.btn_date_income)?.apply {
                     text = selectedDate
                     setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
                 }

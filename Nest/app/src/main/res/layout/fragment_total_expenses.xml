@@ -40,7 +40,7 @@
 
 
             <Button
-                    android:id="@+id/startDate"
+                    android:id="@+id/btn_date_income"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

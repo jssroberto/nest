@@ -8,7 +8,7 @@
         <item name="android:editTextColor">@color/darker_blue</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:fontFamily">@font/lexend_regular</item>
-        <item name="android:textColorHint">@color/blue_50</item>
+        <item name="android:textColorHint">@color/darker_blue_low</item>
         <item name="bottomNavigationStyle">@style/Nest.BottomNavigation</item>
 
     </style>

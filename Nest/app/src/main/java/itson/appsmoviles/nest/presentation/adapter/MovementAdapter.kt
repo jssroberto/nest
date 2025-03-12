@@ -1,7 +1,5 @@
 package itson.appsmoviles.nest.presentation.adapter
 
-import android.R.attr.category
-import android.R.attr.text
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,13 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.Movement
 import itson.appsmoviles.nest.domain.model.enums.Category
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MovementAdapter(private val items: List<Movement>) : RecyclerView.Adapter<MovementViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovementViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.movement_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_movement, parent, false)
         return MovementViewHolder(view)
     }
 

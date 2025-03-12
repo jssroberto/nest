@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root_frame_home"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -123,8 +124,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/this_months_budget"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="10dp"
-                        />
+                        android:layout_marginEnd="10dp" />
 
 
                 <TextView
@@ -163,8 +163,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center"
-                        android:layout_gravity="start"
-                        >
+                        android:layout_gravity="start">
 
                     <View
                             android:layout_width="10dp"
@@ -326,7 +325,7 @@
                         />
 
                 <ImageButton
-                        android:id="@+id/home_btn_filter"
+                        android:id="@+id/btn_filter_home"
                         android:layout_width="38dp"
                         android:layout_height="38dp"
                         android:background="@drawable/btn_filter"
@@ -357,7 +356,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_add"
-            android:layout_gravity="bottom|end"
-            />
+            android:layout_gravity="bottom|end" />
+
+    <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_filter_container_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
 
 </FrameLayout>

@@ -20,6 +20,7 @@ import java.util.Calendar
 
 class AddIncomeFragment : Fragment() {
 
+    private lateinit var btnDate: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,9 @@ class AddIncomeFragment : Fragment() {
 
         configurarSpinner(view)
 
-        view.findViewById<Button>(R.id.startDate)?.setOnClickListener {
+        btnDate = view.findViewById<Button>(R.id.btn_date_income)
+
+        btnDate.setOnClickListener {
             showStartDatePicker()
         }
 
@@ -90,9 +93,9 @@ class AddIncomeFragment : Fragment() {
             { _, year, month, day ->
                 val selectedDate = "$day/${month + 1}/$year"
 
-                view?.findViewById<Button>(R.id.startDate)?.apply {
+                view?.findViewById<Button>(R.id.btn_date_income)?.apply {
                     text = selectedDate
-                    setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
+                    setTextColor(Color.parseColor("#FFFFFF")) // Cambia "#FF5733" por el color que desees
                 }
             },
             currentYear, currentMonth, currentDay

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_large"
         android:text="@string/settings_title"
-        android:fontFamily="@font/lexend_medium"
+        
         android:gravity="start"
         />
 
@@ -22,18 +22,16 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_user_info"
-        android:fontFamily="@font/lexend_medium"
-        android:paddingTop="26dp" />
+        
+        android:layout_marginTop="26dp" />
 
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:text="@string/name"
-            android:textStyle="bold"
-            android:fontFamily="@font/lexend_medium"
             android:gravity="start"
-            android:paddingTop="10dp"
+            android:layout_marginTop="10dp"
             android:paddingStart="7dp"
             android:paddingEnd="0dp" />
 
@@ -42,9 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_rounded"
-            android:inputType="text"
+            android:inputType="textPersonName"
             android:layout_marginTop="5dp"
-            android:fontFamily="@font/lexend_regular"
             android:text="Ramiro Arnoldo" />
 
     <TextView
@@ -52,10 +49,9 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:text="@string/email"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"
+        
         android:gravity="start"
-        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
         android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
@@ -64,9 +60,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:layout_marginTop="5dp"
-        android:fontFamily="@font/lexend_regular"
         android:text="ramoldo1@gmail.com"/>
 
     <TextView
@@ -74,18 +69,17 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_change_pass"
-        android:fontFamily="@font/lexend_medium"
-        android:layout_marginTop="20dp" />
+        
+        android:layout_marginTop="26dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:text="@string/old_password"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"
+        
         android:gravity="start"
-        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
         android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
@@ -97,18 +91,15 @@
         android:drawableEnd="@drawable/eye"
         android:inputType="textPassword"
         android:layout_marginTop="5dp"
-        android:fontFamily="@font/lexend_bold"
-        android:text="password"/>
+       />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:text="@string/new_password"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"
         android:gravity="start"
-        android:paddingTop="10dp"
+        android:layout_marginTop="10dp"
         android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
 
@@ -120,8 +111,7 @@
         android:drawableEnd="@drawable/eye"
         android:inputType="textPassword"
         android:layout_marginTop="5dp"
-        android:fontFamily="@font/lexend_bold"
-        android:text="password" />
+      />
 
     <Button
         android:id="@+id/buttonSaveChanges"
@@ -132,7 +122,7 @@
         android:layout_gravity="center"
         android:text="@string/save_changes"
         android:textAllCaps="true"
-        android:fontFamily="@font/lexend_bold"
+            android:fontFamily="@font/lexend_medium"
  />
 
     <LinearLayout

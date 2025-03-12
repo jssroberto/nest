@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
+import kotlinx.coroutines.Dispatchers.Main
 
 class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,15 +30,15 @@ class SignUpActivity : AppCompatActivity() {
         setupPasswordToggle(editTextPassword)
 
         signIn.setOnClickListener {
-            val intentSignIn = Intent(this, MainActivity::class.java)
+            val intentSignIn = Intent(this, SignInActivity::class.java)
             startActivity(intentSignIn)
         }
 
         btnSignUp.setOnClickListener {
-//            if (validarCampos()) {
-//                val intent = Intent(this, Main::class.java)
-//                startActivity(intent)
-//            }
+            if (validarCampos()) {
+                val intent = Intent(this, Main::class.java)
+                startActivity(intent)
+            }
         }
     }
 

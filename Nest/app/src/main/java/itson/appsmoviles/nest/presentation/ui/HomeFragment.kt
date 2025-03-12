@@ -43,6 +43,7 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var btnAdd: ImageButton
     private lateinit var bottonNav: BottomNavigationView
+    private lateinit var btnFilter: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +94,7 @@ class HomeFragment : Fragment() {
         recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
         btnAdd = view.findViewById<ImageButton>(R.id.btn_add)
         bottonNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        btnFilter = view.findViewById<ImageButton>(R.id.btn_filter_home)
 
         val expenses = getExpenses()
 
@@ -107,6 +109,11 @@ class HomeFragment : Fragment() {
         }
 
         applyBtnAddMargin()
+
+        btnFilter.setOnClickListener {
+            val dialog = FilterMovementsFragment()
+            dialog.show(parentFragmentManager, "FilterMovementsFragment")
+        }
 
 
     }

@@ -2,7 +2,7 @@
 <resources>
     <!--paleta de colores oficiales-->
     <color name="off_white">#FAFAFA</color>
-    <color name="light_gray">#EFEFEF</color>
+    <color name="light_gray">#E9E9E9</color>
     <color name="light_gray_low">#AAE2E2E2</color>
     <color name="gray">#D9D9D9</color>
     <color name="lightest_blue">#D1DFDF</color>
@@ -14,9 +14,10 @@
     <color name="dark_blue_low">#A9137578</color>
     <color name="blue_50">#804EB4B7</color>
     <color name="darker_blue">#0C5A5C</color>
+    <color name="darker_blue_low">#969899</color>
     <color name="red">#AD2224</color>
-    <color name="dark_gray">#434343</color>
-    <color name="black">#0F0F0F</color>
+    <color name="dark_gray">#313131</color>
+    <color name="black">#0B0B0B</color>
     <color name="dark_orange">#C66B10</color>
     <color name="light_orange">#F2CFAC</color>
     <color name="cashLight">#7EAED7A9</color>
@@ -29,7 +30,7 @@
     <color name="primary_color">@color/darker_blue</color>
     <color name="dateButton">@color/lightest_blue</color>
     <color name="dateButtonLetters">@color/darker_blue</color>
-    <color name="spinner">@color/lightest_blue</color>
+    <color name="spinner">@color/primary_color</color>
     <color name="txt_secondary">@color/dark_blue_low</color>
     <color name="background">@color/off_white</color>
 
