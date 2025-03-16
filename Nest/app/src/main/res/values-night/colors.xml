@@ -10,6 +10,7 @@
     <color name="spinner">@color/blue_mid</color>
     <color name="txt_secondary">@color/light_gray_low</color>
     <color name="background">@color/black</color>
+    <color name="txt_color">@color/off_white</color>
 
     <!--categories-->
     <color name="category_living">@color/dark_blue</color>

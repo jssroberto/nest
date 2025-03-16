@@ -52,7 +52,7 @@
                     android:paddingEnd="10dp"
                     android:textColorHint="@color/dateButtonLetters"
                     android:textSize="@dimen/text_size_small"
-                    android:theme="@style/Nest.DateButton" />
+                    android:theme="@style/Nest.Selectable" />
 
             <View
                     android:layout_width="8dp"
@@ -71,7 +71,7 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:gravity="fill_vertical"
-                    android:theme="@style/Nest.DateButton"
+                    android:theme="@style/Nest.Selectable"
 
 
                     />

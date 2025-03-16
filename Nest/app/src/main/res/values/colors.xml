@@ -2,7 +2,7 @@
 <resources>
     <!--paleta de colores oficiales-->
     <color name="off_white">#FAFAFA</color>
-    <color name="light_gray">#E9E9E9</color>
+    <color name="light_gray">#EFEFEF</color>
     <color name="light_gray_low">#AAE2E2E2</color>
     <color name="gray">#D9D9D9</color>
     <color name="lightest_blue">#D1DFDF</color>
@@ -33,6 +33,7 @@
     <color name="spinner">@color/primary_color</color>
     <color name="txt_secondary">@color/dark_blue_low</color>
     <color name="background">@color/off_white</color>
+    <color name="txt_color">@color/darker_blue</color>
 
     <!--categories-->
     <color name="category_living">@color/darker_blue</color>

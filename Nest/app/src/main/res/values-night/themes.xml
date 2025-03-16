@@ -20,9 +20,9 @@
         <item name="itemActiveIndicatorStyle">@color/background</item>
     </style>
 
-    <style name="Nest.DateButton">
-        <item name="android:background">@drawable/edittext_rounded</item>
-        <item name="android:backgroundTint">@color/blue_mid</item>
+    <style name="Nest.Selectable">
+        <item name="backgroundTint">@color/edt_text</item>
+        <item name="android:background">@drawable/selectable_backgrund</item>
     </style>
 
 </resources>
