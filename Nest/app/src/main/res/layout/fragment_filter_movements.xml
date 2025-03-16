@@ -34,28 +34,29 @@
 
             <Button
                     android:id="@+id/btn_start_date_filter"
-                    android:layout_width="140dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
                     android:drawableEnd="@drawable/calendar"
                     android:gravity="fill_vertical"
                     android:text="@string/start_date"
                     android:paddingHorizontal="14dp"
-                    android:background="@drawable/button"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
+                    style="@style/Nest.Selectable"
                     />
 
 
             <Button
                     android:id="@+id/btn_end_date_filter"
-                    android:layout_width="140dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:drawableEnd="@drawable/calendar"
                     android:gravity="fill_vertical"
                     android:text="@string/end_date"
                     android:paddingHorizontal="14dp"
-                    android:background="@drawable/button"
                     android:layout_gravity="center"
+                    style="@style/Nest.Selectable"
                     />
 
         </LinearLayout>
@@ -71,14 +72,14 @@
                 android:id="@+id/spinner_categories_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="7dp"
                 android:background="@drawable/edittext_rounded"
                 android:backgroundTint="@color/edt_text"
                 android:paddingVertical="3dp"
                 />
 
         <Button
-                android:id="@+id/btn_filter"
+                android:id="@+id/btn_filter_movements"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/apply_filters"

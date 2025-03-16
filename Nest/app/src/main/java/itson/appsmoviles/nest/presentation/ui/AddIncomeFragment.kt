@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.R.attr.text
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
@@ -53,7 +54,7 @@ class AddIncomeFragment : Fragment() {
         addDollarSign(edtAmount)
 
         btnDate.setOnClickListener {
-            showStartDatePicker()
+            showDatePicker(btnDate)
         }
 
     }
@@ -110,7 +111,7 @@ class AddIncomeFragment : Fragment() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun showStartDatePicker() {
+    private fun showDatePicker(btnDate: Button) {
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
         val currentMonth = calendar.get(Calendar.MONTH)
@@ -122,7 +123,7 @@ class AddIncomeFragment : Fragment() {
             { _, year, month, day ->
                 val selectedDate = formatDate(day, month, year)
 
-                view?.findViewById<Button>(R.id.btn_date_income)?.apply {
+                btnDate.apply {
                     text = selectedDate
                 }
             },

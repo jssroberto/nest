@@ -1,36 +1,34 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.app.DatePickerDialog
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FilterMovementsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FilterMovementsFragment : DialogFragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var btnStartDate: Button
+    private lateinit var btnEndDate: Button
+    private lateinit var spinner: Spinner
+    private lateinit var btnFilter: Button
+    private lateinit var categories: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
 
 
     }
@@ -43,33 +41,42 @@ class FilterMovementsFragment : DialogFragment() {
         return inflater.inflate(R.layout.fragment_filter_movements, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FilterMovementsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FilterMovementsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val categories = listOf("Option 1", "Option 2", "Option 3")
-        val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, categories)
-        adapter.setDropDownViewResource(R.layout.spinner_item)
-        view.findViewById<Spinner>(R.id.spinner_categories_filter).adapter = adapter
+        btnStartDate = view.findViewById(R.id.btn_start_date_filter)
+        btnEndDate = view.findViewById(R.id.btn_end_date_filter)
+        spinner = view.findViewById(R.id.spinner_categories_filter)
+        btnFilter = view.findViewById(R.id.btn_filter_movements)
+        categories = mutableListOf(
+            "Food",
+            "Transport",
+            "Entertainment",
+            "Home",
+            "Health",
+            "Other"
+        )
+
+        setUpSpinner(view)
+        btnStartDate.setOnClickListener {
+            showDatePicker(btnStartDate)
+        }
+        btnEndDate.setOnClickListener {
+            showDatePicker(btnEndDate)
+        }
+
+        btnFilter.setOnClickListener {
+            val startDate = btnStartDate.text.toString()
+            val endDate = btnEndDate.text.toString()
+            val category = spinner.selectedItem.toString()
+
+            if (validateEntries(startDate, endDate, category)) {
+                dismiss()
+            }
+        }
+
+
     }
 
     override fun onStart() {
@@ -79,6 +86,103 @@ class FilterMovementsFragment : DialogFragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent) // Ensures rounded corners
+    }
+
+    private fun setUpSpinner(view: View) {
+
+        val spinnerCategories = listOf("Select a Category") + categories
+
+        val adapter =
+            object :
+                ArrayAdapter<String>(requireContext(), R.layout.spinner_item, spinnerCategories) {
+                override fun isEnabled(position: Int): Boolean {
+                    // Disable the hint item
+                    return position != 0
+                }
+
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: View?,
+                    parent: ViewGroup
+                ): View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view as TextView
+                    if (position == 0) {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.edt_text
+                            )
+                        ) // Hint color
+                    } else {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.txt_color
+                            )
+                        ) // Normal color
+                    }
+                    return view
+                }
+            }
+
+        adapter.setDropDownViewResource(R.layout.spinner_item)
+        spinner.adapter = adapter
+        spinner.setSelection(0)
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun showDatePicker(btnDate: Button) {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            R.style.Nest_DatePicker,
+            { _, year, month, day ->
+                val selectedDate = formatDate(day, month, year)
+
+                btnDate.apply {
+                    text = selectedDate
+                }
+            },
+            currentYear, currentMonth, currentDay
+        )
+
+        datePickerDialog.show()
+
+        val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+        val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+
+        positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun formatDate(day: Int, month: Int, year: Int): String {
+        val selectedDate = LocalDate.of(year, month + 1, day)
+        val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.getDefault())
+        return selectedDate.format(formatter)
+    }
+
+    private fun validateEntries(startDate: String, endDate: String, category: String): Boolean {
+        if (startDate.isEmpty() || endDate.isEmpty() || !categories.contains(category)) {
+            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        //TODO: Validate date format
+        if (startDate > endDate) {
+            Toast.makeText(
+                requireContext(),
+                "Start date must be before end date",
+                Toast.LENGTH_SHORT
+            ).show()
+            return false
+        }
+        return true
     }
 
 }
