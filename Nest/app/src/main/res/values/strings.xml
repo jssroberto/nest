@@ -56,5 +56,14 @@
     <string name="start_date">Start date</string>
     <string name="apply_filters">Apply Filters</string>
     <string name="date">Date</string>
+    <string name="amount">Amount</string>
+    <string name="amount_hint">$0.00</string>
+    <string name="category">Category</string>
+    <string name="description">Description</string>
+    <string name="description_hint">Add a description for your expense</string>
+    <string name="add_income">Add Income</string>
+    <string name="cash">Cash</string>
+    <string name="card">Card</string>
+    <string name="payment_method">Payment Method</string>
 
 </resources>

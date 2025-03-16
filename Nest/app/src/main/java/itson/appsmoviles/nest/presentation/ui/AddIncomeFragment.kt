@@ -1,16 +1,16 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.app.DatePickerDialog
-import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -18,21 +18,18 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
-
 class AddIncomeFragment : Fragment() {
 
+    private lateinit var edtAmount: EditText
     private lateinit var btnDate: Button
+    private lateinit var spinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -42,12 +39,18 @@ class AddIncomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_add_income, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        edtAmount = view.findViewById(R.id.edt_amount_income)
         btnDate = view.findViewById<Button>(R.id.btn_date_income)
+        spinner = view.findViewById<Spinner>(R.id.spinner_categories_income)
+
 
         setUpSpinner(view)
+
+        addDollarSign(edtAmount)
 
         btnDate.setOnClickListener {
             showStartDatePicker()
@@ -57,26 +60,48 @@ class AddIncomeFragment : Fragment() {
 
 
     private fun setUpSpinner(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
-        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
+        val categories = listOf(
+            "Select a category",
+            "Food",
+            "Transport",
+            "Entertainment",
+            "Home",
+            "Health",
+            "Other"
+        )
 
-        val adapter = object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
-            override fun isEnabled(position: Int): Boolean {
-                // Disable the hint item
-                return position != 0
-            }
-
-            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getDropDownView(position, convertView, parent)
-                val textView = view as TextView
-                if (position == 0) {
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.edt_text)) // Hint color
-                } else {
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color)) // Normal color
+        val adapter =
+            object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
+                override fun isEnabled(position: Int): Boolean {
+                    // Disable the hint item
+                    return position != 0
                 }
-                return view
+
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: View?,
+                    parent: ViewGroup
+                ): View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view as TextView
+                    if (position == 0) {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.edt_text
+                            )
+                        ) // Hint color
+                    } else {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.txt_color
+                            )
+                        ) // Normal color
+                    }
+                    return view
+                }
             }
-        }
 
         adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
@@ -109,7 +134,6 @@ class AddIncomeFragment : Fragment() {
         val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
         val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
 
-        // Set the color of the "OK" and "Cancel" buttons
         positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
         negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
@@ -119,5 +143,29 @@ class AddIncomeFragment : Fragment() {
         val selectedDate = LocalDate.of(year, month + 1, day)
         val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault())
         return selectedDate.format(formatter)
+    }
+
+    private fun addDollarSign(edtAmount: EditText) {
+        edtAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(editable: Editable?) {
+                edtAmount.removeTextChangedListener(this)
+
+                val input = editable.toString()
+
+                val formattedInput = if (!input.startsWith("$")) {
+                    "$$input"
+                } else {
+                    input
+                }
+
+                edtAmount.setText(formattedInput)
+                edtAmount.setSelection(formattedInput.length)
+                edtAmount.addTextChangedListener(this)
+            }
+        })
     }
 }

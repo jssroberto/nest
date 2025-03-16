@@ -19,5 +19,10 @@
     <color name="category_food">@color/light_blue</color>
     <color name="category_health">@color/lighter_blue</color>
     <color name="category_other">@color/lightest_blue</color>
+    <color name="txt_color_radio_cash">@color/cash_light</color>
+    <color name="txt_color_radio_card">@color/light_orange</color>
+    <color name="background_color_radio_cash">@color/cash_strong</color>
+    <color name="background_color_radio_card">@color/dark_orange</color>
+
 
 </resources>

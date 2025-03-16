@@ -18,10 +18,10 @@
     <color name="red">#AD2224</color>
     <color name="dark_gray">#313131</color>
     <color name="black">#0B0B0B</color>
-    <color name="dark_orange">#C66B10</color>
-    <color name="light_orange">#F2CFAC</color>
-    <color name="cashLight">#7EAED7A9</color>
-    <color name="cashStrong">#1B5C0C</color>
+    <color name="dark_orange">#40250A</color>
+    <color name="light_orange">#F2E7DA</color>
+    <color name="cash_light">#E1F4DE</color>
+    <color name="cash_strong">#133C0A</color>
 
     <!--variables-->
     <color name="edt_text">@color/light_gray</color>
@@ -34,6 +34,10 @@
     <color name="txt_secondary">@color/dark_blue_low</color>
     <color name="background">@color/off_white</color>
     <color name="txt_color">@color/darker_blue</color>
+    <color name="txt_color_radio_cash">@color/cash_strong</color>
+    <color name="txt_color_radio_card">@color/dark_orange</color>
+    <color name="background_color_radio_cash">@color/cash_light</color>
+    <color name="background_color_radio_card">@color/light_orange</color>
 
     <!--categories-->
     <color name="category_living">@color/darker_blue</color>

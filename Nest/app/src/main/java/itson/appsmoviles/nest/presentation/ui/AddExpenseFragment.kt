@@ -1,30 +1,37 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.app.DatePickerDialog
-import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
+import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
-
+import java.util.Locale
 
 class AddExpenseFragment : Fragment() {
-
+    private lateinit var edtAmount: EditText
+    private lateinit var btnDate: Button
+    private lateinit var spinner: Spinner
+    private lateinit var radioCash: RadioButton
+    private lateinit var radioCard: RadioButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -34,51 +41,79 @@ class AddExpenseFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_add_expense, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        configurarSpinner(view)
+        edtAmount = view.findViewById(R.id.edt_amount_expense)
+        btnDate = view.findViewById<Button>(R.id.btn_date_expense)
+        spinner = view.findViewById<Spinner>(R.id.spinner_categories_expense)
+        radioCash = view.findViewById(R.id.radio_cash)
+        radioCard = view.findViewById(R.id.radio_card)
 
-        view.findViewById<Button>(R.id.btn_date_income)?.setOnClickListener {
+        setUpSpinner(view)
+
+        addDollarSign(edtAmount)
+
+        btnDate.setOnClickListener {
             showStartDatePicker()
         }
 
+        setRadioColors()
+
     }
 
+    private fun setUpSpinner(view: View) {
+        val categories = listOf(
+            "Select a category",
+            "Food",
+            "Transport",
+            "Entertainment",
+            "Home",
+            "Health",
+            "Other"
+        )
 
-    private fun configurarSpinner(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
-        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other", "All categories")
+        val adapter =
+            object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
+                override fun isEnabled(position: Int): Boolean {
+                    // Disable the hint item
+                    return position != 0
+                }
 
-        val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, categories) {
-
-
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getView(position, convertView, parent)
-                val textView = view.findViewById<TextView>(android.R.id.text1)
-                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
-                textView.textSize = 16f
-                return view
+                override fun getDropDownView(
+                    position: Int,
+                    convertView: View?,
+                    parent: ViewGroup
+                ): View {
+                    val view = super.getDropDownView(position, convertView, parent)
+                    val textView = view as TextView
+                    if (position == 0) {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.edt_text
+                            )
+                        ) // Hint color
+                    } else {
+                        textView.setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.txt_color
+                            )
+                        ) // Normal color
+                    }
+                    return view
+                }
             }
 
-            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getDropDownView(position, convertView, parent)
-                view.setBackgroundColor(ContextCompat.getColor(context, R.color.off_white))
-                val textView = view.findViewById<TextView>(android.R.id.text1)
-                textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
-                textView.textSize = 16f
-                textView.setPadding(20, 20, 20, 20)
-                return view
-            }
-        }
-
+        adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {}
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+        spinner.setSelection(0)
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showStartDatePicker() {
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
@@ -87,17 +122,59 @@ class AddExpenseFragment : Fragment() {
 
         val datePickerDialog = DatePickerDialog(
             requireContext(),
+            R.style.Nest_DatePicker,
             { _, year, month, day ->
-                val selectedDate = "$day/${month + 1}/$year"
+                val selectedDate = formatDate(day, month, year)
 
-                view?.findViewById<Button>(R.id.btn_date_income)?.apply {
+                view?.findViewById<Button>(R.id.btn_date_expense)?.apply {
                     text = selectedDate
-                    setTextColor(Color.parseColor("#0C5A5C")) // Cambia "#FF5733" por el color que desees
                 }
             },
             currentYear, currentMonth, currentDay
         )
 
         datePickerDialog.show()
+
+        val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+        val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+
+        positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun formatDate(day: Int, month: Int, year: Int): String {
+        val selectedDate = LocalDate.of(year, month + 1, day)
+        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault())
+        return selectedDate.format(formatter)
+    }
+
+    private fun addDollarSign(edtAmount: EditText) {
+        edtAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(editable: Editable?) {
+                edtAmount.removeTextChangedListener(this)
+
+                val input = editable.toString()
+
+                val formattedInput = if (!input.startsWith("$")) {
+                    "$$input"
+                } else {
+                    input
+                }
+
+                edtAmount.setText(formattedInput)
+                edtAmount.setSelection(formattedInput.length)
+                edtAmount.addTextChangedListener(this)
+            }
+        })
+    }
+
+    private fun setRadioColors(){
+        radioCash.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
+        radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
 }

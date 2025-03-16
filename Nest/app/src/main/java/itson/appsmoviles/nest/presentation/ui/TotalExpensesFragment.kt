@@ -246,7 +246,7 @@ class TotalExpensesFragment : Fragment() {
     }
 
     private fun configurarSpinner(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.spinnerCategories)
+        val spinner = view.findViewById<Spinner>(R.id.spinner_categories_income)
         val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other", "All categories")
 
         val adapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, categories) {
