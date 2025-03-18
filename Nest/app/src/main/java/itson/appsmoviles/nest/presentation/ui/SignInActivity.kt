@@ -11,17 +11,30 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
 
 class SignInActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        auth = Firebase.auth
+
+
+
+
         setContentView(R.layout.activity_sign_in)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -29,6 +42,7 @@ class SignInActivity : AppCompatActivity() {
             insets
         }
 
+        val email: EditText = findViewById(R.id.editTextLoginEmail)
         val editTextLoginPassword = findViewById<EditText>(R.id.editTextLoginPassword)
         val textViewSignUp = findViewById<TextView>(R.id.textViewSignUp)
         val buttonSignIn = findViewById<Button>(R.id.buttonSignIn)
@@ -36,8 +50,7 @@ class SignInActivity : AppCompatActivity() {
         setupPasswordToggle(editTextLoginPassword)
 
         buttonSignIn.setOnClickListener {
-            val intentSignIn = Intent(this, MainActivity::class.java)
-            startActivity(intentSignIn)
+            login(email.text.toString(), editTextLoginPassword.text.toString())
         }
 
         textViewSignUp.setOnClickListener {
@@ -47,30 +60,27 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    fun validarCampos(): Boolean {
-        val editTextLoginPassword = findViewById<EditText>(R.id.editTextLoginPassword)
-        val editTextLoginEmail = findViewById<EditText>(R.id.editTextLoginEmail)
-        val alertIcon = findViewById<ImageView>(R.id.alertIcon)
-        val textAlert = findViewById<TextView>(R.id.txtAlert)
-        val email = editTextLoginEmail.text.toString().trim()
-        val password = editTextLoginPassword.text.toString().trim()
+    private fun login(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
 
-        if (email.isEmpty()) {
-            editTextLoginEmail.error = "Email is required"
-            return false
-        }
-        if (!esEmailValido(email)) {
-            editTextLoginEmail.error = "Invalid email format"
-            return false
-        }
-        if (password.isEmpty()) {
-            alertIcon.visibility = View.VISIBLE
-            textAlert.visibility = View.VISIBLE
-            textAlert.setText("Password is required")
+                    Toast.makeText(this, "¡Bienvenido, ${user?.displayName}!", Toast.LENGTH_SHORT).show()
+                    goToMain()
+                } else {
 
-            return false
-        }
-        return true
+                    Toast.makeText(this, "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+
+    fun goToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
 

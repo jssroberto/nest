@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
@@ -11,23 +12,37 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
 import kotlinx.coroutines.Dispatchers.Main
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 class SignUpActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        val editTextPassword = findViewById<EditText>(R.id.etPassword)
+        auth = Firebase.auth
+
+        val email: EditText = findViewById(R.id.etEmail)
+        val name: EditText = findViewById(R.id.etName)
+        val password = findViewById<EditText>(R.id.etPassword)
         val editConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
         val signIn = findViewById<TextView>(R.id.txtSignIn)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
 
         setupPasswordToggle(editConfirmPassword)
-        setupPasswordToggle(editTextPassword)
+        setupPasswordToggle(password)
 
         signIn.setOnClickListener {
             val intentSignIn = Intent(this, SignInActivity::class.java)
@@ -36,11 +51,63 @@ class SignUpActivity : AppCompatActivity() {
 
         btnSignUp.setOnClickListener {
             if (validarCampos()) {
-                val intent = Intent(this, Main::class.java)
-                startActivity(intent)
+                signUp(email.text.toString(), password.text.toString(), name.text.toString())
             }
         }
     }
+
+    private fun signUp(email: String, password: String, name: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("INFO", "Registro exitoso con email: $email")
+
+                    // 🔹 Obtener usuario autenticado
+                    val user = auth.currentUser
+
+                    // 🔹 Guardar el nombre en Firebase Authentication
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)  // Guarda el nombre en Firebase Auth
+                        .build()
+
+                    user?.updateProfile(profileUpdates)?.addOnCompleteListener { profileTask ->
+                        if (profileTask.isSuccessful) {
+                            Log.d("INFO", "Nombre guardado correctamente en FirebaseAuth")
+                        }
+                    }
+
+                    // 🔹 Guardar en Firestore para más información del usuario
+                    val userId = user?.uid
+                    val db = FirebaseFirestore.getInstance()
+                    val userData = hashMapOf(
+                        "uid" to userId,
+                        "name" to name,
+                        "email" to email
+                    )
+
+                    db.collection("users").document(userId!!)
+                        .set(userData)
+                        .addOnSuccessListener { Log.d("INFO", "Usuario guardado en Firestore") }
+                        .addOnFailureListener { e -> Log.e("ERROR", "Error al guardar en Firestore", e) }
+
+                    // 🔹 Ir a MainActivity
+                    val intent = Intent(this, MainActivity::class.java).apply {
+                        putExtra("user", email)
+                        putExtra("name", name) // También pasamos el nombre
+                    }
+                    startActivity(intent)
+                    finish() // Cierra SignUpActivity
+                } else {
+                    Log.w("ERROR", "Registro fallido", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "El registro falló: ${task.exception?.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
 
 
     fun validarCampos(): Boolean {

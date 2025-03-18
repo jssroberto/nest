@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -201,8 +202,14 @@ class TotalExpensesFragment : Fragment() {
         val pieChartDrawable = PieChartDrawable(requireContext(), categorias)
         graph.background = pieChartDrawable
 
-
-
+        // Detectar toque en el gráfico para mostrar información emergente (tooltip)
+        graph.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                pieChartDrawable.onTouch(event.x, event.y)
+                graph.invalidate() // Redibujar el gráfico para mostrar el tooltip
+            }
+            true
+        }
     }
 
     private fun configurarSpinner(view: View) {

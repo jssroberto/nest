@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "162786490092",
+    "project_id": "nest-4bb5d",
+    "storage_bucket": "nest-4bb5d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162786490092:android:111ed953ade7fbc2b697c9",
+        "android_client_info": {
+          "package_name": "itson.appsmoviles.nest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm7zXx_qJW-lEC9KhD4BOJFCI8Zrs9WuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
