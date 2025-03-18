@@ -11,6 +11,13 @@
     <color name="txt_secondary">@color/light_gray_low</color>
     <color name="background">@color/black</color>
     <color name="txt_color">@color/off_white</color>
+    <color name="txt_color_radio_cash">@color/cash_light</color>
+    <color name="txt_color_radio_card">@color/light_orange</color>
+    <color name="background_color_radio_cash">@color/cash_strong</color>
+    <color name="background_color_radio_card">@color/dark_orange</color>
+    <color name="category_spinner">@color/darker_blue</color>
+    <color name="budgetCategory">@color/darker_blue</color>
+    <color name="txt_expense">@color/off_white</color>
 
     <!--categories-->
     <color name="category_living">@color/dark_blue</color>
@@ -19,10 +26,7 @@
     <color name="category_food">@color/light_blue</color>
     <color name="category_health">@color/lighter_blue</color>
     <color name="category_other">@color/lightest_blue</color>
-    <color name="txt_color_radio_cash">@color/cash_light</color>
-    <color name="txt_color_radio_card">@color/light_orange</color>
-    <color name="background_color_radio_cash">@color/cash_strong</color>
-    <color name="background_color_radio_card">@color/dark_orange</color>
+
 
 
 </resources>

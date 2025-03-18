@@ -33,7 +33,7 @@
     <string name="welcome_example">Hi Ramiro Arnoldo \nhere\'s your monthly overview</string>
     <string name="this_months_budget">This month\'s budget:</string>
     <string name="budget_example">$520</string>
-    <string name="entretenimiento">Entretenimiento</string>
+    <string name="entretenimiento">Entertainment</string>
     <string name="transporte">Transporte</string>
     <string name="alimentacion">Alimentación</string>
     <string name="salud">Salud</string>

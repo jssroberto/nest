@@ -2,11 +2,13 @@ package itson.appsmoviles.nest.presentation.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import itson.appsmoviles.nest.R
@@ -14,11 +16,14 @@ class BudgetFragment : Fragment() {
 
     var categoryExpenses = ArrayList<CategoryExpense>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar el layout del fragmento
+
+
+
         val view = inflater.inflate(R.layout.fragment_budget, container, false)
 
         // Llamar a la función que agrega las categorías
@@ -33,6 +38,12 @@ class BudgetFragment : Fragment() {
 
         // Retorna la vista inflada
         return view
+    }
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val editTextAmount: EditText = view.findViewById(R.id.et_food)
     }
 
     // Función para agregar las categorías de gastos
@@ -72,5 +83,9 @@ class BudgetFragment : Fragment() {
 
             return view
         }
+
+
     }
+
+
 }
