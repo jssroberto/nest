@@ -1,6 +1,7 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.util.Patterns
@@ -14,7 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import itson.appsmoviles.nest.R
 
 class SettingsFragment : Fragment() {
@@ -29,6 +30,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val btnLogOut = view.findViewById<TextView>(R.id.btn_logout)
         val editTextOldPass = view.findViewById<EditText>(R.id.editTextOldPass)
         val editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
         val buttonSaveChanges = view.findViewById<Button>(R.id.buttonSaveChanges)
@@ -43,6 +45,13 @@ class SettingsFragment : Fragment() {
 
             }
         }
+
+        btnLogOut.setOnClickListener(){
+            FirebaseAuth.getInstance().signOut()
+            val intentSignIn = Intent(requireContext(), SignInActivity::class.java)
+            intentSignIn.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intentSignIn)
+        }
     }
 
     private fun validarCampos(view: View): Boolean {
@@ -52,6 +61,7 @@ class SettingsFragment : Fragment() {
         val editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
         val alertIcon = view.findViewById<ImageView>(R.id.alertIcon)
         val textAlert = view.findViewById<TextView>(R.id.txtAlert)
+
 
         val nombre = editTextName.text.toString().trim()
         val email = editTextEmail.text.toString().trim()

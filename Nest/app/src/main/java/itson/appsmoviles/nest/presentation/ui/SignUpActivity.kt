@@ -76,7 +76,7 @@ class SignUpActivity : AppCompatActivity() {
                         }
                     }
 
-                    // 🔹 Guardar en Firestore para más información del usuario
+
                     val userId = user?.uid
                     val db = FirebaseFirestore.getInstance()
                     val userData = hashMapOf(
@@ -90,13 +90,12 @@ class SignUpActivity : AppCompatActivity() {
                         .addOnSuccessListener { Log.d("INFO", "Usuario guardado en Firestore") }
                         .addOnFailureListener { e -> Log.e("ERROR", "Error al guardar en Firestore", e) }
 
-                    // 🔹 Ir a MainActivity
+
                     val intent = Intent(this, MainActivity::class.java).apply {
                         putExtra("user", email)
-                        putExtra("name", name) // También pasamos el nombre
+                        putExtra("name", name)
                     }
                     startActivity(intent)
-                    finish() // Cierra SignUpActivity
                 } else {
                     Log.w("ERROR", "Registro fallido", task.exception)
                     Toast.makeText(

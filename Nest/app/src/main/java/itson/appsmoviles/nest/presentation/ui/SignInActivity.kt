@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Patterns
 import android.view.MotionEvent
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,7 +16,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
@@ -31,9 +28,6 @@ class SignInActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         auth = Firebase.auth
-
-
-
 
         setContentView(R.layout.activity_sign_in)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -50,13 +44,18 @@ class SignInActivity : AppCompatActivity() {
         setupPasswordToggle(editTextLoginPassword)
 
         buttonSignIn.setOnClickListener {
-            login(email.text.toString(), editTextLoginPassword.text.toString())
+            // Validar que los campos de email y contraseña no estén vacíos
+            if (email.text.isNullOrEmpty() || editTextLoginPassword.text.isNullOrEmpty()) {
+                // Muestra un mensaje de error si los campos están vacíos
+                Toast.makeText(this, "Por favor, ingresa tu email y contraseña", Toast.LENGTH_SHORT).show()
+            } else {
+                login(email.text.toString(), editTextLoginPassword.text.toString())
+            }
         }
 
         textViewSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
-
         }
     }
 
@@ -65,29 +64,23 @@ class SignInActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-
                     Toast.makeText(this, "¡Bienvenido, ${user?.displayName}!", Toast.LENGTH_SHORT).show()
                     goToMain()
                 } else {
-
                     Toast.makeText(this, "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-
     fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-        finish()
     }
 
 
     fun esEmailValido(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     fun setupPasswordToggle(editText: EditText) {

@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Build
@@ -197,16 +198,16 @@ class TotalExpensesFragment : Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun configurarGrafico(view: View) {
         val graph = view.findViewById<View>(R.id.graph)
         val pieChartDrawable = PieChartDrawable(requireContext(), categorias)
         graph.background = pieChartDrawable
 
-        // Detectar toque en el gráfico para mostrar información emergente (tooltip)
         graph.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 pieChartDrawable.onTouch(event.x, event.y)
-                graph.invalidate() // Redibujar el gráfico para mostrar el tooltip
+                graph.invalidate()
             }
             true
         }
@@ -229,7 +230,7 @@ class TotalExpensesFragment : Fragment() {
 
             override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getDropDownView(position, convertView, parent)
-                view.setBackgroundColor(ContextCompat.getColor(context, R.color.dateButton))
+                view.setBackgroundColor(ContextCompat.getColor(context, R.color.edt_text))
                 val textView = view.findViewById<TextView>(android.R.id.text1)
                 textView.typeface = ResourcesCompat.getFont(requireContext(), R.font.lexend_regular)
                 textView.textSize = 16f

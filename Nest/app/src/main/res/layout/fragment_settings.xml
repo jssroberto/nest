@@ -145,12 +145,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ejemplo"
-    
             android:textColor="@color/red"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/lexend_light"
             android:visibility="invisible" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="@string/log_out"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:paddingStart="7dp"
+        android:paddingEnd="0dp"/>
+
+
 
 
 </LinearLayout>
