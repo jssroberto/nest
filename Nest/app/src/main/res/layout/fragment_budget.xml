@@ -246,10 +246,11 @@
                     android:backgroundTint="@color/budgetCategory"
                     android:fontFamily="@font/lexend_medium"
                     android:gravity="center"
+                    android:hint="$0"
                     android:inputType="numberDecimal"
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -286,7 +287,8 @@
                     android:gravity="center"
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:hint="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -323,7 +325,8 @@
                     android:gravity="center"
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:hint="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -360,7 +363,8 @@
                     android:gravity="center"
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:hint="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -397,7 +401,8 @@
                     android:gravity="center"
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:hint="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -435,7 +440,8 @@
 
                     android:importantForAccessibility="yes"
                     android:maxLength="10"
-                    android:text="$0"
+                    android:hint="$0"
+                    android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
@@ -448,24 +454,32 @@
                 android:textColor="@color/blue"
                 android:fontFamily="@font/lexend_medium" />
 
-<!--        <ImageView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="6dp"-->
-<!--                android:layout_marginVertical="20dp"-->
-<!--                android:background="@drawable/layout_rounded_bg" />-->
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_marginVertical="20dp"
+                android:background="@drawable/layout_rounded_bg" />
 
-<!--        <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Expenses by category"-->
-<!--                android:fontFamily="@font/lexend_bold"-->
-<!--                android:textSize="@dimen/text_size_medium_large" />-->
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Expenses by category"
+                android:fontFamily="@font/lexend_bold"
+                android:textSize="@dimen/text_size_medium_large" />
 
-<!--        <itson.appsmoviles.nest.presentation.utilities.ScrollDisabledListView-->
-<!--                android:id="@+id/listViewCategoryExpenses"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="800dp"-->
-<!--                android:layout_marginVertical="20dp" />-->
+        <itson.appsmoviles.nest.presentation.utilities.ScrollDisabledListView
+                android:id="@+id/listViewCategoryExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="800dp"
+                android:layout_marginVertical="20dp" />
+
+        <!--            <ListView-->
+        <!--                android:id="@+id/listViewCategoryExpensess"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content">-->
+
+
+        <!--            </ListView>-->
 
 
     </LinearLayout>

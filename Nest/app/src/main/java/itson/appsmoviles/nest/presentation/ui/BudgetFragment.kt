@@ -16,6 +16,7 @@ import android.widget.Toast
 import itson.appsmoviles.nest.R
 class BudgetFragment : Fragment() {
 
+    var categoryExpenses = ArrayList<CategoryExpense>()
     private var isEditing = false // Evitar el bucle infinito
 
     override fun onCreateView(
@@ -24,6 +25,12 @@ class BudgetFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_budget, container, false)
 
+        addProducts()
+
+        val listViewCategoryExpenses: ListView = view.findViewById(R.id.listViewCategoryExpenses)
+        val adapter = CategoryExpenseAdapter(requireContext(), categoryExpenses)
+
+        listViewCategoryExpenses.adapter = adapter
 
         return view
     }
@@ -31,6 +38,7 @@ class BudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Inicializa los EditText para cada categoría
         val editTextAmountFood: EditText = view.findViewById(R.id.et_food)
         val editTextAmountHome: EditText = view.findViewById(R.id.et_home)
         val editTextAmountRecreation: EditText = view.findViewById(R.id.et_recreation)
@@ -39,6 +47,7 @@ class BudgetFragment : Fragment() {
         val editTextAmountHealth: EditText = view.findViewById(R.id.et_health)
         val editTextBudget: EditText = view.findViewById(R.id.monthly_budget)
 
+        // Configura todos los EditText con la función reutilizable
         setUpCurrencyEditText(editTextAmountFood)
         setUpCurrencyEditText(editTextBudget)
         setUpCurrencyEditText(editTextAmountHome)
@@ -123,4 +132,41 @@ class BudgetFragment : Fragment() {
         })
     }
 
+
+    // Función para agregar las categorías de gastos
+    fun addProducts() {
+        categoryExpenses.add(CategoryExpense("Food"))
+        categoryExpenses.add(CategoryExpense("Home"))
+        categoryExpenses.add(CategoryExpense("Health"))
+        categoryExpenses.add(CategoryExpense("Recreation"))
+        categoryExpenses.add(CategoryExpense("Transport"))
+        categoryExpenses.add(CategoryExpense("Others"))
+    }
+
+    private class CategoryExpenseAdapter(
+        private val context: Context,
+        private val categories: ArrayList<CategoryExpense>
+    ) : BaseAdapter() {
+
+        override fun getCount(): Int {
+            return categories.size
+        }
+
+        override fun getItem(position: Int): Any {
+            return categories[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view: View = convertView ?: LayoutInflater.from(context).inflate(R.layout.category_expense_view, parent, false)
+
+            val textViewCategoryName: TextView = view.findViewById(R.id.textViewCategoryName)
+            textViewCategoryName.text = categories[position].name
+
+            return view
+        }
+    }
 }
