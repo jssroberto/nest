@@ -17,7 +17,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/expensesTitle"
-                android:fontFamily="@font/lexend_medium"
                 android:textSize="25sp"
                 android:layout_marginHorizontal="@dimen/horizontalMargin" />
 
@@ -280,7 +279,7 @@
                     android:gravity="center_vertical"
                     android:layout_marginStart="8dp"
                     android:textSize="18sp"
-                    android:textStyle="bold"/>
+                    />
         </LinearLayout>
 
 
@@ -365,7 +364,7 @@
 
             <TextView
                     android:textSize="18sp"
-                    android:textStyle="bold"
+                    
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/transport"
@@ -454,7 +453,7 @@
 
             <TextView
                 android:textSize="18sp"
-                android:textStyle="bold"
+                
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/health"
@@ -546,7 +545,7 @@
 
             <TextView
                 android:textSize="18sp"
-                android:textStyle="bold"
+                
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/home"
@@ -636,7 +635,7 @@
 
             <TextView
                 android:textSize="18sp"
-                android:textStyle="bold"
+                
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/entretenimiento"
@@ -723,7 +722,7 @@
 
             <TextView
                     android:textSize="18sp"
-                    android:textStyle="bold"
+                    
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/otros"

@@ -96,6 +96,7 @@ class SignUpActivity : AppCompatActivity() {
                         putExtra("name", name)
                     }
                     startActivity(intent)
+                    finish()
                 } else {
                     Log.w("ERROR", "Registro fallido", task.exception)
                     Toast.makeText(

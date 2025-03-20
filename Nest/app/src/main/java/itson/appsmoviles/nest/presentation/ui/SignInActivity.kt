@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
@@ -47,7 +48,8 @@ class SignInActivity : AppCompatActivity() {
             // Validar que los campos de email y contraseña no estén vacíos
             if (email.text.isNullOrEmpty() || editTextLoginPassword.text.isNullOrEmpty()) {
                 // Muestra un mensaje de error si los campos están vacíos
-                Toast.makeText(this, "Por favor, ingresa tu email y contraseña", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Por favor, ingresa tu email y contraseña", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 login(email.text.toString(), editTextLoginPassword.text.toString())
             }
@@ -59,22 +61,35 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    public override fun onStart() {
+        super.onStart()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            goToMain(currentUser)
+        }
+    }
+
     private fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    Toast.makeText(this, "¡Bienvenido, ${user?.displayName}!", Toast.LENGTH_SHORT).show()
-                    goToMain()
+                    Toast.makeText(this, "¡Bienvenido, ${user?.displayName}!", Toast.LENGTH_SHORT)
+                        .show()
+                    goToMain(user!!)
                 } else {
-                    Toast.makeText(this, "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
 
-    fun goToMain() {
+    fun goToMain(user : FirebaseUser) {
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("user", user.email)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+        finish()
     }
 
 
@@ -100,7 +115,8 @@ class SignInActivity : AppCompatActivity() {
 
             isPasswordVisible = !isPasswordVisible
             if (!isPasswordVisible) {
-                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                editText.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 editText.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
