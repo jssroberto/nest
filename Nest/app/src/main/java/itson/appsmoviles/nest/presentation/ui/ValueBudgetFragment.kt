@@ -1,6 +1,5 @@
 package itson.appsmoviles.nest.presentation.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,13 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 import itson.appsmoviles.nest.R
-class BudgetFragment : Fragment() {
+
+class ValueBudgetFragment : Fragment() {
 
     private var isEditing = false // Evitar el bucle infinito
 

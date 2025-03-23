@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".presentation.ui.PercentageBudgetFragment">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:paddingBottom="15dp"
-                android:fontFamily="@font/lexend_medium"
-                android:text="Edit your budget"
-                android:textSize="@dimen/text_size_large" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:paddingBottom="15dp"
+            android:fontFamily="@font/lexend_medium"
+            android:text="Edit your budget"
+            android:textSize="@dimen/text_size_large" />
 
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-                android:background="@drawable/layout_rounded_bg"
-                android:backgroundTint="@color/edt_text"
-                android:orientation="vertical">
+            android:background="@drawable/layout_rounded_bg"
+            android:backgroundTint="@color/edt_text"
+            android:orientation="vertical">
 
             <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
-                    android:text="Monthly Budget"
-                    android:textSize="@dimen/text_size_medium_large" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:text="Monthly Budget"
+                android:textSize="@dimen/text_size_medium_large" />
 
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
 
 
                 <EditText
@@ -66,73 +66,73 @@
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingVertical="10dp"
-                    android:layout_gravity="start">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="10dp"
+                android:layout_gravity="start">
 
                 <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginHorizontal="15dp"
+                        android:text="Income"
+                        android:textSize="@dimen/text_size_medium"
+                        android:textColor="@color/blue" />
 
                     <TextView
-                            android:layout_width="70dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:text="Income"
-                                    android:textSize="@dimen/text_size_medium"
-                            android:textColor="@color/blue" />
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/blue" />
 
                     <TextView
-                            android:layout_width="15dp"
-                            android:layout_height="wrap_content"
-                            android:text="+"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/blue" />
-
-                    <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="$520"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/blue" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$520"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/blue" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                        android:layout_width="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginHorizontal="15dp"
+                        android:text="Expense"
+                        android:textColor="@color/txt_expense" />
 
                     <TextView
-                            android:layout_width="70dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:text="Expense"
-                                    android:textColor="@color/txt_expense" />
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="-"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/txt_expense" />
 
                     <TextView
-                            android:layout_width="15dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="-"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/txt_expense" />
-
-                    <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="$250"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/txt_expense" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$250"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/txt_expense" />
 
                 </LinearLayout>
 
@@ -140,44 +140,44 @@
             </LinearLayout>
 
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingVertical="10dp">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingVertical="10dp">
 
                 <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="end">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="end">
 
                     <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:text="Net Balance"
-                            android:textSize="@dimen/text_size_medium"
-                                     />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="Net Balance"
+                        android:textSize="@dimen/text_size_medium"
+                        />
 
 
                 </LinearLayout>
 
                 <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="end">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="end">
 
                     <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:gravity="top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:gravity="top"
 
-                            android:text="$270"
-                                    android:textSize="@dimen/text_size_x_large"
-                            />
+                        android:text="$270"
+                        android:textSize="@dimen/text_size_x_large"
+                        />
 
 
                 </LinearLayout>
@@ -187,24 +187,24 @@
         </LinearLayout>
 
         <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:background="@drawable/layout_rounded_bg" />
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:background="@drawable/layout_rounded_bg" />
 
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Choose an estimated budget per category"
-                android:textSize="@dimen/text_size_medium"
-                android:fontFamily="@font/lexend_medium"
-                android:gravity="center_horizontal"
-                android:paddingVertical="5dp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose an estimated budget per category"
+            android:textSize="@dimen/text_size_medium"
+            android:fontFamily="@font/lexend_medium"
+            android:gravity="center_horizontal"
+            android:paddingVertical="5dp" />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingVertical="5dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -679,33 +679,32 @@
         </LinearLayout>
 
 <!--        <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Switch to percentages"-->
-<!--                android:textColor="@color/blue"-->
-<!--                android:fontFamily="@font/lexend_medium" />-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Switch to percentages"-->
+<!--            android:textColor="@color/blue"-->
+<!--            android:fontFamily="@font/lexend_medium" />-->
 
-<!--        <ImageView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="6dp"-->
-<!--                android:layout_marginVertical="20dp"-->
-<!--                android:background="@drawable/layout_rounded_bg" />-->
+        <!--        <ImageView-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="6dp"-->
+        <!--                android:layout_marginVertical="20dp"-->
+        <!--                android:background="@drawable/layout_rounded_bg" />-->
 
-<!--        <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Expenses by category"-->
-<!--                android:fontFamily="@font/lexend_bold"-->
-<!--                android:textSize="@dimen/text_size_medium_large" />-->
+        <!--        <TextView-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="Expenses by category"-->
+        <!--                android:fontFamily="@font/lexend_bold"-->
+        <!--                android:textSize="@dimen/text_size_medium_large" />-->
 
-<!--        <itson.appsmoviles.nest.presentation.utilities.ScrollDisabledListView-->
-<!--                android:id="@+id/listViewCategoryExpenses"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="800dp"-->
-<!--                android:layout_marginVertical="20dp" />-->
+        <!--        <itson.appsmoviles.nest.presentation.utilities.ScrollDisabledListView-->
+        <!--                android:id="@+id/listViewCategoryExpenses"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="800dp"-->
+        <!--                android:layout_marginVertical="20dp" />-->
 
 
     </LinearLayout>
-
 
 </androidx.core.widget.NestedScrollView>
