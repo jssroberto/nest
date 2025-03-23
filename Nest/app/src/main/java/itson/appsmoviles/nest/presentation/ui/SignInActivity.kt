@@ -93,10 +93,6 @@ class SignInActivity : AppCompatActivity() {
     }
 
 
-    fun esEmailValido(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     fun setupPasswordToggle(editText: EditText) {
         var isPasswordVisible = false

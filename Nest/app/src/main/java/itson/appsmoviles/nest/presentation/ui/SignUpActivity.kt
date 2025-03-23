@@ -14,14 +14,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
-import kotlinx.coroutines.Dispatchers.Main
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 class SignUpActivity : AppCompatActivity() {
@@ -32,26 +29,29 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
 
         val email: EditText = findViewById(R.id.etEmail)
         val name: EditText = findViewById(R.id.etName)
-        val password = findViewById<EditText>(R.id.etPassword)
-        val editConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
-        val signIn = findViewById<TextView>(R.id.txtSignIn)
-        val btnSignUp = findViewById<Button>(R.id.btnSignUp)
+        val password: EditText = findViewById(R.id.etPassword)
+        val confirmPassword: EditText = findViewById(R.id.etConfirmPassword)
+        val signIn: TextView = findViewById(R.id.txtSignIn)
+        val btnSignUp: Button = findViewById(R.id.btnSignUp)
 
-        setupPasswordToggle(editConfirmPassword)
         setupPasswordToggle(password)
+        setupPasswordToggle(confirmPassword)
 
         signIn.setOnClickListener {
-            val intentSignIn = Intent(this, SignInActivity::class.java)
-            startActivity(intentSignIn)
+            startActivity(Intent(this, SignInActivity::class.java))
         }
 
         btnSignUp.setOnClickListener {
+            val emailText = email.text.toString().trim()
+            val nameText = name.text.toString().trim()
+            val passwordText = password.text.toString().trim()
+
             if (validarCampos()) {
-                signUp(email.text.toString(), password.text.toString(), name.text.toString())
+                signUp(emailText, passwordText, nameText)
             }
         }
     }
@@ -60,54 +60,51 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d("INFO", "Registro exitoso con email: $email")
-
-                    // 🔹 Obtener usuario autenticado
                     val user = auth.currentUser
+                    if (user != null) {
 
-                    // 🔹 Guardar el nombre en Firebase Authentication
-                    val profileUpdates = UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)  // Guarda el nombre en Firebase Auth
-                        .build()
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build()
 
-                    user?.updateProfile(profileUpdates)?.addOnCompleteListener { profileTask ->
-                        if (profileTask.isSuccessful) {
-                            Log.d("INFO", "Nombre guardado correctamente en FirebaseAuth")
+                        user.updateProfile(profileUpdates).addOnCompleteListener {
+                            Log.d("INFO", "Nombre actualizado en FirebaseAuth")
                         }
+
+
+                        guardarNombreEnDatabase(user.uid, name)
+
+
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            putExtra("user", email)
+                            putExtra("name", name)
+                        }
+                        startActivity(intent)
+                        finish()
                     }
-
-
-                    val userId = user?.uid
-                    val db = FirebaseFirestore.getInstance()
-                    val userData = hashMapOf(
-                        "uid" to userId,
-                        "name" to name,
-                        "email" to email
-                    )
-
-                    db.collection("users").document(userId!!)
-                        .set(userData)
-                        .addOnSuccessListener { Log.d("INFO", "Usuario guardado en Firestore") }
-                        .addOnFailureListener { e -> Log.e("ERROR", "Error al guardar en Firestore", e) }
-
-
-                    val intent = Intent(this, MainActivity::class.java).apply {
-                        putExtra("user", email)
-                        putExtra("name", name)
-                    }
-                    startActivity(intent)
-                    finish()
                 } else {
                     Log.w("ERROR", "Registro fallido", task.exception)
                     Toast.makeText(
-                        baseContext,
-                        "El registro falló: ${task.exception?.localizedMessage}",
+                        this,
+                        "Error: ${task.exception?.localizedMessage}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
     }
 
+    private fun guardarNombreEnDatabase(uid: String, name: String) {
+        val database = FirebaseDatabase.getInstance().reference
+        database.child("usuarios").child(uid).setValue(name)
+            .addOnSuccessListener { Log.d("INFO", "Nombre guardado en Realtime Database") }
+            .addOnFailureListener { e ->
+                Log.e(
+                    "ERROR",
+                    "Error al guardar en Realtime Database",
+                    e
+                )
+            }
+    }
 
 
     fun validarCampos(): Boolean {
@@ -180,7 +177,8 @@ class SignUpActivity : AppCompatActivity() {
 
             isPasswordVisible = !isPasswordVisible
             if (!isPasswordVisible) {
-                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                editText.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 editText.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
@@ -201,8 +199,9 @@ class SignUpActivity : AppCompatActivity() {
             return@setOnTouchListener true
         }
     }
-
 }
+
+
 
 
 
