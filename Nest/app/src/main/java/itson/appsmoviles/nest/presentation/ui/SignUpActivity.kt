@@ -19,16 +19,19 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.domain.model.repository.RegisterRepository
 
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var registerRepository: RegisterRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
+        registerRepository = RegisterRepository()
         auth = FirebaseAuth.getInstance()
 
         val email: EditText = findViewById(R.id.etEmail)
@@ -51,66 +54,32 @@ class SignUpActivity : AppCompatActivity() {
             val passwordText = password.text.toString().trim()
 
             if (validarCampos()) {
-                signUp(emailText, passwordText, nameText)
+                registrarUsuario(emailText, passwordText, nameText)
             }
         }
     }
 
-    private fun signUp(email: String, password: String, name: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    if (user != null) {
 
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                            .setDisplayName(name)
-                            .build()
-
-                        user.updateProfile(profileUpdates).addOnCompleteListener {
-                            Log.d("INFO", "Nombre actualizado en FirebaseAuth")
-                        }
-
-
-                        guardarUsuarioEnDatabase(user.uid, name, email)
-
-
-
-                        val intent = Intent(this, MainActivity::class.java).apply {
-                            putExtra("user", email)
-                            putExtra("name", name)
-                        }
-                        startActivity(intent)
-                        finish()
-                    }
-                } else {
-                    Log.w("ERROR", "Registro fallido", task.exception)
-                    Toast.makeText(
-                        this,
-                        "Error: ${task.exception?.localizedMessage}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+    private fun registrarUsuario(email: String, password: String, name: String) {
+        registerRepository.signUp(email, password, name,
+            onSuccess = { user ->
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra("user", user.email)
+                    putExtra("name", user.displayName)
                 }
+                startActivity(intent)
+                finish()
+            },
+            onFailure = { exception ->
+                Log.w("ERROR", "Registro fallido", exception)
+                Toast.makeText(
+                    this,
+                    "Error: ${exception.localizedMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-    }
-
-    private fun guardarUsuarioEnDatabase(uid: String, name: String, email: String) {
-        val database = FirebaseDatabase.getInstance().reference
-
-        // Crear un objeto con la información del usuario
-        val usuario = hashMapOf(
-            "nombre" to name,
-            "email" to email,
-            "gastos" to emptyMap<String, Any>()
         )
-
-        database.child("usuarios").child(uid).setValue(usuario)
-            .addOnSuccessListener { Log.d("INFO", "Usuario guardado en Realtime Database") }
-            .addOnFailureListener { e ->
-                Log.e("ERROR", "Error al guardar usuario en Realtime Database", e)
-            }
     }
-
 
 
     fun validarCampos(): Boolean {

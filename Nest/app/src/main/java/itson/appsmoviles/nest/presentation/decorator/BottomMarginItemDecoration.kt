@@ -10,7 +10,7 @@ class BottomMarginItemDecoration(private val bottomMargin: Int) : RecyclerView.I
     ) {
         val position = parent.getChildAdapterPosition(view)
         if (position < (parent.adapter?.itemCount?.minus(1) ?: 0)) {
-            outRect.bottom = bottomMargin // Add space below every item except the last one
+            outRect.bottom = bottomMargin
         }
     }
 }

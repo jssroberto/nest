@@ -18,17 +18,17 @@ class ExpensesDrawable(
         val width = bounds.width().toFloat()
         val height = bounds.height().toFloat()
 
-        // Calculamos el ancho del progreso con base en el total y el actual
+
         val progressWidth = (current / total) * width
 
-        // Pintamos el fondo de la barra de progreso
+
         val backgroundPaint = Paint().apply {
             color = backgroundColor
             style = Paint.Style.FILL
         }
         canvas.drawRect(0f, 0f, width, height, backgroundPaint)
 
-        // Pintamos la barra de progreso
+
         val progressPaint = Paint().apply {
             color = progressColor
             style = Paint.Style.FILL

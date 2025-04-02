@@ -96,7 +96,7 @@ class FilterMovementsFragment : DialogFragment() {
             object :
                 ArrayAdapter<String>(requireContext(), R.layout.spinner_item, spinnerCategories) {
                 override fun isEnabled(position: Int): Boolean {
-                    // Disable the hint item
+
                     return position != 0
                 }
 
@@ -113,14 +113,14 @@ class FilterMovementsFragment : DialogFragment() {
                                 requireContext(),
                                 R.color.edt_text
                             )
-                        ) // Hint color
+                        )
                     } else {
                         textView.setTextColor(
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.txt_color
                             )
-                        ) // Normal color
+                        )
                     }
                     return view
                 }
@@ -173,7 +173,7 @@ class FilterMovementsFragment : DialogFragment() {
             Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
             return false
         }
-        //TODO: Validate date format
+
         if (startDate > endDate) {
             Toast.makeText(
                 requireContext(),

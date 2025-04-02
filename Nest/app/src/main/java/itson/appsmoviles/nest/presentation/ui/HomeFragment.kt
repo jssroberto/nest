@@ -36,8 +36,6 @@ import java.time.LocalDateTime
 
 
 class HomeFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var progressContainer: LinearLayout
     private val totalBudget = 100.0f
     private lateinit var recyclerView: RecyclerView
@@ -68,27 +66,28 @@ class HomeFragment : Fragment() {
         bottonNav = requireActivity().findViewById(R.id.bottomNavigation)
         btnFilter = view.findViewById(R.id.btn_filter_home)
 
-        // Inicializa el ViewModel
+
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
-        // Observa los cambios en los datos
         viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
-            initRecyclerView(expenses)
-            val expenseMap = calculateExpenses(expenses)
+            val sortedExpenses = expenses.sortedByDescending { it.date }
+            initRecyclerView(sortedExpenses)
+            val expenseMap = calculateExpenses(sortedExpenses)
             paintBudget(expenseMap)
         }
 
-        // Carga los datos desde el ViewModel
+
+
         viewModel.fetchExpenses()
 
-        // Botón de agregar gasto
+
         btnAdd.setOnClickListener {
             changeAddFragment()
         }
 
         applyBtnAddMargin()
 
-        // Filtro de movimientos
+
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
@@ -102,21 +101,20 @@ class HomeFragment : Fragment() {
 
 
 
-    // Inicializa el RecyclerView con los gastos
     private fun initRecyclerView(expenses: List<Expense>) {
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
+            reverseLayout = false
+        }
         recyclerView.adapter = MovementAdapter(expenses)
+
         val dividerItemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
-
-        divider?.let {
-            dividerItemDecoration.setDrawable(it)
-        }
-
+        divider?.let { dividerItemDecoration.setDrawable(it) }
         recyclerView.addItemDecoration(dividerItemDecoration)
     }
 
-    // Método para pintar los gastos en un gráfico de barras
+
+
     private fun paintBudget(expenses: Map<Category, Float>) {
         val categoryColors = getCategoryColors()
         for ((category, amount) in expenses) {
@@ -135,7 +133,7 @@ class HomeFragment : Fragment() {
         paintRemainingBudget(usedBudget)
     }
 
-    // Pintar el presupuesto restante
+
     private fun paintRemainingBudget(usedBudget: Float) {
         val remainingBudget = totalBudget - usedBudget
         if (remainingBudget > 0) {
@@ -151,7 +149,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // Obtener colores para cada categoría
+
     private fun getCategoryColors(): Map<Category, String> {
         fun colorToHex(colorResId: Int): String {
             val colorInt = ContextCompat.getColor(requireContext(), colorResId)
@@ -168,7 +166,7 @@ class HomeFragment : Fragment() {
         )
     }
 
-    // Obtener la categoría a partir de un nombre de categoría (String)
+
     private fun getCategoryFromString(categoryName: String): Category {
         return when (categoryName.lowercase()) {
             "food" -> Category.FOOD
@@ -181,7 +179,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // Cambiar al fragmento de agregar
+
     private fun changeAddFragment() {
         val newFragment = AddFragment()
         val transaction = parentFragmentManager.beginTransaction()
@@ -190,7 +188,7 @@ class HomeFragment : Fragment() {
         transaction.commit()
     }
 
-    // Ajustar el margen del botón de agregar
+
     private fun applyBtnAddMargin() {
         bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
