@@ -72,7 +72,8 @@ class SignUpActivity : AppCompatActivity() {
                         }
 
 
-                        guardarNombreEnDatabase(user.uid, name)
+                        guardarUsuarioEnDatabase(user.uid, name, email)
+
 
 
                         val intent = Intent(this, MainActivity::class.java).apply {
@@ -93,18 +94,23 @@ class SignUpActivity : AppCompatActivity() {
             }
     }
 
-    private fun guardarNombreEnDatabase(uid: String, name: String) {
+    private fun guardarUsuarioEnDatabase(uid: String, name: String, email: String) {
         val database = FirebaseDatabase.getInstance().reference
-        database.child("usuarios").child(uid).setValue(name)
-            .addOnSuccessListener { Log.d("INFO", "Nombre guardado en Realtime Database") }
+
+        // Crear un objeto con la información del usuario
+        val usuario = hashMapOf(
+            "nombre" to name,
+            "email" to email,
+            "gastos" to emptyMap<String, Any>()
+        )
+
+        database.child("usuarios").child(uid).setValue(usuario)
+            .addOnSuccessListener { Log.d("INFO", "Usuario guardado en Realtime Database") }
             .addOnFailureListener { e ->
-                Log.e(
-                    "ERROR",
-                    "Error al guardar en Realtime Database",
-                    e
-                )
+                Log.e("ERROR", "Error al guardar usuario en Realtime Database", e)
             }
     }
+
 
 
     fun validarCampos(): Boolean {

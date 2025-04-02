@@ -45,9 +45,8 @@ class SignInActivity : AppCompatActivity() {
         setupPasswordToggle(editTextLoginPassword)
 
         buttonSignIn.setOnClickListener {
-            // Validar que los campos de email y contraseña no estén vacíos
             if (email.text.isNullOrEmpty() || editTextLoginPassword.text.isNullOrEmpty()) {
-                // Muestra un mensaje de error si los campos están vacíos
+
                 Toast.makeText(this, "Por favor, ingresa tu email y contraseña", Toast.LENGTH_SHORT)
                     .show()
             } else {

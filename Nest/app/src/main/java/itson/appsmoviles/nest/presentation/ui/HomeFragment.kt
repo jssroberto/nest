@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +15,23 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.Movement
+import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 
 // TODO: Rename parameter arguments, choose names that match
@@ -90,19 +100,21 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        progressContainer = view.findViewById<LinearLayout>(R.id.progress_bar)
-        recyclerView = view.findViewById<RecyclerView>(R.id.home_recycler_view)
-        btnAdd = view.findViewById<ImageButton>(R.id.btn_add)
-        bottonNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
-        btnFilter = view.findViewById<ImageButton>(R.id.btn_filter_home)
+        progressContainer = view.findViewById(R.id.progress_bar)
+        recyclerView = view.findViewById(R.id.home_recycler_view)
+        btnAdd = view.findViewById(R.id.btn_add)
+        bottonNav = requireActivity().findViewById(R.id.bottomNavigation)
+        btnFilter = view.findViewById(R.id.btn_filter_home)
 
-        val expenses = getExpenses()
+        lifecycleScope.launch {
+            val movements = getMovementsFromFirebase()
+            Log.d("HomeFragment", "Movements retrieved: $movements")  // Agrega esto para depuración
+            initRecyclerView(movements)
 
-        paintBudget(expenses)
+            val expenses = calculateExpenses(movements)
+            paintBudget(expenses)
+        }
 
-        val movements = getMovements()
-
-        initRecyclerView(movements)
 
         btnAdd.setOnClickListener {
             changeAddFragment()
@@ -114,9 +126,46 @@ class HomeFragment : Fragment() {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
         }
-
-
     }
+
+    private fun calculateExpenses(movements: List<Movement>): Map<Category, Float> {
+        return movements.groupBy { it.category }
+            .mapValues { entry -> entry.value.sumOf { it.amount.toDouble() }.toFloat() }
+    }
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getMovementsFromFirebase(): List<Movement> {
+        val auth = FirebaseAuth.getInstance()
+        val database = FirebaseDatabase.getInstance().reference
+        val userId = auth.currentUser?.uid ?: return emptyList()
+
+        return try {
+            val snapshot: DataSnapshot = database.child("usuarios").child(userId).child("gastos").get().await()
+            Log.d("HomeFragment", "Firebase snapshot children count: ${snapshot.childrenCount}")
+
+            snapshot.children.mapNotNull { gastoSnapshot ->
+                val gasto = gastoSnapshot.getValue(Expense::class.java)
+                Log.d("HomeFragment", "Gasto leído: $gasto")
+
+                gasto?.let {
+                    Movement(
+                        category = getCategoryFromString(gasto.categoria),
+                        description = gasto.descripcion,
+                        amount = gasto.monto.toFloat(),
+                        payment = gasto.payment,
+                        date = LocalDateTime.now().minusDays(1)
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("HomeFragment", "Error obteniendo datos de Firebase", e)
+            emptyList()
+        }
+    }
+
+
 
     private fun initRecyclerView(movements: List<Movement>) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -167,7 +216,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun getExpenses(): Map<Category, Float> {
-        //TODO replace this with actual data
         return mapOf(
             Category.LIVING to 10.0f,
             Category.RECREATION to 20.0f,
@@ -195,34 +243,31 @@ class HomeFragment : Fragment() {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getMovements(): List<Movement> {
-        //TODO replace this with actual data
-        return listOf(
-            Movement(1, Category.FOOD, "Groceries", 50.0f, LocalDateTime.now().minusDays(1)),
-            Movement(2, Category.TRANSPORT, "Bus Ticket", 2.5f, LocalDateTime.now().minusDays(2)),
-            Movement(3, Category.RECREATION, "Cinema", 12.0f, LocalDateTime.now().minusDays(3)),
-            Movement(4, Category.LIVING, "Rent", 500.0f, LocalDateTime.now().minusDays(4)),
-            Movement(5, Category.HEALTH, "Medicine", 30.0f, LocalDateTime.now().minusDays(5)),
-            Movement(6, Category.OTHER, "Gift", 25.0f, LocalDateTime.now().minusDays(6)),
-            Movement(7, Category.FOOD, "Restaurant", 60.0f, LocalDateTime.now().minusDays(7)),
-            Movement(8, Category.TRANSPORT, "Taxi", 15.0f, LocalDateTime.now().minusDays(8)),
-            Movement(9, Category.RECREATION, "Concert", 100.0f, LocalDateTime.now().minusDays(9)),
-            Movement(10, Category.LIVING, "Utilities", 80.0f, LocalDateTime.now().minusDays(10))
-        )
+
+
+    fun getCategoryFromString(categoryName: String): Category {
+        return when (categoryName.lowercase()) {
+            "food" -> Category.FOOD
+            "transport" -> Category.TRANSPORT
+            "entertainment" -> Category.RECREATION
+            "home" -> Category.LIVING
+            "health" -> Category.HEALTH
+            "other" -> Category.OTHER
+            else -> Category.OTHER  // Categoría por defecto
+        }
     }
 
     private fun changeAddFragment(){
         val newFragment = AddFragment()
 
-        // Start a fragment transaction
+
         val transaction = parentFragmentManager.beginTransaction()
 
-        // Optionally, add this transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragment)  // Replace the container's content with the new fragment
-        transaction.addToBackStack(null)  // Optional, adds this transaction to the back stack
 
-        // Commit the transaction to apply the change
+        transaction.replace(R.id.fragment_container, newFragment)
+        transaction.addToBackStack(null)
+
+
         transaction.commit()
     }
 

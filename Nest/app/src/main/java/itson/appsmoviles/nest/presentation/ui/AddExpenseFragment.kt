@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,12 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import itson.appsmoviles.nest.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -25,14 +29,13 @@ import java.util.Locale
 
 class AddExpenseFragment : Fragment() {
     private lateinit var edtAmount: EditText
+    private lateinit var edtDescription: EditText
     private lateinit var btnDate: Button
+    private lateinit var addExpense: Button
     private lateinit var spinner: Spinner
     private lateinit var radioCash: RadioButton
     private lateinit var radioCard: RadioButton
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var selectedDate: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,75 +49,48 @@ class AddExpenseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         edtAmount = view.findViewById(R.id.edt_amount_expense)
-        btnDate = view.findViewById<Button>(R.id.btn_date_expense)
-        spinner = view.findViewById<Spinner>(R.id.spinner_categories_expense)
+        edtDescription = view.findViewById(R.id.edt_description_expense)
+        btnDate = view.findViewById(R.id.btn_date_expense)
+        spinner = view.findViewById(R.id.spinner_categories_expense)
         radioCash = view.findViewById(R.id.radio_cash)
         radioCard = view.findViewById(R.id.radio_card)
+        addExpense = view.findViewById(R.id.add_expense)
 
-        setUpSpinner(view)
-
+        setUpSpinner()
         addDollarSign(edtAmount)
 
         btnDate.setOnClickListener {
-            showStartDatePicker()
+            showDatePicker()
+        }
+
+        addExpense.setOnClickListener {
+            if (validarCampos()) {
+                val monto = obtenerMonto()
+                val descripcion = edtDescription.text.toString().trim()
+                val categoria = spinner.selectedItem.toString()
+                val metodoPago = if (radioCash.isChecked) "cash" else "card"
+
+                agregarGasto(monto, descripcion, categoria, metodoPago, selectedDate!!)
+            }
         }
 
         setRadioColors()
-
     }
 
-    private fun setUpSpinner(view: View) {
-        val categories = listOf(
-            "Select a category",
-            "Food",
-            "Transport",
-            "Entertainment",
-            "Home",
-            "Health",
-            "Other"
-        )
-
-        val adapter =
-            object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
-                override fun isEnabled(position: Int): Boolean {
-                    // Disable the hint item
-                    return position != 0
-                }
-
-                override fun getDropDownView(
-                    position: Int,
-                    convertView: View?,
-                    parent: ViewGroup
-                ): View {
-                    val view = super.getDropDownView(position, convertView, parent)
-                    val textView = view as TextView
-                    if (position == 0) {
-                        textView.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.edt_text
-                            )
-                        ) // Hint color
-                    } else {
-                        textView.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.txt_color
-                            )
-                        ) // Normal color
-                    }
-                    return view
-                }
+    private fun setUpSpinner() {
+        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
+        val adapter = object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
+            override fun isEnabled(position: Int): Boolean {
+                return position != 0
             }
-
+        }
         adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
         spinner.setSelection(0)
     }
 
-
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun showStartDatePicker() {
+    private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val currentYear = calendar.get(Calendar.YEAR)
         val currentMonth = calendar.get(Calendar.MONTH)
@@ -124,22 +100,18 @@ class AddExpenseFragment : Fragment() {
             requireContext(),
             R.style.Nest_DatePicker,
             { _, year, month, day ->
-                val selectedDate = formatDate(day, month, year)
-
-                view?.findViewById<Button>(R.id.btn_date_expense)?.apply {
-                    text = selectedDate
-                }
+                selectedDate = formatDate(day, month, year)
+                btnDate.text = selectedDate
             },
             currentYear, currentMonth, currentDay
         )
 
         datePickerDialog.show()
 
-        val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-        val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-
-        positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-        negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -152,19 +124,12 @@ class AddExpenseFragment : Fragment() {
     private fun addDollarSign(edtAmount: EditText) {
         edtAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(editable: Editable?) {
                 edtAmount.removeTextChangedListener(this)
 
                 val input = editable.toString()
-
-                val formattedInput = if (!input.startsWith("$")) {
-                    "$$input"
-                } else {
-                    input
-                }
+                val formattedInput = if (!input.startsWith("$")) "$$input" else input
 
                 edtAmount.setText(formattedInput)
                 edtAmount.setSelection(formattedInput.length)
@@ -173,8 +138,95 @@ class AddExpenseFragment : Fragment() {
         })
     }
 
-    private fun setRadioColors(){
+    private fun setRadioColors() {
         radioCash.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
         radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
+    }
+
+    private fun agregarGasto(monto: Double, descripcion: String, categoria: String, metodoPago: String, fecha: String) {
+        val auth = FirebaseAuth.getInstance()
+        val database = FirebaseDatabase.getInstance().reference
+        val userId = auth.currentUser?.uid
+
+        if (userId != null) {
+            val nuevoGastoRef = database.child("usuarios").child(userId).child("gastos").push()
+
+            val gasto = mapOf(
+                "monto" to monto,
+                "descripcion" to descripcion,
+                "fecha" to fecha,
+                "categoria" to categoria,
+                "metodoPago" to metodoPago
+            )
+
+            nuevoGastoRef.setValue(gasto)
+                .addOnSuccessListener {
+                    limpiarCampos()
+                    Toast.makeText(requireContext(), "Gasto agregado", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun limpiarCampos() {
+        edtAmount.text.clear()
+        spinner.setSelection(0)
+        edtDescription.text.clear()
+        btnDate.text = getString(R.string.select_date)
+        selectedDate = null
+        radioCash.isChecked = false
+        radioCard.isChecked = false
+    }
+
+    private fun obtenerMonto(): Double {
+        return edtAmount.text.toString()
+            .replace("$", "")
+            .replace(",", ".")
+            .toDouble()
+    }
+
+    private fun validarCampos(): Boolean {
+        var valido = true
+
+        val amountText = edtAmount.text.toString().trim()
+        if (amountText.isEmpty() || amountText == "$") {
+            edtAmount.error = "Ingresa un monto válido"
+            valido = false
+        } else {
+            try {
+                val monto = obtenerMonto()
+                if (monto <= 0) {
+                    edtAmount.error = "El monto debe ser mayor a cero"
+                    valido = false
+                }
+            } catch (e: NumberFormatException) {
+                edtAmount.error = "Formato de monto inválido"
+                valido = false
+            }
+        }
+
+        if (spinner.selectedItemPosition == 0) {
+            Toast.makeText(requireContext(), "Selecciona una categoría", Toast.LENGTH_SHORT).show()
+            valido = false
+        }
+
+        if (edtDescription.text.toString().trim().isEmpty()) {
+            edtDescription.error = "La descripción es obligatoria"
+            valido = false
+        }
+
+        if (selectedDate == null) {
+            Toast.makeText(requireContext(), "Selecciona una fecha", Toast.LENGTH_SHORT).show()
+            valido = false
+        }
+
+        if (!radioCash.isChecked && !radioCard.isChecked) {
+            Toast.makeText(requireContext(), "Selecciona un método de pago", Toast.LENGTH_SHORT).show()
+            valido = false
+        }
+
+        return valido
     }
 }
