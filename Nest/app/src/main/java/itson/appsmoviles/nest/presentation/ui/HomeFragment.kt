@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,30 +23,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.domain.model.Movement
 import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
+import itson.appsmoviles.nest.domain.model.viewmodel.ExpenseViewModel
 import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [androidx.fragment.app.Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var progressContainer: LinearLayout
@@ -54,46 +44,18 @@ class HomeFragment : Fragment() {
     private lateinit var btnAdd: ImageButton
     private lateinit var bottonNav: BottomNavigationView
     private lateinit var btnFilter: ImageButton
+    private lateinit var viewModel: ExpenseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
-
-
         return view
-
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -106,81 +68,55 @@ class HomeFragment : Fragment() {
         bottonNav = requireActivity().findViewById(R.id.bottomNavigation)
         btnFilter = view.findViewById(R.id.btn_filter_home)
 
-        lifecycleScope.launch {
-            val movements = getMovementsFromFirebase()
-            Log.d("HomeFragment", "Movements retrieved: $movements")  // Agrega esto para depuración
-            initRecyclerView(movements)
+        // Inicializa el ViewModel
+        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
-            val expenses = calculateExpenses(movements)
-            paintBudget(expenses)
+        // Observa los cambios en los datos
+        viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
+            initRecyclerView(expenses)
+            val expenseMap = calculateExpenses(expenses)
+            paintBudget(expenseMap)
         }
 
+        // Carga los datos desde el ViewModel
+        viewModel.fetchExpenses()
 
+        // Botón de agregar gasto
         btnAdd.setOnClickListener {
             changeAddFragment()
         }
 
         applyBtnAddMargin()
 
+        // Filtro de movimientos
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
         }
     }
 
-    private fun calculateExpenses(movements: List<Movement>): Map<Category, Float> {
-        return movements.groupBy { it.category }
+    private fun calculateExpenses(expenses: List<Expense>): Map<Category, Float> {
+        return expenses.groupBy { it.category }
             .mapValues { entry -> entry.value.sumOf { it.amount.toDouble() }.toFloat() }
     }
 
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getMovementsFromFirebase(): List<Movement> {
-        val auth = FirebaseAuth.getInstance()
-        val database = FirebaseDatabase.getInstance().reference
-        val userId = auth.currentUser?.uid ?: return emptyList()
-
-        return try {
-            val snapshot: DataSnapshot = database.child("usuarios").child(userId).child("gastos").get().await()
-            Log.d("HomeFragment", "Firebase snapshot children count: ${snapshot.childrenCount}")
-
-            snapshot.children.mapNotNull { gastoSnapshot ->
-                val gasto = gastoSnapshot.getValue(Expense::class.java)
-                Log.d("HomeFragment", "Gasto leído: $gasto")
-
-                gasto?.let {
-                    Movement(
-                        category = getCategoryFromString(gasto.categoria),
-                        description = gasto.descripcion,
-                        amount = gasto.monto.toFloat(),
-                        payment = gasto.payment,
-                        date = LocalDateTime.now().minusDays(1)
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("HomeFragment", "Error obteniendo datos de Firebase", e)
-            emptyList()
-        }
-    }
-
-
-
-    private fun initRecyclerView(movements: List<Movement>) {
+    // Inicializa el RecyclerView con los gastos
+    private fun initRecyclerView(expenses: List<Expense>) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = MovementAdapter(movements)
-        val dividerItemDecoration =
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        recyclerView.adapter = MovementAdapter(expenses)
+        val dividerItemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
 
-        if (divider != null) {
-            dividerItemDecoration.setDrawable(divider)
+        divider?.let {
+            dividerItemDecoration.setDrawable(it)
         }
 
         recyclerView.addItemDecoration(dividerItemDecoration)
     }
 
+    // Método para pintar los gastos en un gráfico de barras
     private fun paintBudget(expenses: Map<Category, Float>) {
         val categoryColors = getCategoryColors()
         for ((category, amount) in expenses) {
@@ -189,17 +125,17 @@ class HomeFragment : Fragment() {
                 layoutParams = LinearLayout.LayoutParams(
                     0,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    amount.toFloat() / totalBudget
+                    amount / totalBudget
                 )
             }
             progressContainer.addView(barSegment)
         }
 
         val usedBudget = expenses.values.sum()
-
         paintRemainingBudget(usedBudget)
     }
 
+    // Pintar el presupuesto restante
     private fun paintRemainingBudget(usedBudget: Float) {
         val remainingBudget = totalBudget - usedBudget
         if (remainingBudget > 0) {
@@ -208,25 +144,14 @@ class HomeFragment : Fragment() {
                 layoutParams = LinearLayout.LayoutParams(
                     0,
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    remainingBudget.toFloat() / totalBudget
+                    remainingBudget / totalBudget
                 )
             }
             progressContainer.addView(emptySegment)
         }
     }
 
-    private fun getExpenses(): Map<Category, Float> {
-        return mapOf(
-            Category.LIVING to 10.0f,
-            Category.RECREATION to 20.0f,
-            Category.TRANSPORT to 15.0f,
-            Category.FOOD to 5.0f,
-            Category.HEALTH to 10.0f,
-            Category.OTHER to 10.0f
-
-        )
-    }
-
+    // Obtener colores para cada categoría
     private fun getCategoryColors(): Map<Category, String> {
         fun colorToHex(colorResId: Int): String {
             val colorInt = ContextCompat.getColor(requireContext(), colorResId)
@@ -243,9 +168,8 @@ class HomeFragment : Fragment() {
         )
     }
 
-
-
-    fun getCategoryFromString(categoryName: String): Category {
+    // Obtener la categoría a partir de un nombre de categoría (String)
+    private fun getCategoryFromString(categoryName: String): Category {
         return when (categoryName.lowercase()) {
             "food" -> Category.FOOD
             "transport" -> Category.TRANSPORT
@@ -257,29 +181,23 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun changeAddFragment(){
+    // Cambiar al fragmento de agregar
+    private fun changeAddFragment() {
         val newFragment = AddFragment()
-
-
         val transaction = parentFragmentManager.beginTransaction()
-
-
         transaction.replace(R.id.fragment_container, newFragment)
         transaction.addToBackStack(null)
-
-
         transaction.commit()
     }
 
-    private fun applyBtnAddMargin(){
-        bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object: ViewTreeObserver.OnGlobalLayoutListener{
+    // Ajustar el margen del botón de agregar
+    private fun applyBtnAddMargin() {
+        bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 bottonNav.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
                 val bottonNavHeight = bottonNav.height
-
                 val params = btnAdd.layoutParams as FrameLayout.LayoutParams
-
                 params.bottomMargin = bottonNavHeight + 10.dp
                 btnAdd.layoutParams = params
             }

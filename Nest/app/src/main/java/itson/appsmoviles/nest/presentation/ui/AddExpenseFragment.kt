@@ -19,9 +19,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.domain.model.enums.Category
+import itson.appsmoviles.nest.domain.model.viewmodel.ExpenseViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -37,6 +40,8 @@ class AddExpenseFragment : Fragment() {
     private lateinit var radioCard: RadioButton
     private var selectedDate: String? = null
 
+    private lateinit var viewModel: ExpenseViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +52,8 @@ class AddExpenseFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this).get(ExpenseViewModel::class.java)
 
         edtAmount = view.findViewById(R.id.edt_amount_expense)
         edtDescription = view.findViewById(R.id.edt_description_expense)
@@ -67,15 +74,53 @@ class AddExpenseFragment : Fragment() {
             if (validarCampos()) {
                 val monto = obtenerMonto()
                 val descripcion = edtDescription.text.toString().trim()
-                val categoria = spinner.selectedItem.toString()
+                val categoria = getCategoryFromString(spinner.selectedItem.toString())
                 val metodoPago = if (radioCash.isChecked) "cash" else "card"
 
-                agregarGasto(monto, descripcion, categoria, metodoPago, selectedDate!!)
+
+                viewModel.addExpense(
+                    monto,
+                    descripcion,
+                    categoria,
+                    metodoPago,
+                    selectedDate!!,
+                    onSuccess = {
+                        limpiarCampos()
+                        Toast.makeText(requireContext(), "Gasto agregado", Toast.LENGTH_SHORT).show()
+                    },
+                    onFailure = { e ->
+                        Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+
             }
         }
 
         setRadioColors()
+
+
+        viewModel.fetchExpenses()
+
+
+        viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
+            Log.d("AddExpenseFragment", "Gastos obtenidos: $expenses")
+
+        }
     }
+
+    fun getCategoryFromString(categoryName: String): Category {
+        return when (categoryName.lowercase()) {
+            "food" -> Category.FOOD
+            "transport" -> Category.TRANSPORT
+            "recreation", "entertainment" -> Category.RECREATION
+            "living", "home" -> Category.LIVING
+            "health" -> Category.HEALTH
+            "other" -> Category.OTHER
+            else -> Category.OTHER  // Categoría por defecto si no hay coincidencia
+        }
+    }
+
 
     private fun setUpSpinner() {
         val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
@@ -92,10 +137,6 @@ class AddExpenseFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
-        val currentYear = calendar.get(Calendar.YEAR)
-        val currentMonth = calendar.get(Calendar.MONTH)
-        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
-
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             R.style.Nest_DatePicker,
@@ -103,22 +144,17 @@ class AddExpenseFragment : Fragment() {
                 selectedDate = formatDate(day, month, year)
                 btnDate.text = selectedDate
             },
-            currentYear, currentMonth, currentDay
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
         )
-
         datePickerDialog.show()
-
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun formatDate(day: Int, month: Int, year: Int): String {
-        val selectedDate = LocalDate.of(year, month + 1, day)
-        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault())
-        return selectedDate.format(formatter)
+        return LocalDate.of(year, month + 1, day)
+            .format(DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()))
     }
 
     private fun addDollarSign(edtAmount: EditText) {
@@ -127,12 +163,9 @@ class AddExpenseFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(editable: Editable?) {
                 edtAmount.removeTextChangedListener(this)
-
                 val input = editable.toString()
-                val formattedInput = if (!input.startsWith("$")) "$$input" else input
-
-                edtAmount.setText(formattedInput)
-                edtAmount.setSelection(formattedInput.length)
+                edtAmount.setText(if (!input.startsWith("$")) "$$input" else input)
+                edtAmount.setSelection(edtAmount.text.length)
                 edtAmount.addTextChangedListener(this)
             }
         })
@@ -143,32 +176,6 @@ class AddExpenseFragment : Fragment() {
         radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
 
-    private fun agregarGasto(monto: Double, descripcion: String, categoria: String, metodoPago: String, fecha: String) {
-        val auth = FirebaseAuth.getInstance()
-        val database = FirebaseDatabase.getInstance().reference
-        val userId = auth.currentUser?.uid
-
-        if (userId != null) {
-            val nuevoGastoRef = database.child("usuarios").child(userId).child("gastos").push()
-
-            val gasto = mapOf(
-                "monto" to monto,
-                "descripcion" to descripcion,
-                "fecha" to fecha,
-                "categoria" to categoria,
-                "metodoPago" to metodoPago
-            )
-
-            nuevoGastoRef.setValue(gasto)
-                .addOnSuccessListener {
-                    limpiarCampos()
-                    Toast.makeText(requireContext(), "Gasto agregado", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-    }
 
     private fun limpiarCampos() {
         edtAmount.text.clear()
@@ -181,52 +188,12 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun obtenerMonto(): Double {
-        return edtAmount.text.toString()
-            .replace("$", "")
-            .replace(",", ".")
-            .toDouble()
+        return edtAmount.text.toString().replace("$", "").replace(",", ".").toDouble()
     }
 
     private fun validarCampos(): Boolean {
-        var valido = true
-
-        val amountText = edtAmount.text.toString().trim()
-        if (amountText.isEmpty() || amountText == "$") {
-            edtAmount.error = "Ingresa un monto válido"
-            valido = false
-        } else {
-            try {
-                val monto = obtenerMonto()
-                if (monto <= 0) {
-                    edtAmount.error = "El monto debe ser mayor a cero"
-                    valido = false
-                }
-            } catch (e: NumberFormatException) {
-                edtAmount.error = "Formato de monto inválido"
-                valido = false
-            }
-        }
-
-        if (spinner.selectedItemPosition == 0) {
-            Toast.makeText(requireContext(), "Selecciona una categoría", Toast.LENGTH_SHORT).show()
-            valido = false
-        }
-
-        if (edtDescription.text.toString().trim().isEmpty()) {
-            edtDescription.error = "La descripción es obligatoria"
-            valido = false
-        }
-
-        if (selectedDate == null) {
-            Toast.makeText(requireContext(), "Selecciona una fecha", Toast.LENGTH_SHORT).show()
-            valido = false
-        }
-
-        if (!radioCash.isChecked && !radioCard.isChecked) {
-            Toast.makeText(requireContext(), "Selecciona un método de pago", Toast.LENGTH_SHORT).show()
-            valido = false
-        }
-
-        return valido
+        return edtAmount.text.isNotEmpty() && spinner.selectedItemPosition != 0 &&
+                edtDescription.text.isNotEmpty() && selectedDate != null &&
+                (radioCash.isChecked || radioCard.isChecked)
     }
 }

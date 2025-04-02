@@ -1,11 +1,17 @@
 package itson.appsmoviles.nest.domain.model.entity
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import itson.appsmoviles.nest.domain.model.enums.Category
+
 data class Expense(
-    var id: Long = 0,
-    var categoria: String = "",
-    var descripcion: String = "",
-    var monto: Float = 0.0f,
-    var payment: String = ""
+    var id: String = "",
+    var category: Category,
+    var description: String = "",
+    var amount: Float = 0.0f,
+    var paymentMethod: String = "",
+    var date: String
 ) {
-    constructor() : this(0, "", "", 0.0f)
+    @RequiresApi(Build.VERSION_CODES.O)
+    constructor() : this("", Category.OTHER, "", 0.0f, "", "")
 }
