@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import itson.appsmoviles.nest.domain.model.enums.Category
 
+
 data class Expense(
     var id: String = "",
     var category: Category,

@@ -67,7 +67,7 @@ class AddExpenseFragment : Fragment() {
         addDollarSign(edtAmount)
 
         btnDate.setOnClickListener {
-            showDatePicker()
+            showDatePicker(btnDate)
         }
 
         addExpense.setOnClickListener {
@@ -134,22 +134,36 @@ class AddExpenseFragment : Fragment() {
         spinner.setSelection(0)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun showDatePicker() {
+    private fun showDatePicker(btnDate: Button) {
         val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             R.style.Nest_DatePicker,
             { _, year, month, day ->
-                selectedDate = formatDate(day, month, year)
-                btnDate.text = selectedDate
+                val selectedDate = "$day/${month + 1}/$year"
+
+                btnDate.apply {
+                    text = selectedDate
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+
+                }
             },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
+            currentYear, currentMonth, currentDay
         )
+
         datePickerDialog.show()
+
+        val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+        val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+
+        positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun formatDate(day: Int, month: Int, year: Int): String {
