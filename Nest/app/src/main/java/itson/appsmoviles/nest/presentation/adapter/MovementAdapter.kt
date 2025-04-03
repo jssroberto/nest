@@ -20,6 +20,7 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
         return MovementViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MovementViewHolder, position: Int) {
         val item = items[position]
         val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy - HH:mm", Locale.getDefault())
@@ -40,17 +41,19 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
 
         holder.icon.setImageResource(iconResId)
 
-        // Agregar el evento de clic para abrir el diálogo
+
         holder.itemView.setOnClickListener {
-            // Crear un Bundle para pasar los datos al Fragment
+
             val bundle = Bundle().apply {
+                putString("id", item.id)
                 putString("description", item.description)
                 putFloat("amount", item.amount)
                 putString("date", item.date.toString())
                 putString("category", item.category.name)
+                putString("paymentMethod", item.paymentMethod)
             }
 
-            // Crear el fragmento y pasar el Bundle con los datos
+
             val dialog = ExpenseDetailDialogFragment()
             dialog.arguments = bundle
             dialog.show((holder.itemView.context as AppCompatActivity).supportFragmentManager, "ExpenseDetailDialog")

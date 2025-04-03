@@ -2,90 +2,143 @@ package itson.appsmoviles.nest.presentation.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
+import itson.appsmoviles.nest.domain.model.repository.ExpenseRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-
 class ExpenseDetailDialogFragment : DialogFragment() {
-    private lateinit var descriptionTextView: TextView
-    private lateinit var amountTextView: TextView
-    private lateinit var dateTextView: TextView
-    private lateinit var categoryTextView: TextView
+    private lateinit var etDescription: EditText
+    private lateinit var etAmount: EditText
+    private lateinit var etDate: EditText
     private lateinit var categoryImageView: ImageView
+    private lateinit var btnSave: Button
+
+    private lateinit var expense: Expense
 
     companion object {
         fun newInstance(expense: Expense): ExpenseDetailDialogFragment {
-            val fragment = ExpenseDetailDialogFragment()
-            val bundle = Bundle().apply {
-                putString("description", expense.description)
-                putFloat("amount", expense.amount)
-                putString("date", expense.date.toString())
-                putString("category", expense.category.name)
+            return ExpenseDetailDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putString("description", expense.description)
+                    putFloat("amount", expense.amount)
+                    putString("date", expense.date)
+                    putString("category", expense.category.name)
+                    putString("id", expense.id)
+                    putString("paymentMethod", expense.paymentMethod)
+                }
             }
-            fragment.arguments = bundle
-            return fragment
         }
     }
 
     override fun onStart() {
         super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT  // Esto asegurará que ocupe todo el ancho disponible
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT  // Deja que la altura se ajuste al contenido
-            dialog.window?.setLayout(width, height) // Establecer el tamaño del diálogo
-        }
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflar la vista del fragmento
-        return inflater.inflate(R.layout.fragment_expense_detail, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_expense_detail, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Referencias a las vistas del fragmento
-        descriptionTextView = view.findViewById(R.id.tv_description)
-        amountTextView = view.findViewById(R.id.tv_amount)
-        dateTextView = view.findViewById(R.id.tv_date)
-        categoryImageView = view.findViewById(R.id.iv_icon)  // Aquí se carga el icono
+        etDescription = view.findViewById(R.id.et_description)
+        etAmount = view.findViewById(R.id.et_amount)
+        etDate = view.findViewById(R.id.et_date)
+        categoryImageView = view.findViewById(R.id.iv_icon)
+        btnSave = view.findViewById(R.id.btn_save)
 
-        // Obtener los datos del Bundle y mostrarlos
-        val description = arguments?.getString("description")
-        val amount = arguments?.getFloat("amount")
-        val date = arguments?.getString("date")
-        val category = arguments?.getString("category")
+        arguments?.run {
+            val categoryName = getString("category") ?: "OTHER"
+            val category = Category.values().find { it.name == categoryName } ?: Category.OTHER
 
-        descriptionTextView.text = description
-        amountTextView.text = "$$amount"
-        dateTextView.text = date
-
-        // Cargar el icono correspondiente según la categoría
-        val iconResId = when (category) {
-            "LIVING" -> R.drawable.icon_category_living
-            "RECREATION" -> R.drawable.icon_category_recreation
-            "TRANSPORT" -> R.drawable.icon_category_transport
-            "FOOD" -> R.drawable.icon_category_food
-            "HEALTH" -> R.drawable.icon_category_health
-            "OTHER" -> R.drawable.icon_category_other
-            else -> R.drawable.alert_circle  // Default icon if category is unknown
+            expense = Expense(
+                id = getString("id") ?: "",
+                description = getString("description") ?: "",
+                amount = getFloat("amount", 0f),
+                date = getString("date") ?: "",
+                category = category,
+                paymentMethod = getString("paymentMethod") ?: "UNKNOWN"
+            )
         }
 
-        categoryImageView.setImageResource(iconResId)  // Establecer el icono
+        etDescription.setText(expense.description)
+        etAmount.setText(expense.amount.toString())
+        etDate.setText(expense.date)
+
+        val iconResId = when (expense.category) {
+            Category.LIVING -> R.drawable.icon_category_living
+            Category.RECREATION -> R.drawable.icon_category_recreation
+            Category.TRANSPORT -> R.drawable.icon_category_transport
+            Category.FOOD -> R.drawable.icon_category_food
+            Category.HEALTH -> R.drawable.icon_category_health
+            Category.OTHER -> R.drawable.icon_category_other
+        }
+
+        categoryImageView.setImageResource(iconResId)
+
+        btnSave.setOnClickListener { saveExpense() }
+    }
+
+    private fun saveExpense() {
+        val updatedDescription = etDescription.text.toString()
+        val updatedAmount = etAmount.text.toString().toFloatOrNull() ?: 0.0f
+        val updatedDate = etDate.text.toString()
+
+        if (updatedDescription.isNotEmpty() && updatedAmount > 0 && updatedDate.isNotEmpty()) {
+            expense = expense.copy(description = updatedDescription, amount = updatedAmount, date = updatedDate)
+            updateExpenseInDatabase(expense)
+            dismiss()
+        } else {
+            Toast.makeText(requireContext(), "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateExpenseInDatabase(expense: Expense) {
+        val expenseRepository = ExpenseRepository()
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                expenseRepository.updateExpense(
+                    expense.id,
+                    expense.amount.toDouble(),
+                    expense.description,
+                    expense.category,
+                    expense.paymentMethod,
+                    expense.date,
+                    onSuccess = {
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "Expense updated successfully!", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onFailure = { e ->
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "Error updating expense: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Error updating expense: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
