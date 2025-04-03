@@ -71,30 +71,7 @@ class AddExpenseFragment : Fragment() {
         }
 
         addExpense.setOnClickListener {
-            if (validarCampos()) {
-                val monto = obtenerMonto()
-                val descripcion = edtDescription.text.toString().trim()
-                val categoria = getCategoryFromString(spinner.selectedItem.toString())
-                val metodoPago = if (radioCash.isChecked) "cash" else "card"
-
-
-                viewModel.addExpense(
-                    monto,
-                    descripcion,
-                    categoria,
-                    metodoPago,
-                    selectedDate!!,
-                    onSuccess = {
-                        limpiarCampos()
-                        Toast.makeText(requireContext(), "Gasto agregado", Toast.LENGTH_SHORT).show()
-                    },
-                    onFailure = { e ->
-                        Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                )
-
-
-            }
+            addExpense()
         }
 
         setRadioColors()
@@ -109,6 +86,31 @@ class AddExpenseFragment : Fragment() {
         }
     }
 
+    private fun addExpense() {
+        if (validarCampos()) {
+            val monto = obtenerMonto()
+            val descripcion = edtDescription.text.toString().trim()
+            val categoria = getCategoryFromString(spinner.selectedItem.toString())
+            val metodoPago = if (radioCash.isChecked) "cash" else "card"
+
+            viewModel.addExpense(
+                monto,
+                descripcion,
+                categoria,
+                metodoPago,
+                selectedDate!!,
+                onSuccess = {
+                    limpiarCampos()
+
+                },
+                onFailure = { e ->
+                    Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+
     fun getCategoryFromString(categoryName: String): Category {
         return when (categoryName.lowercase()) {
             "food" -> Category.FOOD
@@ -117,7 +119,7 @@ class AddExpenseFragment : Fragment() {
             "living", "home" -> Category.LIVING
             "health" -> Category.HEALTH
             "other" -> Category.OTHER
-            else -> Category.OTHER  // Categoría por defecto si no hay coincidencia
+            else -> Category.OTHER
         }
     }
 
@@ -144,12 +146,11 @@ class AddExpenseFragment : Fragment() {
             requireContext(),
             R.style.Nest_DatePicker,
             { _, year, month, day ->
-                val selectedDate = "$day/${month + 1}/$year"
+                selectedDate = "$day/${month + 1}/$year"
 
                 btnDate.apply {
                     text = selectedDate
                     setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-
                 }
             },
             currentYear, currentMonth, currentDay
@@ -163,6 +164,7 @@ class AddExpenseFragment : Fragment() {
         positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
         negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.O)
