@@ -66,20 +66,10 @@ class ExpenseRepository {
         description: String,
         category: Category,
         paymentMethod: String,
-        date: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) = withContext(Dispatchers.IO) {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            withContext(Dispatchers.Main) { onFailure(Exception("Invalid user ID")) }
-            return@withContext
-        }
-
-        if (expenseId.isEmpty()) {
-            withContext(Dispatchers.Main) { onFailure(Exception("Invalid expense ID")) }
-            return@withContext
-        }
+        date: String
+    ) {
+        val userId = auth.currentUser?.uid ?: throw Exception("Invalid user ID")
+        if (expenseId.isEmpty()) throw Exception("Invalid expense ID")
 
         val expenseRef = database.child("usuarios").child(userId).child("gastos").child(expenseId)
 
@@ -91,12 +81,7 @@ class ExpenseRepository {
             "date" to date
         )
 
-        try {
-            expenseRef.updateChildren(updatedExpense).await()
-            withContext(Dispatchers.Main) { onSuccess() }
-        } catch (e: Exception) {
-            Log.e("Firebase", "Error actualizando gasto: ${e.message}")
-            withContext(Dispatchers.Main) { onFailure(e) }
-        }
+        expenseRef.updateChildren(updatedExpense).await()
     }
+
 }

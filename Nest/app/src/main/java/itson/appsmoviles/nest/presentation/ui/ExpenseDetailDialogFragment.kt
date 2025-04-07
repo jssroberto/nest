@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.presentation.ui
 
+import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
@@ -21,9 +24,15 @@ import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.domain.model.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 class ExpenseDetailDialogFragment : DialogFragment() {
+
     private lateinit var etDescription: EditText
     private lateinit var etAmount: EditText
     private lateinit var etDate: EditText
@@ -96,6 +105,44 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         categoryImageView.setImageResource(iconResId)
 
         btnSave.setOnClickListener { saveExpense() }
+
+        etDate.setOnClickListener {
+            showDatePicker(etDate)
+        }
+
+        etDate.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                showDatePicker(etDate)
+            }
+        }
+    }
+
+    private fun showDatePicker(editText: EditText) {
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            R.style.Nest_DatePicker,
+            { _, year, month, dayOfMonth ->
+                val selectedDate = "${dayOfMonth}/${month + 1}/$year"
+                editText.setText(selectedDate)
+                editText.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+            },
+            currentYear, currentMonth, currentDay
+        )
+
+        datePickerDialog.setOnShowListener {
+            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+
+            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        }
+
+        datePickerDialog.show()
     }
 
     private fun saveExpense() {
@@ -106,7 +153,6 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         if (updatedDescription.isNotEmpty() && updatedAmount > 0 && updatedDate.isNotEmpty()) {
             expense = expense.copy(description = updatedDescription, amount = updatedAmount, date = updatedDate)
             updateExpenseInDatabase(expense)
-            dismiss()
         } else {
             Toast.makeText(requireContext(), "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
         }
@@ -114,30 +160,31 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
     private fun updateExpenseInDatabase(expense: Expense) {
         val expenseRepository = ExpenseRepository()
-        lifecycleScope.launch(Dispatchers.IO) {
+
+        lifecycleScope.launch {
             try {
-                expenseRepository.updateExpense(
-                    expense.id,
-                    expense.amount.toDouble(),
-                    expense.description,
-                    expense.category,
-                    expense.paymentMethod,
-                    expense.date,
-                    onSuccess = {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Expense updated successfully!", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    onFailure = { e ->
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Error updating expense: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                )
-            } catch (e: Exception) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error updating expense: ${e.message}", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.IO) {
+                    expenseRepository.updateExpense(
+                        expense.id,
+                        expense.amount.toDouble(),
+                        expense.description,
+                        expense.category,
+                        expense.paymentMethod,
+                        expense.date
+                    )
                 }
+
+                Toast.makeText(requireContext(), "¡Gasto actualizado!", Toast.LENGTH_SHORT).show()
+                parentFragmentManager.setFragmentResult(
+                    "update_expense_result",
+                    bundleOf("updated" to true)
+                )
+                requireActivity().supportFragmentManager.popBackStack()
+                dismiss()
+
+            } catch (e: Exception) {
+                Log.e("UPDATE_ERROR", "Falló la actualización", e)
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

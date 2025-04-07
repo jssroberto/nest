@@ -60,12 +60,24 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 🔔 Escucha si un gasto fue actualizado desde otro fragmento
+        parentFragmentManager.setFragmentResultListener(
+            "update_expense_result",
+            viewLifecycleOwner
+        ) { _, result ->
+            val wasUpdated = result.getBoolean("updated", false)
+            if (wasUpdated) {
+                Log.d("HOME_FRAGMENT", "Se actualizó un gasto. Recargando lista.")
+                viewModel.fetchExpenses()
+            }
+        }
+
+        // Resto de tu código...
         progressContainer = view.findViewById(R.id.progress_bar)
         recyclerView = view.findViewById(R.id.home_recycler_view)
         btnAdd = view.findViewById(R.id.btn_add)
         bottonNav = requireActivity().findViewById(R.id.bottomNavigation)
         btnFilter = view.findViewById(R.id.btn_filter_home)
-
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
@@ -76,10 +88,7 @@ class HomeFragment : Fragment() {
             paintBudget(expenseMap)
         }
 
-
-
         viewModel.fetchExpenses()
-
 
         btnAdd.setOnClickListener {
             changeAddFragment()
@@ -87,12 +96,12 @@ class HomeFragment : Fragment() {
 
         applyBtnAddMargin()
 
-
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
         }
     }
+
 
     private fun calculateExpenses(expenses: List<Expense>): Map<Category, Float> {
         return expenses.groupBy { it.category }
@@ -116,6 +125,8 @@ class HomeFragment : Fragment() {
 
 
     private fun paintBudget(expenses: Map<Category, Float>) {
+        progressContainer.removeAllViews()
+
         val categoryColors = getCategoryColors()
         for ((category, amount) in expenses) {
             val barSegment = View(requireContext()).apply {
