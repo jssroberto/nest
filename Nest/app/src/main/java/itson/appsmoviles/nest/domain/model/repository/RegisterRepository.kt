@@ -34,7 +34,7 @@ class RegisterRepository {
                                 Log.d("INFO", "Nombre actualizado en FirebaseAuth")
                             }
 
-                        // Guardar usuario en la base de datos
+
                         guardarUsuarioEnDatabase(user.uid, name, email, onSuccess, onFailure)
                     }
                 } else {

@@ -47,7 +47,7 @@ class TotalExpensesFragment : Fragment() {
         val startDate: Button = view.findViewById(R.id.btn_date_income)
         val endDate: Button = view.findViewById(R.id.btn_end_date)
 
-        calculateExpendedGraphic(view, 150f,75f,200f,100f,400f,50f, 100f,50f,40f, 50f, 50f, 20f)
+        calculateExpendedGraphic(view, 150f,75f,200f,1f,400f,50f, 100f,50f,40f, 41f, 50f, 20f)
 
         configurarSpinner(view)
 
@@ -77,64 +77,39 @@ class TotalExpensesFragment : Fragment() {
                                          totalHome: Float, currentHome: Float,
                                          totalRecreation: Float, currentRecreation: Float,){
         val foodTotal = view.findViewById<View>(R.id.foodBudget)
-        val estimatedBudgetFood = view.findViewById<TextView>(R.id.estimatedBudgetFood)
-        val actualExpensesFood = view.findViewById<TextView>(R.id.actualExpensesFood)
         val healthTotal = view.findViewById<View>(R.id.budgetHealth)
-        val estimatedBudgetHealth = view.findViewById<TextView>(R.id.estimatedBudgetHealth)
-        val actualExpensesHealth = view.findViewById<TextView>(R.id.actualExpensesHealth)
-        val otherTotal = view.findViewById<View>(R.id.budgetOthers)
-        val estimatedBudgetOthers = view.findViewById<TextView>(R.id.estimatedBudgetOthers)
-        val actualExpensesOthers = view.findViewById<TextView>(R.id.actualExpensesOthers)
         val recreationTotal = view.findViewById<View>(R.id.budgetRecreation)
-        val estimatedBudgetRecreation = view.findViewById<TextView>(R.id.estimatedBudgetRecreation)
-        val actualExpensesRecreation = view.findViewById<TextView>(R.id.actualExpensesRecreation)
         val homeTotal = view.findViewById<View>(R.id.budgetHome)
-        val estimatedBudgetHome = view.findViewById<TextView>(R.id.estimatedBudgetHome)
-        val actualExpensesHome = view.findViewById<TextView>(R.id.actualExpensesHome)
         val transportTotal = view.findViewById<View>(R.id.transportBudget)
-        val estimatedBudgetTransport = view.findViewById<TextView>(R.id.estimatedBudgetTransport)
-        val actualExpensesTransport = view.findViewById<TextView>(R.id.actualExpensesTransport)
 
 
         calculateExpended(
             view.findViewById(R.id.foodBudget),
-            view.findViewById(R.id.estimatedBudgetFood),
-            view.findViewById(R.id.actualExpensesFood),
             totalFood, currentFood
         )
 
         calculateExpended(
             view.findViewById(R.id.transportBudget),
-            view.findViewById(R.id.estimatedBudgetTransport),
-            view.findViewById(R.id.actualExpensesTransport),
             totalTransport, currentTransport
         )
 
         calculateExpended(
             view.findViewById(R.id.budgetHealth),
-            view.findViewById(R.id.estimatedBudgetHealth),
-            view.findViewById(R.id.actualExpensesHealth),
             totalHealth, currentHealth
         )
 
         calculateExpended(
             view.findViewById(R.id.budgetOthers),
-            view.findViewById(R.id.estimatedBudgetOthers),
-            view.findViewById(R.id.actualExpensesOthers),
             totalOthers, currentOthers
         )
 
         calculateExpended(
             view.findViewById(R.id.budgetHome),
-            view.findViewById(R.id.estimatedBudgetHome),
-            view.findViewById(R.id.actualExpensesHome),
             totalHome, currentHome
         )
 
         calculateExpended(
             view.findViewById(R.id.budgetRecreation),
-            view.findViewById(R.id.estimatedBudgetRecreation),
-            view.findViewById(R.id.actualExpensesRecreation),
             totalRecreation, currentRecreation
         )
 
@@ -142,13 +117,9 @@ class TotalExpensesFragment : Fragment() {
 
     private fun calculateExpended(
         expendedView: View,
-        estimatedBudgetTextView: TextView,
-        actualExpensesTextView: TextView,
         total: Float,
         current: Float
     ) {
-        estimatedBudgetTextView.text = "$${total}"
-        actualExpensesTextView.text = "$${current}"
 
         val progressColor = ContextCompat.getColor(requireContext(), R.color.primary_color)
         val backgroundColor = ContextCompat.getColor(requireContext(), R.color.txt_income)

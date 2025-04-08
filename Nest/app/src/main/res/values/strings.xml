@@ -47,7 +47,7 @@
     <string name="food">Food</string>
     <string name="expense">Expense</string>
     <string name="income">Income</string>
-    <string name="estimated_budget">Estimated Budget: </string>
+    <string name="estimated_budget">Estimated Budget</string>
     <string name="health">Health</string>
     <string name="other">Other</string>
     <string name="living">Living</string>
