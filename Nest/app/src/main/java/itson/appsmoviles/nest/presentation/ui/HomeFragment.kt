@@ -12,30 +12,32 @@ import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.domain.model.viewmodel.ExpenseViewModel
 import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.time.LocalDateTime
-
 
 
 class HomeFragment : Fragment() {
+    private val auth = FirebaseAuth.getInstance()
+    private val database = FirebaseDatabase.getInstance().reference
     private lateinit var progressContainer: LinearLayout
     private val totalBudget = 100.0f
     private lateinit var recyclerView: RecyclerView
@@ -43,6 +45,17 @@ class HomeFragment : Fragment() {
     private lateinit var bottonNav: BottomNavigationView
     private lateinit var btnFilter: ImageButton
     private lateinit var viewModel: ExpenseViewModel
+    private lateinit var txtWelcome: TextView
+    private lateinit var txtIncome: TextView
+    private lateinit var txtExpenses: TextView
+
+    companion object {
+        const val NODE_EXPENSES = "gastos"
+        const val NODE_INCOMES = "ingresos"
+        const val USERS_NODE = "usuarios"
+        const val TAG = "FirebaseSum"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +73,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 🔔 Escucha si un gasto fue actualizado desde otro fragmento
         parentFragmentManager.setFragmentResultListener(
             "update_expense_result",
             viewLifecycleOwner
@@ -72,12 +84,16 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Resto de tu código...
         progressContainer = view.findViewById(R.id.progress_bar)
         recyclerView = view.findViewById(R.id.home_recycler_view)
         btnAdd = view.findViewById(R.id.btn_add)
         bottonNav = requireActivity().findViewById(R.id.bottomNavigation)
         btnFilter = view.findViewById(R.id.btn_filter_home)
+        txtWelcome = view.findViewById(R.id.txt_welcome_home)
+        txtIncome = view.findViewById(R.id.txt_income_home)
+        txtExpenses = view.findViewById(R.id.txt_expenses_home)
+
+
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
@@ -100,6 +116,29 @@ class HomeFragment : Fragment() {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
         }
+
+        loadAndDisplayUserData()
+
+    }
+
+    private fun loadAndDisplayUserData() {
+        val currentUser = auth.currentUser
+
+        if (currentUser == null) {
+            txtExpenses.text = "---"
+            txtIncome.text = "---"
+            return
+        }
+
+        showUserInfo(currentUser)
+
+        calculateTotalForNode(currentUser.uid, NODE_EXPENSES) { result ->
+            updateAmountTextView(result, txtExpenses)
+        }
+
+        calculateTotalForNode(currentUser.uid, NODE_INCOMES) { result ->
+            updateAmountTextView(result, txtIncome)
+        }
     }
 
 
@@ -109,20 +148,74 @@ class HomeFragment : Fragment() {
     }
 
 
-
     private fun initRecyclerView(expenses: List<Expense>) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
             reverseLayout = false
         }
         recyclerView.adapter = MovementAdapter(expenses)
 
-        val dividerItemDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        val dividerItemDecoration =
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
         divider?.let { dividerItemDecoration.setDrawable(it) }
         recyclerView.addItemDecoration(dividerItemDecoration)
     }
 
+    private fun showUserInfo(user: FirebaseUser) {
+        val userName = user.displayName ?: "Usuario"
+        txtWelcome.text = "Hi $userName\nhere's your monthly overview"
 
+
+    }
+
+    private fun updateAmountTextView(result: Result<Double>, textView: TextView) {
+        requireActivity().runOnUiThread {
+            result.onSuccess { total ->
+                textView.text = "$${total.toInt()}"
+            }.onFailure {
+                textView.text = "0"
+            }
+        }
+    }
+
+
+    private fun calculateTotalForNode(
+        userId: String,
+        nodeName: String,
+        onResult: (Result<Double>) -> Unit
+    ) {
+        val nodeRef: DatabaseReference = database
+            .child(USERS_NODE)
+            .child(userId)
+            .child(nodeName)
+
+        nodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var totalSum = 0.0
+
+                if (!dataSnapshot.exists()) {
+                    Log.d(TAG, "Node $nodeName does not exist for user $userId")
+                    onResult(Result.success(totalSum)) // Return 0.0 if node doesn't exist
+                    return
+                }
+                for (itemSnapshot in dataSnapshot.children) {
+                    val amount = itemSnapshot.child("amount").getValue(Double::class.java)
+                        ?: itemSnapshot.child("amount").getValue(Long::class.java)?.toDouble()
+
+                    if (amount != null) {
+                        totalSum += amount
+                    }
+                }
+
+                onResult(Result.success(totalSum))
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                onResult(Result.failure(databaseError.toException()))
+            }
+        })
+    }
 
     private fun paintBudget(expenses: Map<Category, Float>) {
         progressContainer.removeAllViews()
@@ -201,7 +294,8 @@ class HomeFragment : Fragment() {
 
 
     private fun applyBtnAddMargin() {
-        bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 bottonNav.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
@@ -215,4 +309,6 @@ class HomeFragment : Fragment() {
 
     val Int.dp: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+
 }

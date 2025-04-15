@@ -19,6 +19,7 @@
 
 
             <TextView
+                    android:id="@+id/txt_welcome_home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/welcome_example"
@@ -49,6 +50,7 @@
                             />
 
                     <TextView
+                            android:id="@+id/txt_income_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="+ $999"
@@ -75,6 +77,7 @@
                             android:textColor="@color/txt_expenses" />
 
                     <TextView
+                            android:id="@+id/txt_expenses_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="- $999"
@@ -100,6 +103,7 @@
                             android:gravity="center" />
 
                     <TextView
+                            android:id="@+id/txt_net_balance_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="$999"
@@ -128,6 +132,7 @@
 
 
                 <TextView
+                        android:id="@+id/txt_budget_home"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/budget_example"

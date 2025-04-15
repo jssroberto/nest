@@ -1,6 +1,7 @@
 package itson.appsmoviles.nest.presentation.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -14,14 +15,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import itson.appsmoviles.nest.MainActivity
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.domain.model.viewmodel.ExpenseViewModel
@@ -34,7 +33,7 @@ class AddExpenseFragment : Fragment() {
     private lateinit var edtAmount: EditText
     private lateinit var edtDescription: EditText
     private lateinit var btnDate: Button
-    private lateinit var addExpense: Button
+    private lateinit var btnAddExpense: Button
     private lateinit var spinner: Spinner
     private lateinit var radioCash: RadioButton
     private lateinit var radioCard: RadioButton
@@ -61,7 +60,7 @@ class AddExpenseFragment : Fragment() {
         spinner = view.findViewById(R.id.spinner_categories_expense)
         radioCash = view.findViewById(R.id.radio_cash)
         radioCard = view.findViewById(R.id.radio_card)
-        addExpense = view.findViewById(R.id.add_expense)
+        btnAddExpense = view.findViewById(R.id.btn_add_expense)
 
         setUpSpinner()
         addDollarSign(edtAmount)
@@ -70,7 +69,7 @@ class AddExpenseFragment : Fragment() {
             showDatePicker(btnDate)
         }
 
-        addExpense.setOnClickListener {
+        btnAddExpense.setOnClickListener {
             addExpense()
         }
 
@@ -87,27 +86,39 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun addExpense() {
-        if (validarCampos()) {
-            val monto = obtenerMonto()
-            val descripcion = edtDescription.text.toString().trim()
-            val categoria = getCategoryFromString(spinner.selectedItem.toString())
-            val metodoPago = if (radioCash.isChecked) "cash" else "card"
-
-            viewModel.addExpense(
-                monto,
-                descripcion,
-                categoria,
-                metodoPago,
-                selectedDate!!,
-                onSuccess = {
-                    limpiarCampos()
-
-                },
-                onFailure = { e ->
-                    Toast.makeText(requireContext(), "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            )
+        if (!validarCampos()) {
+            Toast.makeText(
+                requireContext(),
+                "Por favor, completa todos los campos",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
         }
+
+        val monto = obtenerMonto()
+        val descripcion = edtDescription.text.toString().trim()
+        val categoria = getCategoryFromString(spinner.selectedItem.toString())
+        val metodoPago = if (radioCash.isChecked) "cash" else "card"
+
+        viewModel.addExpense(
+            monto,
+            descripcion,
+            categoria,
+            metodoPago,
+            selectedDate!!,
+            onSuccess = {
+                limpiarCampos()
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+
+            },
+            onFailure = { e ->
+                Toast.makeText(
+                    requireContext(),
+                    "Error al guardar: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
     }
 
 
@@ -125,12 +136,21 @@ class AddExpenseFragment : Fragment() {
 
 
     private fun setUpSpinner() {
-        val categories = listOf("Select a category", "Food", "Transport", "Entertainment", "Home", "Health", "Other")
-        val adapter = object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
-            override fun isEnabled(position: Int): Boolean {
-                return position != 0
+        val categories = listOf(
+            "Select a category",
+            "Food",
+            "Transport",
+            "Entertainment",
+            "Home",
+            "Health",
+            "Other"
+        )
+        val adapter =
+            object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
+                override fun isEnabled(position: Int): Boolean {
+                    return position != 0
+                }
             }
-        }
         adapter.setDropDownViewResource(R.layout.spinner_item)
         spinner.adapter = adapter
         spinner.setSelection(0)
@@ -156,6 +176,7 @@ class AddExpenseFragment : Fragment() {
             currentYear, currentMonth, currentDay
         )
 
+        datePickerDialog.datePicker.maxDate = calendar.timeInMillis
         datePickerDialog.show()
 
         val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
@@ -164,7 +185,6 @@ class AddExpenseFragment : Fragment() {
         positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
         negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -188,8 +208,10 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun setRadioColors() {
-        radioCash.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
-        radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
+        radioCash.buttonTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
+        radioCard.buttonTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
 
 

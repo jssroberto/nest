@@ -11,7 +11,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
-
 class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
