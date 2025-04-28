@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -48,11 +50,12 @@ class HomeFragment : Fragment() {
     private lateinit var txtWelcome: TextView
     private lateinit var txtIncome: TextView
     private lateinit var txtExpenses: TextView
+    private lateinit var edtSearchHome: EditText
 
     companion object {
-        const val NODE_EXPENSES = "gastos"
-        const val NODE_INCOMES = "ingresos"
-        const val USERS_NODE = "usuarios"
+        const val NODE_EXPENSES = "expenses"
+        const val NODE_INCOMES = "incomes"
+        const val USERS_NODE = "users"
         const val TAG = "FirebaseSum"
     }
 
@@ -73,16 +76,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        parentFragmentManager.setFragmentResultListener(
-            "update_expense_result",
-            viewLifecycleOwner
-        ) { _, result ->
-            val wasUpdated = result.getBoolean("updated", false)
-            if (wasUpdated) {
-                Log.d("HOME_FRAGMENT", "Se actualizó un gasto. Recargando lista.")
-                viewModel.fetchExpenses()
-            }
-        }
+        updateExpenses()
 
         progressContainer = view.findViewById(R.id.progress_bar)
         recyclerView = view.findViewById(R.id.home_recycler_view)
@@ -92,8 +86,7 @@ class HomeFragment : Fragment() {
         txtWelcome = view.findViewById(R.id.txt_welcome_home)
         txtIncome = view.findViewById(R.id.txt_income_home)
         txtExpenses = view.findViewById(R.id.txt_expenses_home)
-
-
+        edtSearchHome = view.findViewById(R.id.edt_search_home)
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
@@ -119,6 +112,19 @@ class HomeFragment : Fragment() {
 
         loadAndDisplayUserData()
 
+    }
+
+    private fun updateExpenses() {
+        parentFragmentManager.setFragmentResultListener(
+            "update_expense_result",
+            viewLifecycleOwner
+        ) { _, result ->
+            val wasUpdated = result.getBoolean("updated", false)
+            if (wasUpdated) {
+                Log.d("HOME_FRAGMENT", "Se actualizó un gasto. Recargando lista.")
+                viewModel.fetchExpenses()
+            }
+        }
     }
 
     private fun loadAndDisplayUserData() {
@@ -162,7 +168,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showUserInfo(user: FirebaseUser) {
-        val userName = user.displayName ?: "Usuario"
+        val userName = user.displayName ?: "user"
         txtWelcome.text = "Hi $userName\nhere's your monthly overview"
 
 
@@ -192,29 +198,40 @@ class HomeFragment : Fragment() {
         nodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var totalSum = 0.0
-
                 if (!dataSnapshot.exists()) {
-                    Log.d(TAG, "Node $nodeName does not exist for user $userId")
-                    onResult(Result.success(totalSum)) // Return 0.0 if node doesn't exist
+                    Log.d(TAG, "Node '$nodeName' does not exist for user '$userId'")
+                    onResult(Result.success(0.0))
                     return
                 }
-                for (itemSnapshot in dataSnapshot.children) {
-                    val amount = itemSnapshot.child("amount").getValue(Double::class.java)
-                        ?: itemSnapshot.child("amount").getValue(Long::class.java)?.toDouble()
 
-                    if (amount != null) {
-                        totalSum += amount
+                val totalSum = dataSnapshot.children
+                    .mapNotNull { itemSnapshot ->
+                        getAmountFromSnapshot(itemSnapshot)
                     }
-                }
+                    .sum()
 
                 onResult(Result.success(totalSum))
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
+                Log.e(
+                    TAG,
+                    "Database error reading node '$nodeName' for user '$userId': ${databaseError.message}",
+                    databaseError.toException() // Log the exception stack trace
+                )
                 onResult(Result.failure(databaseError.toException()))
             }
         })
+    }
+
+    private fun getAmountFromSnapshot(snapshot: DataSnapshot): Double? {
+        val amountChild = snapshot.child("amount")
+        val doubleValue = amountChild.getValue(Double::class.java)
+
+        if (doubleValue != null) return doubleValue
+
+        val longValue = amountChild.getValue(Long::class.java)
+        return longValue?.toDouble() // Returns null if longValue is also null
     }
 
     private fun paintBudget(expenses: Map<Category, Float>) {

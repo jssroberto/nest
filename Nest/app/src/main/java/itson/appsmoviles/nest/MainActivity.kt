@@ -11,29 +11,49 @@ import itson.appsmoviles.nest.presentation.ui.TotalExpensesFragment
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var bottomNavigation: BottomNavigationView
+
+    private val homeFragment = HomeFragment()
+    private val expensesFragment = TotalExpensesFragment()
+    private val profileFragment = SettingsFragment()
+    private val searchFragment = BaseBudgetFragment()
+
+    private var activeFragment: Fragment = homeFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        replaceFragment(HomeFragment())
+        // Agregar todos los fragmentos al inicio
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, searchFragment, "4").hide(searchFragment)
+            .add(R.id.fragment_container, profileFragment, "3").hide(profileFragment)
+            .add(R.id.fragment_container, expensesFragment, "2").hide(expensesFragment)
+            .add(R.id.fragment_container, homeFragment, "1") // este queda visible
+            .commit()
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_expenses -> replaceFragment(TotalExpensesFragment())
-                R.id.nav_profile -> replaceFragment(SettingsFragment())
-                R.id.nav_search -> replaceFragment(BaseBudgetFragment())
+                R.id.nav_home -> switchFragment(homeFragment)
+                R.id.nav_expenses -> switchFragment(expensesFragment)
+                R.id.nav_profile -> switchFragment(profileFragment)
+                R.id.nav_search -> switchFragment(searchFragment)
             }
             true
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+    private fun switchFragment(targetFragment: Fragment) {
+        if (targetFragment != activeFragment) {
+            supportFragmentManager.beginTransaction()
+                .hide(activeFragment)
+                .show(targetFragment)
+                .commit()
+            activeFragment = targetFragment
+        }
     }
 }
+
 

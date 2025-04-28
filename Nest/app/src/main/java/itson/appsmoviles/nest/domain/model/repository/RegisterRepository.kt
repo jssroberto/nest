@@ -22,24 +22,28 @@ class RegisterRepository {
     ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    if (user != null) {
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                            .setDisplayName(name)
-                            .build()
-
-                        user.updateProfile(profileUpdates)
-                            .addOnCompleteListener {
-                                Log.d("INFO", "Nombre actualizado en FirebaseAuth")
-                            }
-
-
-                        guardarUsuarioEnDatabase(user.uid, name, email, onSuccess, onFailure)
-                    }
-                } else {
-                    task.exception?.let { onFailure(it) }
+                if (!task.isSuccessful) {
+                    Log.e("ERROR", "Error al crear usuario", task.exception)
+                    onFailure(task.exception ?: Exception("Error al crear usuario"))
+                    return@addOnCompleteListener
                 }
+                val user = auth.currentUser
+                if (user == null) {
+                    Log.e("ERROR", "Usuario no encontrado")
+                    onFailure(Exception("Usuario no encontrado"))
+                    return@addOnCompleteListener
+                }
+
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .build()
+
+                user.updateProfile(profileUpdates)
+                    .addOnCompleteListener {
+                        Log.d("INFO", "Nombre actualizado en FirebaseAuth")
+                    }
+
+                guardarUsuarioEnDatabase(user.uid, name, email, onSuccess, onFailure)
             }
     }
 
@@ -52,12 +56,12 @@ class RegisterRepository {
         onFailure: (Exception) -> Unit
     ) {
         val usuario = hashMapOf(
-            "nombre" to name,
+            "name" to name,
             "email" to email,
-            "gastos" to emptyMap<String, Any>()
+            "expenses" to emptyMap<String, Any>()
         )
 
-        database.child("usuarios").child(uid).setValue(usuario)
+        database.child("users").child(uid).setValue(usuario)
             .addOnSuccessListener {
                 Log.d("INFO", "Usuario guardado en Realtime Database")
                 onSuccess(auth.currentUser!!)

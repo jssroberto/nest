@@ -47,7 +47,7 @@ class SignInActivity : AppCompatActivity() {
         buttonSignIn.setOnClickListener {
             if (email.text.isNullOrEmpty() || editTextLoginPassword.text.isNullOrEmpty()) {
 
-                Toast.makeText(this, "Por favor, ingresa tu email y contraseña", Toast.LENGTH_SHORT)
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT)
                     .show()
             } else {
                 login(email.text.toString(), editTextLoginPassword.text.toString())
@@ -77,7 +77,7 @@ class SignInActivity : AppCompatActivity() {
                         .show()
                     goToMain(user!!)
                 } else {
-                    Toast.makeText(this, "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "User or password incorrect", Toast.LENGTH_SHORT)
                         .show()
                 }
             }

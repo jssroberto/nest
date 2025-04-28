@@ -316,6 +316,7 @@
 
 
                 <EditText
+                        android:id="@+id/edt_search_home"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_rounded"
