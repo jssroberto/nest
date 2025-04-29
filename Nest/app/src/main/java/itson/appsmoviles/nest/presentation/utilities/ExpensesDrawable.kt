@@ -7,67 +7,75 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.util.Log
 import kotlin.math.abs
 
 class ExpensesDrawable(
     private val total: Float,
     private val current: Float,
-    private val progressColor: Int,
-    private val backgroundColor: Int
+    private val currentColor: Int,     // Color de current
+    private val totalColor: Int         // Color de total
 ) : Drawable() {
 
     override fun draw(canvas: Canvas) {
         val width = bounds.width().toFloat()
         val height = bounds.height().toFloat()
 
-        val maxValue = maxOf(total, current)
-        val totalWidth = (total / maxValue) * width
-        val currentWidth = (current / maxValue) * width
+        if (width == 0f || height == 0f) return
 
-        val backgroundPaint = Paint().apply {
-            color = backgroundColor
+        val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
+            color = currentColor
         }
 
-        val progressPaint = Paint().apply {
-            color = progressColor
+        val totalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
+            color = totalColor
         }
 
-        val textPaint = Paint().apply {
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
             textSize = 40f
             typeface = Typeface.DEFAULT_BOLD
-            isAntiAlias = true
         }
 
-
-        if (current > total) {
-            canvas.drawRect(0f, 0f, currentWidth, height, backgroundPaint)
-            canvas.drawRect(0f, 0f, totalWidth, height, progressPaint)
-        } else {
-            canvas.drawRect(0f, 0f, totalWidth, height, backgroundPaint)
-            canvas.drawRect(0f, 0f, currentWidth, height, progressPaint)
-        }
-
+        val margin = 16f
+        val textY = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
 
         val totalText = "$${"%.2f".format(total)}"
         val currentText = "$${"%.2f".format(current)}"
         val totalTextWidth = textPaint.measureText(totalText)
         val currentTextWidth = textPaint.measureText(currentText)
 
-        val textY = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
-        val margin = 16f
+        if (current > total) {
+            // current domina (100%), total es proporcional
+            val totalRatio = total / current
+            val totalWidth = totalRatio * width
 
+            // Fondo: current
+            canvas.drawRect(0f, 0f, width, height, currentPaint)
 
-        if (total >= current) {
+            // Barra interna: total
+            canvas.drawRect(0f, 0f, totalWidth, height, totalPaint)
 
-            canvas.drawText(currentText, margin, textY, textPaint)
-            canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
-        } else {
-
+            // Textos
             canvas.drawText(totalText, margin, textY, textPaint)
             canvas.drawText(currentText, width - currentTextWidth - margin, textY, textPaint)
+
+        } else {
+            // total domina (100%), current es proporcional
+            val currentRatio = current / total
+            val currentWidth = currentRatio * width
+
+            // Fondo: total
+            canvas.drawRect(0f, 0f, width, height, totalPaint)
+
+            // Barra interna: current
+            canvas.drawRect(0f, 0f, currentWidth, height, currentPaint)
+
+            // Textos
+            canvas.drawText(currentText, margin, textY, textPaint)
+            canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
         }
     }
 

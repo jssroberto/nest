@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        // Agregar todos los fragmentos al inicio
+
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_container, searchFragment, "4").hide(searchFragment)
             .add(R.id.fragment_container, profileFragment, "3").hide(profileFragment)

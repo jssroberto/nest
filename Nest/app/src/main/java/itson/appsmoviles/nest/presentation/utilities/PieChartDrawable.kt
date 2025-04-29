@@ -7,8 +7,10 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
+import itson.appsmoviles.nest.R
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -23,6 +25,8 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
     private var touchX = 0f
     private var touchY = 0f
 
+
+
     init {
         paint.style = Paint.Style.FILL
     }
@@ -34,9 +38,17 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
 
         anguloInicio = 0.0f
 
+        val total = categorias.sumOf { it.total.toDouble() }.toFloat()
+        if (total == 0f) return
+
+        for (e in categorias) {
+            e.porcentaje = (e.total / total) * 100
+        }
+
         if (categorias.isNotEmpty()) {
             for (e in categorias) {
-                val anguloBarrido: Float = (e.porcentaje * 360) / 100
+                val sweep = (e.porcentaje * 360) / 100
+                val anguloBarrido = if (sweep >= 360f) 359.9f else sweep
                 val color = ContextCompat.getColor(context, e.color)
                 paint.color = color
 
@@ -48,24 +60,57 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
             }
         }
 
-        // Dibujar tooltip si hay una categoría seleccionada
         selectedCategoria?.let { categoria ->
-            val texto = "${categoria.nombre}: ${categoria.porcentaje}%"
+            val texto = "${categoria.nombre}: ${"%.1f".format(categoria.porcentaje)}%"
             val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
                 textSize = 40f
+                R.font.lexend_bold
+                setShadowLayer(8f, 4f, 4f, Color.LTGRAY) // Sombra bonita
             }
+
+            val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.WHITE
+                setShadowLayer(10f, 0f, 0f, Color.GRAY) // Sombra al fondo
+            }
+
+            val textPadding = 30f  // Padding interno
             val textWidth = textPaint.measureText(texto)
+            val textHeight = textPaint.descent() - textPaint.ascent()
 
-            // Dibuja un rectángulo de fondo
-            paint.color = Color.WHITE
-            canvas.drawRect(
-                touchX - 20, touchY - 80, touchX + textWidth + 20, touchY - 20, paint
-            )
+            // Definir posiciones basadas en el toque
+            var left = touchX
+            var top = touchY - textHeight - textPadding
+            var right = left + textWidth + 2 * textPadding
+            var bottom = touchY
 
-            // Dibuja el texto
-            paint.color = Color.BLACK
-            canvas.drawText(texto, touchX, touchY - 40, textPaint)
+            // Correcciones para que no se corte
+            if (right > bounds.right) {
+                left = bounds.right - textWidth - 2 * textPadding
+                right = bounds.right.toFloat()
+            }
+            if (left < bounds.left) {
+                left = bounds.left.toFloat()
+                right = left + textWidth + 2 * textPadding
+            }
+            if (top < bounds.top) {
+                top = bounds.top.toFloat()
+                bottom = top + textHeight + textPadding
+            }
+            if (bottom > bounds.bottom) {
+                bottom = bounds.bottom.toFloat()
+                top = bottom - textHeight - textPadding
+            }
+
+            val rectF = RectF(left, top, right, bottom)
+
+            // Dibuja fondo con esquinas redondeadas
+            canvas.drawRoundRect(rectF, 20f, 20f, backgroundPaint)
+
+            // Dibuja texto centrado
+            val textX = left + textPadding
+            val textY = top + textPadding - textPaint.ascent() // Centrar bien el texto
+            canvas.drawText(texto, textX, textY, textPaint)
         }
     }
 
@@ -81,7 +126,6 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
         return PixelFormat.OPAQUE
     }
 
-    // Detecta el toque en el gráfico y actualiza la categoría seleccionada
     fun onTouch(x: Float, y: Float) {
         val centroX = bounds.width() / 2f
         val centroY = bounds.height() / 2f
@@ -89,7 +133,6 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
         val dy = y - centroY
         val distancia = sqrt(dx * dx + dy * dy)
 
-        // Si el toque está fuera del círculo, ignorarlo
         val radio = bounds.width() / 2.5f
         if (distancia > radio) {
             selectedCategoria = null

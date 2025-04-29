@@ -15,22 +15,6 @@ class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
 
-    //TODO: Retrieve expenses and incomes, not only expenses
-    suspend fun getMovementsFromFirebase(): List<Expense> = withContext(Dispatchers.IO) {
-        val userId = auth.currentUser?.uid ?: return@withContext emptyList()
-        return@withContext try {
-            val snapshot = database.child("users").child(userId).child("expenses").get().await()
-            Log.d("ExpenseRepository", "Firebase snapshot children count: ${snapshot.childrenCount}")
-
-            snapshot.children.mapNotNull { gastoSnapshot ->
-                val expense = gastoSnapshot.getValue(Expense::class.java)
-                expense?.copy(id = gastoSnapshot.key ?: "")
-            }
-        } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error obteniendo datos de Firebase", e)
-            emptyList()
-        }
-    }
 
     suspend fun addExpense(
         amount: Double,
@@ -42,7 +26,7 @@ class ExpenseRepository {
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
         val userId = auth.currentUser?.uid ?: return@withContext onFailure(Exception("User not authenticated"))
-        val newExpenseRef = database.child("users").child(userId).child("expenses").push()
+        val newExpenseRef = database.child("usuarios").child(userId).child("gastos").push()
 
         val expense = mapOf(
             "amount" to amount,
@@ -60,6 +44,7 @@ class ExpenseRepository {
         }
     }
 
+    // Método para actualizar un gasto
     suspend fun updateExpense(
         expenseId: String,
         amount: Double,
@@ -71,7 +56,7 @@ class ExpenseRepository {
         val userId = auth.currentUser?.uid ?: throw Exception("Invalid user ID")
         if (expenseId.isEmpty()) throw Exception("Invalid expense ID")
 
-        val expenseRef = database.child("users").child(userId).child("expenses").child(expenseId)
+        val expenseRef = database.child("usuarios").child(userId).child("gastos").child(expenseId)
 
         val updatedExpense = mapOf(
             "amount" to amount,
@@ -82,6 +67,39 @@ class ExpenseRepository {
         )
 
         expenseRef.updateChildren(updatedExpense).await()
+    }
+
+    // Método para obtener todos los gastos
+    suspend fun getMovementsFromFirebase(): List<Expense> = withContext(Dispatchers.IO) {
+        val userId = auth.currentUser?.uid ?: return@withContext emptyList()
+        return@withContext try {
+            val snapshot = database.child("usuarios").child(userId).child("gastos").get().await()
+            Log.d("ExpenseRepository", "Firebase snapshot children count: ${snapshot.childrenCount}")
+
+            snapshot.children.mapNotNull { gastoSnapshot ->
+                val expense = gastoSnapshot.getValue(Expense::class.java)
+                expense?.copy(id = gastoSnapshot.key ?: "")
+            }
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error obteniendo datos de Firebase", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getExpensesByCategory(categoryName: String): List<Expense> {
+        val userId = auth.currentUser?.uid ?: return emptyList()
+
+        return try {
+            val snapshot = database.child("usuarios").child(userId).child("gastos")
+                .orderByChild("category").equalTo(categoryName).get().await()
+
+            snapshot.children.mapNotNull { gastoSnapshot ->
+                gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
+            }
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error obteniendo gastos por categoría", e)
+            emptyList()
+        }
     }
 
 }
