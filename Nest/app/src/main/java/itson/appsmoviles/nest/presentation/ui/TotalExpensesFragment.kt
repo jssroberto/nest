@@ -2,6 +2,7 @@ package itson.appsmoviles.nest.presentation.ui
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.domain.model.repository.ExpenseRepository
 import itson.appsmoviles.nest.presentation.utilities.PieChartDrawable
@@ -50,6 +52,7 @@ class TotalExpensesFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_total_expenses, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -67,28 +70,70 @@ class TotalExpensesFragment : Fragment() {
 
         setupCategoryTextViews(view)
 
+        view.findViewById<Button>(R.id.btn_filter)?.setOnClickListener {
+            filterAndLoadExpenses()
+        }
+
+
         viewLifecycleOwner.lifecycleScope.launch {
             loadExpenses()
         }
     }
 
-    private fun updateCategoryTextViews() {
-        categoryTextViews.forEach { textView ->
-            val categoryName = textView.tag?.toString()
-            if (selectedCategoryName == null) {
-                // Si no hay selección, todos en negro
-                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            } else {
-                // Si hay algo seleccionado
-                if (categoryName == selectedCategoryName) {
-                    // El seleccionado en negro
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                } else {
-                    // Los demás transparentes
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
-                }
-            }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun parseDateFromButton(button: Button): LocalDate? {
+        return try {
+            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
+            LocalDate.parse(button.text.toString(), formatter)
+        } catch (e: Exception) {
+            null
         }
+    }
+
+    private fun parseSelectedCategory(spinner: Spinner): Category? {
+        return when (spinner.selectedItem.toString()) {
+            "Food" -> Category.FOOD
+            "Transport" -> Category.TRANSPORT
+            "Entertainment" -> Category.RECREATION
+            "Home" -> Category.LIVING
+            "Health" -> Category.HEALTH
+            "Other" -> Category.OTHER
+            else -> null
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun filterAndLoadExpenses() {
+        val startDate = parseDateFromButton(requireView().findViewById(R.id.btn_date_income))
+        val endDate = parseDateFromButton(requireView().findViewById(R.id.btn_end_date))
+        val category = parseSelectedCategory(requireView().findViewById(R.id.spinner_categories_income))
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val filteredExpenses = expenseRepository.getFilteredExpensesFromFirebase(startDate, endDate, category)
+            updateChartWithExpenses(filteredExpenses)
+        }
+    }
+
+    private fun updateChartWithExpenses(expenses: List<Expense>) {
+        val groupedExpenses = expenses.groupBy { mapCategoryName(it.category) }
+
+        categories.clear()
+        groupedExpenses.forEach { (name, expensesList) ->
+            val totalAmount = expensesList.sumOf { it.amount.toDouble() }.toFloat()
+            val colorRes = when (name) {
+                "Health" -> R.color.category_health
+                "Home" -> R.color.category_living
+                "Food" -> R.color.category_food
+                "Recreation" -> R.color.category_recreation
+                "Transport" -> R.color.category_transport
+                "Others" -> R.color.category_other
+                else -> R.color.gray
+            }
+            categories.add(Categoria(name, 0f, colorRes, totalAmount))
+        }
+
+        updatePieChart()
+        updateTotal()
     }
 
 
@@ -161,27 +206,14 @@ class TotalExpensesFragment : Fragment() {
     private fun highlightSelectedCategory(selectedTextView: TextView, categoryName: String) {
         clearAllCategorySelections() // Limpia las selecciones previas
 
-        // Resalta la categoría seleccionada
+
         selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
-        // Asigna el icono correspondiente
-        val drawableRes = when (categoryName) {
-            "Food" -> R.drawable.icon_category_food
-            "Transport" -> R.drawable.icon_category_transport
-            "Health" -> R.drawable.icon_category_health
-            "Home" -> R.drawable.home_filled
-            "Recreation" -> R.drawable.icon_category_recreation
-            "Others" -> R.drawable.icon_category_other
-            else -> 0
-        }
 
-        val drawable = ContextCompat.getDrawable(requireContext(), drawableRes)
-        drawable?.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-        selectedTextView.setCompoundDrawables(null, drawable, null, null)
 
-        // Muestra el porcentaje de la categoría seleccionada
         val percentage = categories.find { it.nombre == categoryName }?.porcentaje ?: 0.0f
-        selectedTextView.text = "$categoryName\n${"%.1f".format(percentage)}%"
+        selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
+
     }
 
 
@@ -251,16 +283,28 @@ class TotalExpensesFragment : Fragment() {
 
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
 
-        datePickerDialog.setOnShowListener {
-            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+        // Si el usuario presiona "Cancelar", restaurar el texto original
+        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar") { _, _ ->
+            when (button.id) {
+                R.id.btn_date_income -> button.text = "Start date"
+                R.id.btn_end_date -> button.text = "End date"
+                else -> button.text = "Select date"
+            }
+            button.setTextColor(ContextCompat.getColor(requireContext(), R.color.darker_blue))
+        }
 
-            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        datePickerDialog.setOnShowListener {
+            datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+            datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
         }
 
         datePickerDialog.show()
     }
+
+
+
 
     private fun calculateTotal(): Float {
         return categories.sumOf { it.total.toDouble() }.toFloat()
@@ -278,37 +322,38 @@ class TotalExpensesFragment : Fragment() {
     }
 
     private suspend fun loadExpenses() {
-        val expenses = expenseRepository.getMovementsFromFirebase()
+        val startDate = view?.findViewById<Button>(R.id.btn_date_income)?.text?.toString()
+            ?.takeIf { it.matches(Regex("\\d{1,2}/\\d{1,2}/\\d{4}")) }
 
-        val groupedExpenses = expenses.groupBy { mapCategoryName(it.category) }
+        val endDate = view?.findViewById<Button>(R.id.btn_end_date)?.text?.toString()
+            ?.takeIf { it.matches(Regex("\\d{1,2}/\\d{1,2}/\\d{4}")) }
 
-        categories.clear()
-        groupedExpenses.forEach { (name, expensesList) ->
-            val totalAmount = expensesList.sumOf { it.amount.toDouble() }.toFloat()
-            val colorRes = when (name) {
-                "Health" -> R.color.category_health
-                "Home" -> R.color.category_living
-                "Food" -> R.color.category_food
-                "Recreation" -> R.color.category_recreation
-                "Transport" -> R.color.category_transport
-                "Others" -> R.color.category_other
-                else -> R.color.gray
-            }
-            categories.add(Categoria(name, 0f, colorRes, totalAmount))
+        val spinner = view?.findViewById<Spinner>(R.id.spinner_categories_income)
+        val selectedCategory = if (spinner?.selectedItemPosition != 0) {
+            spinner?.selectedItem.toString().takeIf { it != "All categories" }
+        } else {
+            null
         }
 
-        updatePieChart()
-        updateTotal()
+        val expenses = expenseRepository.getExpensesFiltered(
+            category = selectedCategory,
+            startDate = startDate,
+            endDate = endDate
+        )
+
+        updateChartWithExpenses(expenses)
+
         calculateProgressBars(
             requireView(),
-            categories.find { it.nombre == "Food" }?.total ?: 0f, 75f,
-            categories.find { it.nombre == "Transport" }?.total ?: 0f, 1f,
-            categories.find { it.nombre == "Health" }?.total ?: 0f, 50f,
-            categories.find { it.nombre == "Others" }?.total ?: 0f, 50f,
-            categories.find { it.nombre == "Home" }?.total ?: 0f, 41f,
-            categories.find { it.nombre == "Recreation" }?.total ?: 0f, 20f
+            expenses.filter { mapCategoryName(it.category) == "Food" }.sumOf { it.amount.toDouble() }.toFloat(), 75f,
+            expenses.filter { mapCategoryName(it.category) == "Transport" }.sumOf { it.amount.toDouble() }.toFloat(), 1f,
+            expenses.filter { mapCategoryName(it.category) == "Health" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { mapCategoryName(it.category) == "Others" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { mapCategoryName(it.category) == "Home" }.sumOf { it.amount.toDouble() }.toFloat(), 41f,
+            expenses.filter { mapCategoryName(it.category) == "Recreation" }.sumOf { it.amount.toDouble() }.toFloat(), 20f
         )
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private fun updatePieChart() {

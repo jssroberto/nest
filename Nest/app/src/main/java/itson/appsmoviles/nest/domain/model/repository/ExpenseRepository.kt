@@ -1,6 +1,8 @@
 package itson.appsmoviles.nest.domain.model.repository
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
@@ -9,7 +11,11 @@ import itson.appsmoviles.nest.domain.model.enums.Category
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -86,20 +92,68 @@ class ExpenseRepository {
         }
     }
 
-    suspend fun getExpensesByCategory(categoryName: String): List<Expense> {
+    suspend fun getExpensesFiltered(category: String?, startDate: String?, endDate: String?): List<Expense> {
         val userId = auth.currentUser?.uid ?: return emptyList()
-
         return try {
-            val snapshot = database.child("usuarios").child(userId).child("gastos")
-                .orderByChild("category").equalTo(categoryName).get().await()
+            val snapshot = database.child("usuarios").child(userId).child("gastos").get().await()
 
             snapshot.children.mapNotNull { gastoSnapshot ->
-                gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
+                val expense = gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
+                expense
+            }.filter { expense ->
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val expenseDate = dateFormat.parse(expense.date)
+
+                val start = startDate?.let { dateFormat.parse(it) }
+                val end = endDate?.let { dateFormat.parse(it) }
+
+                val inDateRange = (start == null || (expenseDate != null && !expenseDate.before(start))) &&
+                        (end == null || (expenseDate != null && !expenseDate.after(end)))
+
+                val inCategory = category == null || expense.category.name == category
+
+                inDateRange && inCategory
             }
+
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error obteniendo gastos por categoría", e)
+            Log.e("ExpenseRepository", "Error filtrando gastos", e)
             emptyList()
         }
     }
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getFilteredExpensesFromFirebase(
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        category: Category? = null
+    ): List<Expense> {
+        val allExpenses = getMovementsFromFirebase()
+
+        // Formato de la fecha que se usa en la base de datos
+        val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+
+        return allExpenses.filter { expense ->
+
+            // Convertir la fecha almacenada como String a LocalDate
+            val expenseDate = try {
+                LocalDate.parse(expense.date, formatter)  // Convierte la fecha del gasto a LocalDate
+            } catch (e: Exception) {
+                null  // Si ocurre un error al parsear la fecha, dejamos expenseDate como null
+            }
+
+            // Verificar si la fecha del gasto está dentro del rango proporcionado
+            val dateMatches = (startDate == null || expenseDate == null || !expenseDate.isBefore(startDate)) &&
+                    (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
+
+            // Filtrar también por categoría si es necesario
+            val categoryMatches = category == null || expense.category == category
+
+            dateMatches && categoryMatches
+        }
+    }
+
+
 
 }

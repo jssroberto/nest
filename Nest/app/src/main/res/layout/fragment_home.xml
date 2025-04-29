@@ -93,7 +93,6 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:gravity="center"
-
                         >
 
                     <TextView

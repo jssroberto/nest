@@ -77,6 +77,7 @@
 
 
         <Button
+                android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:background="@drawable/edittext_rounded"
@@ -112,157 +113,158 @@
             android:text="$"
             android:textSize="22sp" />
 
-        <LinearLayout
+        <GridLayout
+            android:id="@+id/categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="3"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_gravity="center"
+
+            >
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_gravity="center"> <!-- Alinea todo el contenido verticalmente -->
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:layout_gravity="center"> <!-- Alinea los elementos de forma horizontal -->
+                android:gravity="center"
+                android:layout_gravity="start">
 
                 <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/category_food" /> <!-- Centrado horizontalmente -->
-
-                <View
-                        android:layout_marginTop="10dp"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/category_living" /> <!-- Centrado horizontalmente -->
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
-
-                <TextView
-                        android:id="@+id/foodTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/food"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
-
-                <TextView
-                        android:id="@+id/homeTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/home"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"> <!-- Alinea los elementos de forma horizontal -->
-
-                <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/category_transport" /> <!-- Centrado horizontalmente -->
-
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginHorizontal="8dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
                     android:background="@drawable/circle"
-                    android:backgroundTint="@color/category_recreation" /> <!-- Centrado horizontalmente -->
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_living" />
+
+                <TextView
+                    android:id="@+id/homeTextView"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/living" />
 
             </LinearLayout>
 
             <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
-
-                <TextView
-                        android:id="@+id/transportTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/transport"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
-
-                <TextView
-                        android:id="@+id/recreationTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/recreation"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
-
-            </LinearLayout>
-
-            <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"> <!-- Alinea los elementos de forma horizontal -->
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="start"
+                android:layout_marginStart="30dp">
 
                 <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp"
-                        android:backgroundTint="@color/category_health" /> <!-- Centrado horizontalmente -->
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/circle"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_recreation" />
 
-                <View
-                        android:layout_marginTop="10dp"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_other"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="8dp" /> <!-- Centrado horizontalmente -->
+                <TextView
+                    android:id="@+id/recreationTextView"
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recreation" />
 
             </LinearLayout>
 
             <LinearLayout
-                    android:layout_width="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="start"
+
+                >
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/circle"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_transport" />
+
+                <TextView
+                    android:id="@+id/transportTextView"
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"> <!-- Alinea los elementos verticalmente -->
-
-                <TextView
-                        android:id="@+id/healthTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Health"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
-
-                <TextView
-                        android:id="@+id/othersTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Others"
-                        android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
+                    android:text="@string/transport" />
 
             </LinearLayout>
-        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="start"
+                android:layout_marginStart="30dp"
+
+                >
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/circle"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_food" />
+
+                <TextView
+                    android:id="@+id/foodTextView"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/food" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_gravity="start">
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/circle"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_health" />
+
+                <TextView
+                    android:id="@+id/healthTextView"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/health" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginStart="30dp"
+                android:layout_gravity="start">
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/circle"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@color/category_other" />
+
+                <TextView
+                    android:id="@+id/othersTextView"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/other" />
+
+            </LinearLayout>
+
+        </GridLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
