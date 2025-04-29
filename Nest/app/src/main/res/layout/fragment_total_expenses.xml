@@ -153,12 +153,14 @@
                     android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
 
                 <TextView
+                        android:id="@+id/foodTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/food"
                         android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
                 <TextView
+                        android:id="@+id/homeTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/home"
@@ -199,12 +201,14 @@
                     android:layout_marginHorizontal="6dp"> <!-- Alinea los elementos verticalmente -->
 
                 <TextView
+                        android:id="@+id/transportTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/transport"
                         android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
                 <TextView
+                        android:id="@+id/recreationTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/recreation"
@@ -244,12 +248,14 @@
                     android:gravity="center_vertical"> <!-- Alinea los elementos verticalmente -->
 
                 <TextView
+                        android:id="@+id/healthTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Health"
                         android:gravity="center_horizontal" /> <!-- Centrado horizontal del texto -->
 
                 <TextView
+                        android:id="@+id/othersTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Others"
@@ -265,8 +271,8 @@
             android:layout_gravity="center">
 
             <View
-                android:layout_width="7dp"
-                android:layout_height="7dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/circle"
                 android:backgroundTint="@color/primary_color" />
@@ -284,7 +290,7 @@
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/primary_color"
+                android:backgroundTint="@color/txt_income"
                 android:layout_gravity="center_vertical" />
             <TextView
                 android:layout_width="wrap_content"
@@ -429,7 +435,7 @@
                     android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/otros"
+                    android:text="Others"
                     android:gravity="center_vertical" />
         </LinearLayout>
         <View
