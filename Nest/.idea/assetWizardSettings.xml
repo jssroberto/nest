@@ -305,8 +305,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="dropdown" />
-                            <entry key="sourceFile" value="C:\Users\rover\Downloads\dropdown.svg" />
+                            <entry key="outputName" value="btn_clear_filter" />
+                            <entry key="sourceFile" value="C:\Users\rover\Documents\School\Mobile Apps\icons\btn_clear_filter.svg" />
                           </map>
                         </option>
                       </PersistentState>

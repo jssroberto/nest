@@ -151,6 +151,7 @@ class FilterMovementsFragment : DialogFragment() {
             currentYear, currentMonth, currentDay
         )
 
+        datePickerDialog.datePicker.maxDate = calendar.timeInMillis
         datePickerDialog.show()
 
         val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)

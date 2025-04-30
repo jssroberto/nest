@@ -65,7 +65,7 @@ class SignUpActivity : AppCompatActivity() {
             onSuccess = { user ->
                 val intent = Intent(this, MainActivity::class.java).apply {
                     putExtra("user", user.email)
-                    putExtra("name", user.displayName)
+                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 startActivity(intent)
                 finish()
