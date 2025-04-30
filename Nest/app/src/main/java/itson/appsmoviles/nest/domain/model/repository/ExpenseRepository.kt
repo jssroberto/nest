@@ -32,7 +32,7 @@ class ExpenseRepository {
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
         val userId = auth.currentUser?.uid ?: return@withContext onFailure(Exception("User not authenticated"))
-        val newExpenseRef = database.child("usuarios").child(userId).child("gastos").push()
+        val newExpenseRef = database.child("users").child(userId).child("expenses").push()
 
         val expense = mapOf(
             "amount" to amount,
@@ -62,7 +62,7 @@ class ExpenseRepository {
         val userId = auth.currentUser?.uid ?: throw Exception("Invalid user ID")
         if (expenseId.isEmpty()) throw Exception("Invalid expense ID")
 
-        val expenseRef = database.child("usuarios").child(userId).child("gastos").child(expenseId)
+        val expenseRef = database.child("users").child(userId).child("expenses").child(expenseId)
 
         val updatedExpense = mapOf(
             "amount" to amount,
@@ -75,11 +75,11 @@ class ExpenseRepository {
         expenseRef.updateChildren(updatedExpense).await()
     }
 
-    // Método para obtener todos los gastos
+    // Método para obtener todos los expenses
     suspend fun getMovementsFromFirebase(): List<Expense> = withContext(Dispatchers.IO) {
         val userId = auth.currentUser?.uid ?: return@withContext emptyList()
         return@withContext try {
-            val snapshot = database.child("usuarios").child(userId).child("gastos").get().await()
+            val snapshot = database.child("users").child(userId).child("expenses").get().await()
             Log.d("ExpenseRepository", "Firebase snapshot children count: ${snapshot.childrenCount}")
 
             snapshot.children.mapNotNull { gastoSnapshot ->
@@ -95,7 +95,7 @@ class ExpenseRepository {
     suspend fun getExpensesFiltered(category: String?, startDate: String?, endDate: String?): List<Expense> {
         val userId = auth.currentUser?.uid ?: return emptyList()
         return try {
-            val snapshot = database.child("usuarios").child(userId).child("gastos").get().await()
+            val snapshot = database.child("users").child(userId).child("expenses").get().await()
 
             snapshot.children.mapNotNull { gastoSnapshot ->
                 val expense = gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
@@ -116,7 +116,7 @@ class ExpenseRepository {
             }
 
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error filtrando gastos", e)
+            Log.e("ExpenseRepository", "Error filtrando expenses", e)
             emptyList()
         }
     }

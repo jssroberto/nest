@@ -4,6 +4,8 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +17,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +36,7 @@ import itson.appsmoviles.nest.domain.model.entity.Expense
 import itson.appsmoviles.nest.domain.model.enums.Category
 import itson.appsmoviles.nest.domain.model.viewmodel.ExpenseViewModel
 import itson.appsmoviles.nest.presentation.adapter.MovementAdapter
+import java.text.Normalizer
 
 
 class HomeFragment : Fragment() {
@@ -51,6 +53,12 @@ class HomeFragment : Fragment() {
     private lateinit var txtIncome: TextView
     private lateinit var txtExpenses: TextView
     private lateinit var edtSearchHome: EditText
+
+    private lateinit var movementAdapter: MovementAdapter // Make adapter a member variable
+    private var fullExpenseList: List<Expense> = listOf() // Holds ALL expenses
+    private var displayedExpenseList: MutableList<Expense> =
+        mutableListOf() // Holds filtered expenses for display
+
 
     companion object {
         const val NODE_EXPENSES = "expenses"
@@ -76,8 +84,6 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        updateExpenses()
-
         progressContainer = view.findViewById(R.id.progress_bar)
         recyclerView = view.findViewById(R.id.home_recycler_view)
         btnAdd = view.findViewById(R.id.btn_add)
@@ -90,41 +96,97 @@ class HomeFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
+        setupRecyclerView()
+
         viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
-            val sortedExpenses = expenses.sortedByDescending { it.date }
-            initRecyclerView(sortedExpenses)
-            val expenseMap = calculateExpenses(sortedExpenses)
+            fullExpenseList = expenses.sortedByDescending { it.date }
+
+            val expenseMap = calculateExpenses(fullExpenseList)
             paintBudget(expenseMap)
+
+            filterExpenses(edtSearchHome.text.toString())
         }
 
         viewModel.fetchExpenses()
 
+        setupButtonListeners()
+        setupFragmentResultListener()
+        setupSearchListener()
+
+        loadAndDisplayUserData()
+
+        applyBtnAddMargin()
+    }
+
+    private fun setupRecyclerView() {
+        movementAdapter = MovementAdapter(displayedExpenseList)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = movementAdapter
+
+        val dividerItemDecoration =
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        ContextCompat.getDrawable(requireContext(), R.drawable.divider)?.let {
+            dividerItemDecoration.setDrawable(it)
+        }
+        recyclerView.addItemDecoration(dividerItemDecoration)
+    }
+
+    private fun setupButtonListeners() {
         btnAdd.setOnClickListener {
             changeAddFragment()
         }
-
-        applyBtnAddMargin()
-
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
             dialog.show(parentFragmentManager, "FilterMovementsFragment")
         }
-
-        loadAndDisplayUserData()
-
     }
 
-    private fun updateExpenses() {
+    private fun setupFragmentResultListener() {
         parentFragmentManager.setFragmentResultListener(
             "update_expense_result",
             viewLifecycleOwner
         ) { _, result ->
-            val wasUpdated = result.getBoolean("updated", false)
-            if (wasUpdated) {
-                Log.d("HOME_FRAGMENT", "Se actualizó un gasto. Recargando lista.")
+            if (result.getBoolean("updated", false)) {
+                Log.d("HOME_FRAGMENT", "Expense updated. Reloading list.")
                 viewModel.fetchExpenses()
             }
         }
+    }
+
+    private fun setupSearchListener() {
+        edtSearchHome.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterExpenses(s?.toString() ?: "")
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun filterExpenses(query: String) {
+        val queryProcessed = query.lowercase().trim().unaccent()
+
+        val filteredList = if (queryProcessed.isEmpty()) {
+            fullExpenseList
+        } else {
+            fullExpenseList.filter { expense ->
+                val descriptionProcessed = expense.description.lowercase().unaccent()
+                val categoryProcessed = expense.category.name.lowercase().unaccent()
+                val amountProcessed =
+                    expense.amount.toString().lowercase().unaccent() // Use if needed
+
+                descriptionProcessed.contains(queryProcessed) ||
+                        categoryProcessed.contains(queryProcessed) ||
+                        amountProcessed.contains(queryProcessed)
+            }
+        }
+
+        displayedExpenseList.clear()
+        displayedExpenseList.addAll(filteredList)
+
+        movementAdapter.notifyDataSetChanged() // Maybe we'll use DiffUtil
     }
 
     private fun loadAndDisplayUserData() {
@@ -153,19 +215,6 @@ class HomeFragment : Fragment() {
             .mapValues { entry -> entry.value.sumOf { it.amount.toDouble() }.toFloat() }
     }
 
-
-    private fun initRecyclerView(expenses: List<Expense>) {
-        recyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
-            reverseLayout = false
-        }
-        recyclerView.adapter = MovementAdapter(expenses)
-
-        val dividerItemDecoration =
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        val divider = ContextCompat.getDrawable(requireContext(), R.drawable.divider)
-        divider?.let { dividerItemDecoration.setDrawable(it) }
-        recyclerView.addItemDecoration(dividerItemDecoration)
-    }
 
     private fun showUserInfo(user: FirebaseUser) {
         val userName = user.displayName ?: "user"
@@ -327,5 +376,10 @@ class HomeFragment : Fragment() {
     val Int.dp: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
+    private fun String.unaccent(): String {
+        val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)
+        val regex = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+        return regex.replace(normalized, "")
+    }
 
 }

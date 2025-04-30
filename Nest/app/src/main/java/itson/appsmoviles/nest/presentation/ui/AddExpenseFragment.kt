@@ -75,9 +75,7 @@ class AddExpenseFragment : Fragment() {
 
         setRadioColors()
 
-
         viewModel.fetchExpenses()
-
 
         viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
             Log.d("AddExpenseFragment", "Gastos obtenidos: $expenses")

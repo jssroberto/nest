@@ -12,7 +12,6 @@ import android.widget.Toast
 import itson.appsmoviles.nest.R
 
 class PercentageBudgetFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var isEditing = false // Evitar el bucle infinito
 
     override fun onCreateView(
