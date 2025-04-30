@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -24,7 +25,8 @@ class FilterMovementsFragment : DialogFragment() {
     private lateinit var btnStartDate: Button
     private lateinit var btnEndDate: Button
     private lateinit var spinner: Spinner
-    private lateinit var btnFilter: Button
+    private lateinit var btnApplyFilters: Button
+    private lateinit var btnClearFilters: ImageButton
     private lateinit var categories: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +49,8 @@ class FilterMovementsFragment : DialogFragment() {
         btnStartDate = view.findViewById(R.id.btn_start_date_filter)
         btnEndDate = view.findViewById(R.id.btn_end_date_filter)
         spinner = view.findViewById(R.id.spinner_categories_filter)
-        btnFilter = view.findViewById(R.id.btn_filter_movements)
+        btnApplyFilters = view.findViewById(R.id.btn_apply_filters)
+        btnClearFilters = view.findViewById(R.id.btn_clear_filters)
         categories = mutableListOf(
             "Food",
             "Transport",
@@ -65,7 +68,7 @@ class FilterMovementsFragment : DialogFragment() {
             showDatePicker(btnEndDate)
         }
 
-        btnFilter.setOnClickListener {
+        btnApplyFilters.setOnClickListener {
             val startDate = btnStartDate.text.toString()
             val endDate = btnEndDate.text.toString()
             val category = spinner.selectedItem.toString()

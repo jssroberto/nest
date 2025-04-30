@@ -66,5 +66,6 @@
     <string name="card">Card</string>
     <string name="payment_method">Payment Method</string>
     <string name="log_out">Log out</string>
+    <string name="clear_filters">Clear filters</string>
 
 </resources>

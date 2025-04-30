@@ -131,6 +131,7 @@ class HomeFragment : Fragment() {
         recyclerView.addItemDecoration(dividerItemDecoration)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupButtonListeners() {
         btnAdd.setOnClickListener {
             changeAddFragment()
