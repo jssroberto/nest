@@ -341,18 +341,6 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun getCategoryFromString(categoryName: String): CategoryType {
-        return when (categoryName.lowercase()) {
-            "food" -> CategoryType.FOOD
-            "transport" -> CategoryType.TRANSPORT
-            "entertainment" -> CategoryType.RECREATION
-            "home" -> CategoryType.LIVING
-            "health" -> CategoryType.HEALTH
-            "other" -> CategoryType.OTHER
-            else -> CategoryType.OTHER  // Categoría por defecto
-        }
-    }
-
 
     private fun changeAddFragment() {
         val newFragment = AddFragment()

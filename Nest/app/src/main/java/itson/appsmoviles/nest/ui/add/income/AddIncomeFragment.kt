@@ -13,9 +13,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -55,6 +57,38 @@ class AddIncomeFragment : Fragment() {
         btnDate.setOnClickListener {
             showDatePicker(btnDate)
         }
+
+        val btnAddIncome = view.findViewById<Button>(R.id.btn_add_income)
+        val incomeViewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
+
+        btnAddIncome.setOnClickListener {
+            val amountStr = edtAmount.text.toString().replace("$", "").trim()
+            val category = spinner.selectedItem.toString()
+            val date = btnDate.text.toString()
+
+            if (amountStr.isBlank() || category == "Select a category" || date == "Select Date") {
+                Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val amount = amountStr.toDoubleOrNull()
+            if (amount == null) {
+                Toast.makeText(requireContext(), "Invalid amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            incomeViewModel.addIncome(amount, category, date)
+        }
+
+        incomeViewModel.isIncomeAdded.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Income added successfully!", Toast.LENGTH_SHORT).show()
+                // Optional: clear fields or navigate
+            } else {
+                Toast.makeText(requireContext(), "Failed to add income", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     }
 
