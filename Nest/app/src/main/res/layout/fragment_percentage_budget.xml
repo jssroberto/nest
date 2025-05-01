@@ -19,7 +19,7 @@
             android:layout_gravity="start"
             android:paddingBottom="15dp"
             android:fontFamily="@font/lexend_medium"
-            android:text="Edit your budget"
+            android:text="@string/edit_budget"
             android:textSize="@dimen/text_size_large" />
 
 
@@ -87,7 +87,7 @@
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
-                        android:text="Income"
+                        android:text="@string/income"
                         android:textSize="@dimen/text_size_medium"
                         android:textColor="@color/blue" />
 
@@ -116,7 +116,7 @@
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
-                        android:text="Expense"
+                        android:text="@string/expense"
                         android:textColor="@color/txt_expense" />
 
                     <TextView
@@ -156,9 +156,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
-                        android:text="Net Balance"
-                        android:textSize="@dimen/text_size_medium"
-                        />
+                        android:text="@string/net_balance"
+                        android:textSize="@dimen/text_size_medium" />
 
 
                 </LinearLayout>
@@ -194,7 +193,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Choose an estimated budget per category"
+            android:text="@string/categories_budget"
             android:textSize="@dimen/text_size_medium"
             android:fontFamily="@font/lexend_medium"
             android:gravity="center_horizontal"
@@ -233,7 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Food"
+                        android:text="@string/food"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -247,8 +246,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
@@ -320,7 +320,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Home"
+                        android:text="@string/home"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -330,12 +330,13 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmHome"
+                            android:id="@+id/checkBoxAlarmFood"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
@@ -405,7 +406,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Health"
+                        android:text="@string/health"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -415,12 +416,13 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmHealth"
+                            android:id="@+id/checkBoxAlarmFood"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
@@ -490,7 +492,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Recreation"
+                        android:text="@string/recreation"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -500,12 +502,13 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmRecreation"
+                            android:id="@+id/checkBoxAlarmFood"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
@@ -575,7 +578,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Transport"
+                        android:text="@string/transport"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -585,12 +588,13 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmTransport"
+                            android:id="@+id/checkBoxAlarmFood"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
@@ -660,7 +664,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Others"
+                        android:text="@string/other"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
@@ -670,12 +674,13 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmOthers"
+                            android:id="@+id/checkBoxAlarmFood"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
+                            android:layout_marginEnd="5dp"
                             android:checked="false"
-                            android:text="Set Alarm At: "
+                            android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
                             android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />

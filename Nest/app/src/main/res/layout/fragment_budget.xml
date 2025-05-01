@@ -113,26 +113,26 @@
                         android:orientation="horizontal">
 
                     <TextView
-                            android:layout_width="70dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:text="@string/expense"
-                                    android:textColor="@color/txt_expense" />
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/expense"
+                        android:textColor="@color/txt_expense" />
 
                     <TextView
-                            android:layout_width="15dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="-"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/txt_expense" />
+                        android:layout_width="15dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="-"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/txt_expense" />
 
                     <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="$250"
-                                    android:textSize="@dimen/text_size_large"
-                            android:textColor="@color/txt_expense" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="$250"
+                        android:textSize="@dimen/text_size_large"
+                        android:textColor="@color/txt_expense" />
 
                 </LinearLayout>
 
@@ -153,12 +153,11 @@
                         android:layout_gravity="end">
 
                     <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
-                            android:text="@string/net_balance"
-                            android:textSize="@dimen/text_size_medium"
-                                     />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/net_balance"
+                        android:textSize="@dimen/text_size_medium" />
 
 
                 </LinearLayout>
