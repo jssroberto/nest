@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name=".presentation.NestApplication"
+        android:name=".NestApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,7 +14,7 @@
         android:theme="@style/Nest"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.SignInActivity"
+            android:name=".ui.auth.signin.SignInActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -24,12 +24,12 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
-            android:name=".presentation.ui.SignUpActivity"
+            android:name=".ui.auth.signup.SignUpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan">
         </activity>
