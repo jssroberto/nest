@@ -8,6 +8,11 @@
     android:orientation="vertical"
     tools:context=".ui.profile.ProfileFragment">
 
+
+
+
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +22,11 @@
         android:gravity="start"
         />
 
+
+
+
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +34,11 @@
         android:text="@string/settings_user_info"
         
         android:layout_marginTop="26dp" />
+
+
+
+
+
 
     <TextView
             android:layout_width="match_parent"
@@ -35,16 +50,25 @@
             android:paddingStart="7dp"
             android:paddingEnd="0dp" />
 
+
+
+
+
     <EditText
-            android:id="@+id/editTextName"
+            android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_rounded"
             android:inputType="textPersonName"
-            android:layout_marginTop="5dp"
-            android:text="Ramiro Arnoldo" />
+            android:layout_marginTop="5dp"/>
+
+
+
+
+
 
     <TextView
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -61,8 +85,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_rounded"
         android:inputType="textEmailAddress"
-        android:layout_marginTop="5dp"
-        android:text="ramoldo1@gmail.com"/>
+        android:layout_marginTop="5dp"/>
+
+
+
+
+
 
     <TextView
         android:layout_width="match_parent"
@@ -72,7 +100,14 @@
         
         android:layout_marginTop="26dp" />
 
+
+
+
+
+
     <TextView
+
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -125,6 +160,10 @@
             android:fontFamily="@font/lexend_medium"
  />
 
+
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -150,6 +189,10 @@
             android:fontFamily="@font/lexend_light"
             android:visibility="invisible" />
     </LinearLayout>
+
+
+
+
 
     <TextView
         android:id="@+id/btn_logout"

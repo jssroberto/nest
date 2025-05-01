@@ -16,10 +16,32 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.auth.signin.SignInActivity
+import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_EXPENSES
+import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_INCOMES
 
 class ProfileFragment : Fragment() {
+
+
+
+
+
+
+    private val auth = FirebaseAuth.getInstance()
+    private lateinit var editTextUsername: EditText
+    private lateinit var editTextEmail: EditText
+    private lateinit var btnLogOut: TextView
+    private lateinit var editTextOldPass: EditText
+    private lateinit var editTextNewPass: EditText
+    private lateinit var buttonSaveChanges: Button
+
+
+
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,13 +53,27 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btnLogOut = view.findViewById<TextView>(R.id.btn_logout)
-        val editTextOldPass = view.findViewById<EditText>(R.id.editTextOldPass)
-        val editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
-        val buttonSaveChanges = view.findViewById<Button>(R.id.buttonSaveChanges)
+
+
+
+
+
+
+        btnLogOut = view.findViewById<TextView>(R.id.btn_logout)
+        editTextUsername = view.findViewById<EditText>(R.id.editTextUsername)
+        editTextEmail = view.findViewById<EditText>(R.id.editTextEmail)
+        editTextOldPass = view.findViewById<EditText>(R.id.editTextOldPass)
+        editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
+        buttonSaveChanges = view.findViewById<Button>(R.id.buttonSaveChanges)
+
+
+
+
+
 
         setupPasswordToggle(editTextOldPass)
         setupPasswordToggle(editTextNewPass)
+        loadAndDisplayUserData()
 
         buttonSaveChanges.setOnClickListener {
             if (!validarCampos(view)) {
@@ -55,8 +91,41 @@ class ProfileFragment : Fragment() {
         }
     }
 
+
+
+
+
+
+
+    private fun loadAndDisplayUserData() {
+        val currentUser = auth.currentUser
+
+        if (currentUser == null) {
+            editTextUsername.setText("---")
+            editTextEmail.setText("---")
+            return
+        }
+
+        showUserInfo(currentUser)
+
+    }
+
+
+
+
+
+
+    private fun showUserInfo(user: FirebaseUser) {
+        val username = user.displayName ?: "user"
+        val email = user.email ?: "email"
+        editTextUsername.setText(username)
+        editTextEmail.setText(email)
+
+
+    }
+
     private fun validarCampos(view: View): Boolean {
-        val editTextName = view.findViewById<EditText>(R.id.editTextName)
+        val editTextName = view.findViewById<EditText>(R.id.editTextUsername)
         val editTextEmail = view.findViewById<EditText>(R.id.editTextEmail)
         val editTextOldPass = view.findViewById<EditText>(R.id.editTextOldPass)
         val editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
@@ -131,4 +200,239 @@ class ProfileFragment : Fragment() {
             return@setOnTouchListener true
         }
     }
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
