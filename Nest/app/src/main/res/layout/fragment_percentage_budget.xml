@@ -330,7 +330,7 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmFood"
+                            android:id="@+id/checkBoxAlarmHome"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
@@ -416,7 +416,7 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmFood"
+                            android:id="@+id/checkBoxAlarmHealth"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
@@ -502,7 +502,7 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmFood"
+                            android:id="@+id/checkBoxAlarmRecreation"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
@@ -588,7 +588,7 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmFood"
+                            android:id="@+id/checkBoxAlarmTransport"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
@@ -674,7 +674,7 @@
                         android:orientation="horizontal">
 
                         <CheckBox
-                            android:id="@+id/checkBoxAlarmFood"
+                            android:id="@+id/checkBoxAlarmOthers"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
