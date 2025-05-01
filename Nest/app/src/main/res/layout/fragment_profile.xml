@@ -8,37 +8,20 @@
     android:orientation="vertical"
     tools:context=".ui.profile.ProfileFragment">
 
-
-
-
-
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/text_size_large"
         android:text="@string/settings_title"
-        
-        android:gravity="start"
+                android:gravity="start"
         />
-
-
-
-
-
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_user_info"
-        
         android:layout_marginTop="26dp" />
-
-
-
-
-
 
     <TextView
             android:layout_width="match_parent"
@@ -50,10 +33,6 @@
             android:paddingStart="7dp"
             android:paddingEnd="0dp" />
 
-
-
-
-
     <EditText
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
@@ -62,13 +41,7 @@
             android:inputType="textPersonName"
             android:layout_marginTop="5dp"/>
 
-
-
-
-
-
     <TextView
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -87,27 +60,14 @@
         android:inputType="textEmailAddress"
         android:layout_marginTop="5dp"/>
 
-
-
-
-
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:text="@string/settings_change_pass"
-        
         android:layout_marginTop="26dp" />
 
-
-
-
-
-
     <TextView
-
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp"
@@ -157,12 +117,7 @@
         android:layout_gravity="center"
         android:text="@string/save_changes"
         android:textAllCaps="true"
-            android:fontFamily="@font/lexend_medium"
- />
-
-
-
-
+        android:fontFamily="@font/lexend_medium" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -190,10 +145,6 @@
             android:visibility="invisible" />
     </LinearLayout>
 
-
-
-
-
     <TextView
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
@@ -204,8 +155,4 @@
         android:layout_marginTop="40dp"
         android:paddingStart="7dp"
         android:paddingEnd="0dp"/>
-
-
-
-
 </LinearLayout>

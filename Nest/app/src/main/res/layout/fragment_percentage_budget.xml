@@ -490,7 +490,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="Reacreation"
+                        android:text="Recreation"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout

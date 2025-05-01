@@ -23,12 +23,6 @@ import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_EXPENSES
 import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_INCOMES
 
 class ProfileFragment : Fragment() {
-
-
-
-
-
-
     private val auth = FirebaseAuth.getInstance()
     private lateinit var editTextUsername: EditText
     private lateinit var editTextEmail: EditText
@@ -36,12 +30,6 @@ class ProfileFragment : Fragment() {
     private lateinit var editTextOldPass: EditText
     private lateinit var editTextNewPass: EditText
     private lateinit var buttonSaveChanges: Button
-
-
-
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,23 +41,12 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-
-
-
-
         btnLogOut = view.findViewById<TextView>(R.id.btn_logout)
         editTextUsername = view.findViewById<EditText>(R.id.editTextUsername)
         editTextEmail = view.findViewById<EditText>(R.id.editTextEmail)
         editTextOldPass = view.findViewById<EditText>(R.id.editTextOldPass)
         editTextNewPass = view.findViewById<EditText>(R.id.editTextNewPass)
         buttonSaveChanges = view.findViewById<Button>(R.id.buttonSaveChanges)
-
-
-
-
-
 
         setupPasswordToggle(editTextOldPass)
         setupPasswordToggle(editTextNewPass)
@@ -91,12 +68,6 @@ class ProfileFragment : Fragment() {
         }
     }
 
-
-
-
-
-
-
     private fun loadAndDisplayUserData() {
         val currentUser = auth.currentUser
 
@@ -109,11 +80,6 @@ class ProfileFragment : Fragment() {
         showUserInfo(currentUser)
 
     }
-
-
-
-
-
 
     private fun showUserInfo(user: FirebaseUser) {
         val username = user.displayName ?: "user"
@@ -200,239 +166,4 @@ class ProfileFragment : Fragment() {
             return@setOnTouchListener true
         }
     }
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
