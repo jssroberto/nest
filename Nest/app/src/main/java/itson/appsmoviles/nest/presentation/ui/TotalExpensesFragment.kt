@@ -115,26 +115,24 @@ class TotalExpensesFragment : Fragment() {
     }
 
     private fun updateChartWithExpenses(expenses: List<Expense>) {
+
+        categories.forEach { it.total = 0.0f }
+
         val groupedExpenses = expenses.groupBy { mapCategoryName(it.category) }
 
-        categories.clear()
         groupedExpenses.forEach { (name, expensesList) ->
             val totalAmount = expensesList.sumOf { it.amount.toDouble() }.toFloat()
-            val colorRes = when (name) {
-                "Health" -> R.color.category_health
-                "Home" -> R.color.category_living
-                "Food" -> R.color.category_food
-                "Recreation" -> R.color.category_recreation
-                "Transport" -> R.color.category_transport
-                "Others" -> R.color.category_other
-                else -> R.color.gray
+
+
+            categories.find { it.nombre == name }?.let {
+                it.total = totalAmount
             }
-            categories.add(Categoria(name, 0f, colorRes, totalAmount))
         }
 
         updatePieChart()
         updateTotal()
     }
+
 
 
     private fun setupCategoryTextViews(view: View) {
@@ -204,7 +202,7 @@ class TotalExpensesFragment : Fragment() {
 
 
     private fun highlightSelectedCategory(selectedTextView: TextView, categoryName: String) {
-        clearAllCategorySelections() // Limpia las selecciones previas
+        clearAllCategorySelections()
 
 
         selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
@@ -252,20 +250,39 @@ class TotalExpensesFragment : Fragment() {
 
         graphView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                // Cuando tocas el gráfico: cancelar selección
-                if (selectedCategoryName != null) {
+                val x = event.x
+                val y = event.y
+                val clickedCategory = pieChartDrawable.getCategoryFromTouch(x, y)
+
+                if (clickedCategory != null) {
+                    if (pieChartDrawable.selectedCategoria == clickedCategory) {
+                        // Ya estaba seleccionada → deselecciona
+                        selectedCategoryName = null
+                        pieChartDrawable.selectedCategoria = null
+                        clearAllCategorySelections()
+                    } else {
+                        // Selecciona nueva categoría
+                        selectedCategoryName = clickedCategory.nombre
+                        pieChartDrawable.selectedCategoria = clickedCategory
+                        categoryTextViews.find { it.tag == clickedCategory.nombre }?.let {
+                            highlightSelectedCategory(it, clickedCategory.nombre)
+                        }
+                    }
+                } else {
+                    // Tocó fuera del gráfico
                     selectedCategoryName = null
-                    clearAllCategorySelections()
                     pieChartDrawable.selectedCategoria = null
-                    graphView.invalidate()
+                    clearAllCategorySelections()
                 }
+
+                graphView.invalidate()
             }
             true
         }
     }
 
 
-    private fun showDatePicker(button: Button) {
+        private fun showDatePicker(button: Button) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
@@ -283,7 +300,6 @@ class TotalExpensesFragment : Fragment() {
 
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
 
-        // Si el usuario presiona "Cancelar", restaurar el texto original
         datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar") { _, _ ->
             when (button.id) {
                 R.id.btn_date_income -> button.text = "Start date"
@@ -361,13 +377,7 @@ class TotalExpensesFragment : Fragment() {
         pieChartDrawable = PieChartDrawable(requireContext(), categories)
         graphView?.background = pieChartDrawable
 
-        graphView?.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                pieChartDrawable.onTouch(event.x, event.y)
-                graphView.invalidate()
-            }
-            true
-        }
+
     }
 
 

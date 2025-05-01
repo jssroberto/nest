@@ -77,37 +77,36 @@ class PieChartDrawable(context: Context, var categorias: ArrayList<Categoria>) :
     override fun getOpacity(): Int {
         return PixelFormat.OPAQUE
     }
+    fun getCategoryFromTouch(x: Float, y: Float): Categoria? {
+        coordenadas?.let { rect ->
+            val cx = rect.centerX()
+            val cy = rect.centerY()
+            val dx = x - cx
+            val dy = y - cy
+            val distance = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
 
-    // Método que se llama cuando el gráfico es tocado
-    fun onTouch(x: Float, y: Float) {
-        val centroX = bounds.width() / 2f
-        val centroY = bounds.height() / 2f
-        val dx = x - centroX
-        val dy = y - centroY
-        val distancia = sqrt(dx * dx + dy * dy)
+            // Si tocó fuera del círculo
+            val radius = rect.width() / 2
+            if (distance > radius) return null
 
-        val radio = bounds.width() / 2.5f
-        if (distancia > radio) {
-            // Si el toque está fuera del gráfico, deseleccionar la categoría
-            selectedCategoria = null // Restaurar el estado original
-            invalidateSelf() // Redibujar
-            return
-        }
+            // Ángulo tocado
+            var angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
+            if (angle < 0) angle += 360f
 
-        val anguloToque = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
-        val anguloNormalizado = if (anguloToque < 0) anguloToque + 360 else anguloToque
+            // Recorrer cada categoría para ver en qué ángulo está
+            var startAngle = 0f
+            for (categoria in categorias) {
+                val sweepAngle = (categoria.porcentaje * 360) / 100
+                val endAngle = startAngle + sweepAngle
 
-        var anguloActual = 0f
-        for (categoria in categorias) {
-            val anguloBarrido = (categoria.porcentaje * 360) / 100
-            if (anguloNormalizado in anguloActual..(anguloActual + anguloBarrido)) {
-                selectedCategoria = categoria // Seleccionar la categoría
-                touchX = x
-                touchY = y
-                break
+                if (angle >= startAngle && angle < endAngle) {
+                    return categoria
+                }
+                startAngle = endAngle
             }
-            anguloActual += anguloBarrido
         }
-        invalidateSelf() // Redibujar el gráfico después de seleccionar
+
+        return null
     }
+
 }
