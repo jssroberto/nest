@@ -290,7 +290,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/dark_blue"
+                android:backgroundTint="@color/edt_text"
                 android:background="@drawable/layout_rounded_bg" />
 
             <LinearLayout
@@ -375,7 +375,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/dark_blue"
+                android:backgroundTint="@color/edt_text"
                 android:background="@drawable/layout_rounded_bg" />
 
             <LinearLayout
@@ -460,7 +460,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/dark_blue"
+                android:backgroundTint="@color/edt_text"
                 android:background="@drawable/layout_rounded_bg" />
 
             <LinearLayout
@@ -545,7 +545,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/dark_blue"
+                android:backgroundTint="@color/edt_text"
                 android:background="@drawable/layout_rounded_bg" />
 
             <LinearLayout
@@ -630,7 +630,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/dark_blue"
+                android:backgroundTint="@color/edt_text"
                 android:background="@drawable/layout_rounded_bg" />
 
             <LinearLayout
