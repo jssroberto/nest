@@ -9,7 +9,7 @@ data class Expense(
     var description: String,
     var amount: Float,
     var paymentMethod: PaymentMethod,
-    var date: String
+    var date: Long
 ) {
 
     constructor() : this(
@@ -18,7 +18,7 @@ data class Expense(
         description = "",
         amount = 0.0f,
         paymentMethod = PaymentMethod.UNKNOWN,
-        date = ""
+        date = 0L
     )
 
 }

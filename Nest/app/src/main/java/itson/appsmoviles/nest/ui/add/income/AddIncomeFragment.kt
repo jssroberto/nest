@@ -59,7 +59,7 @@ class AddIncomeFragment : Fragment() {
         }
 
         val btnAddIncome = view.findViewById<Button>(R.id.btn_add_income)
-        val incomeViewModel = ViewModelProvider(this)[IncomeViewModel::class.java]
+        val addIncomeViewModel = ViewModelProvider(this)[AddIncomeViewModel::class.java]
 
         btnAddIncome.setOnClickListener {
             val amountStr = edtAmount.text.toString().replace("$", "").trim()
@@ -77,10 +77,10 @@ class AddIncomeFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            incomeViewModel.addIncome(amount, category, date)
+            addIncomeViewModel.addIncome(amount, category, date)
         }
 
-        incomeViewModel.isIncomeAdded.observe(viewLifecycleOwner) { success ->
+        addIncomeViewModel.isIncomeAdded.observe(viewLifecycleOwner) { success ->
             if (success) {
                 Toast.makeText(requireContext(), "Income added successfully!", Toast.LENGTH_SHORT).show()
                 // Optional: clear fields or navigate

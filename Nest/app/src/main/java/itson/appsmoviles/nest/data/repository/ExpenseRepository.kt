@@ -12,7 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -26,7 +28,7 @@ class ExpenseRepository {
         description: String,
         categoryType: CategoryType,
         paymentMethod: String,
-        date: String,
+        date: Long,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
@@ -56,7 +58,7 @@ class ExpenseRepository {
         description: String,
         categoryType: CategoryType,
         paymentMethod: PaymentMethod,
-        date: String
+        date: Long
     ) {
         val userId = auth.currentUser?.uid ?: throw Exception("Invalid user ID")
         if (expenseId.isEmpty()) throw Exception("Invalid expense ID")
@@ -97,17 +99,17 @@ class ExpenseRepository {
             val snapshot = database.child("users").child(userId).child("expenses").get().await()
 
             snapshot.children.mapNotNull { gastoSnapshot ->
-                val expense = gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
-                expense
+                gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
             }.filter { expense ->
-                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                val expenseDate = dateFormat.parse(expense.date)
+                val startMillis = startDate?.let {
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time
+                }
+                val endMillis = endDate?.let {
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time?.plus(86_399_999)
+                }
 
-                val start = startDate?.let { dateFormat.parse(it) }
-                val end = endDate?.let { dateFormat.parse(it) }
-
-                val inDateRange = (start == null || (expenseDate != null && !expenseDate.before(start))) &&
-                        (end == null || (expenseDate != null && !expenseDate.after(end)))
+                val inDateRange = (startMillis == null || expense.date >= startMillis) &&
+                        (endMillis == null || expense.date <= endMillis)
 
                 val inCategory = category == null || expense.category.name == category
 
@@ -122,6 +124,7 @@ class ExpenseRepository {
 
 
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getFilteredExpensesFromFirebase(
         startDate: LocalDate?,
@@ -130,28 +133,25 @@ class ExpenseRepository {
     ): List<Expense> {
         val allExpenses = getMovementsFromFirebase()
 
-        // Formato de la fecha que se usa en la base de datos
-        val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-
         return allExpenses.filter { expense ->
-
-            // Convertir la fecha almacenada como String a LocalDate
+            // Convert the Long timestamp to LocalDate
             val expenseDate = try {
-                LocalDate.parse(expense.date, formatter)  // Convierte la fecha del gasto a LocalDate
+                Instant.ofEpochMilli(expense.date)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
             } catch (e: Exception) {
-                null  // Si ocurre un error al parsear la fecha, dejamos expenseDate como null
+                null
             }
 
-            // Verificar si la fecha del gasto está dentro del rango proporcionado
             val dateMatches = (startDate == null || expenseDate == null || !expenseDate.isBefore(startDate)) &&
                     (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
 
-            // Filtrar también por categoría si es necesario
             val categoryMatches = categoryType == null || expense.category == categoryType
 
             dateMatches && categoryMatches
         }
     }
+
 
 
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import itson.appsmoviles.nest.data.repository.IncomeRepository
 import kotlinx.coroutines.launch
 
-class IncomeViewModel : ViewModel() {
+class AddIncomeViewModel : ViewModel() {
     private val repository = IncomeRepository()
 
     private val _isIncomeAdded = MutableLiveData<Boolean>()

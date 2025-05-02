@@ -32,15 +32,13 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.enums.CategoryType
-import itson.appsmoviles.nest.ui.add.expense.ExpenseViewModel
+import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.ui.add.AddFragment
+import itson.appsmoviles.nest.ui.add.expense.AddExpenseViewModel
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
-import itson.appsmoviles.nest.ui.main.MainActivity
 import java.text.Normalizer
-import kotlin.collections.iterator
 
 
 class HomeFragment : Fragment() {
@@ -52,7 +50,7 @@ class HomeFragment : Fragment() {
     private lateinit var btnAdd: ImageButton
     private lateinit var bottonNav: BottomNavigationView
     private lateinit var btnFilter: ImageButton
-    private lateinit var viewModel: ExpenseViewModel
+    private lateinit var viewModel: AddExpenseViewModel
     private lateinit var txtWelcome: TextView
     private lateinit var txtIncome: TextView
     private lateinit var txtExpenses: TextView
@@ -98,7 +96,7 @@ class HomeFragment : Fragment() {
         txtExpenses = view.findViewById(R.id.txt_expenses_home)
         edtSearchHome = view.findViewById(R.id.edt_search_home)
 
-        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AddExpenseViewModel::class.java]
 
         setupRecyclerView()
 
@@ -129,6 +127,7 @@ class HomeFragment : Fragment() {
 
         val dividerItemDecoration =
             DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+
         ContextCompat.getDrawable(requireContext(), R.drawable.divider)?.let {
             dividerItemDecoration.setDrawable(it)
         }
@@ -224,8 +223,6 @@ class HomeFragment : Fragment() {
     private fun showUserInfo(user: FirebaseUser) {
         val userName = user.displayName ?: "user"
         txtWelcome.text = "Hi $userName\nhere's your monthly overview"
-
-
     }
 
     private fun updateAmountTextView(result: Result<Double>, textView: TextView) {
@@ -308,7 +305,6 @@ class HomeFragment : Fragment() {
         paintRemainingBudget(usedBudget)
     }
 
-
     private fun paintRemainingBudget(usedBudget: Float) {
         val remainingBudget = totalBudget - usedBudget
         if (remainingBudget > 0) {
@@ -325,6 +321,7 @@ class HomeFragment : Fragment() {
     }
 
 
+    // TODO move this to a util class
     private fun getCategoryColors(): Map<CategoryType, String> {
         fun colorToHex(colorResId: Int): String {
             val colorInt = ContextCompat.getColor(requireContext(), colorResId)

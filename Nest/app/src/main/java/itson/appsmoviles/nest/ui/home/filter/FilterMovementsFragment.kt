@@ -28,6 +28,8 @@ class FilterMovementsFragment : DialogFragment() {
     private lateinit var btnApplyFilters: Button
     private lateinit var btnClearFilters: ImageButton
     private lateinit var categories: MutableList<String>
+    private var selectedDate: String? = null
+    private var selectedTimestamp: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,23 +147,35 @@ class FilterMovementsFragment : DialogFragment() {
             requireContext(),
             R.style.Nest_DatePicker,
             { _, year, month, day ->
-                val selectedDate = formatDate(day, month, year)
+                val selectedCalendar = Calendar.getInstance()
+
+                selectedCalendar.set(year, month, day, 0, 0, 0)
+                selectedCalendar.set(Calendar.MILLISECOND, 0)
+
+                val timestampMillis = selectedCalendar.timeInMillis
+                selectedTimestamp = timestampMillis
+
+                selectedDate = "$day/${month + 1}/$year"
 
                 btnDate.apply {
                     text = selectedDate
+                    setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
                 }
             },
             currentYear, currentMonth, currentDay
         )
 
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis
+
+        datePickerDialog.setOnShowListener { dialogInterface ->
+            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
+            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
+
+            positiveButton?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+            negativeButton?.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
+        }
+
         datePickerDialog.show()
-
-        val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-        val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-
-        positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-        negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

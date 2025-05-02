@@ -11,6 +11,8 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.enums.CategoryType
 import itson.appsmoviles.nest.ui.home.ExpenseDetailDialogFragment
+import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -23,11 +25,14 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MovementViewHolder, position: Int) {
         val item = items[position]
-        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy - HH:mm", Locale.getDefault())
+        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault())
 
         holder.description.text = item.description
         holder.amount.text = "$${item.amount}"
-        holder.date.text = item.date.format(formatter)
+        val dateTime = Instant.ofEpochMilli(item.date)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime()
+        holder.date.text = dateTime.format(formatter)
 
         val iconResId = when (item.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
@@ -48,7 +53,7 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
                 putString("id", item.id)
                 putString("description", item.description)
                 putFloat("amount", item.amount)
-                putString("date", item.date.toString())
+                putLong("date", item.date)
                 putString("category", item.category.name)
                 putString("paymentMethod", item.paymentMethod.name)
             }

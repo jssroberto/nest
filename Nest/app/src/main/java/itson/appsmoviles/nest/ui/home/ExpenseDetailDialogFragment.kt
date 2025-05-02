@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -21,6 +22,9 @@ import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.enums.CategoryType
 import itson.appsmoviles.nest.data.enums.PaymentMethod
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
+import itson.appsmoviles.nest.ui.util.formatDateLongForm
+import itson.appsmoviles.nest.ui.util.showDatePicker
+import itson.appsmoviles.nest.ui.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +38,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
     private lateinit var etDate: EditText
     private lateinit var categoryImageView: ImageView
     private lateinit var btnSave: Button
+    private var selectedTimestamp: Long? = null
 
     private lateinit var expense: Expense
 
@@ -43,7 +48,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                 arguments = Bundle().apply {
                     putString("description", expense.description)
                     putFloat("amount", expense.amount)
-                    putString("date", expense.date)
+                    putLong("date", expense.date)
                     putString("category", expense.category.name)
                     putString("id", expense.id)
                     putString("paymentMethod", expense.paymentMethod.name)
@@ -81,12 +86,11 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                 PaymentMethod.entries.find { it.name.equals(name, ignoreCase = true) }
             } ?: PaymentMethod.CARD
 
-
             expense = Expense(
                 id = getString("id") ?: "",
                 description = getString("description") ?: "",
                 amount = getFloat("amount", 0f),
-                date = getString("date") ?: "",
+                date = getLong("date", 0L),
                 category = categoryType,
                 paymentMethod = paymentMethodType
             )
@@ -94,7 +98,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
         etDescription.setText(expense.description)
         etAmount.setText(expense.amount.toString())
-        etDate.setText(expense.date)
+        etDate.setText(formatDateLongForm(expense.date))
 
         val iconResId = when (expense.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
@@ -110,54 +114,26 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         btnSave.setOnClickListener { saveExpense() }
 
         etDate.setOnClickListener {
-            showDatePicker(etDate)
+            showDatePicker(
+                context = requireContext(),
+                onDateSelected = { timestampMillis ->
+                    selectedTimestamp = timestampMillis
+                    etDate.setText(formatDateLongForm(selectedTimestamp!!))
+                }
+            )
         }
-
-        etDate.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                showDatePicker(etDate)
-            }
-        }
-    }
-
-    private fun showDatePicker(editText: EditText) {
-        val calendar = Calendar.getInstance()
-        val currentYear = calendar.get(Calendar.YEAR)
-        val currentMonth = calendar.get(Calendar.MONTH)
-        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            R.style.Nest_DatePicker,
-            { _, year, month, dayOfMonth ->
-                val selectedDate = "${dayOfMonth}/${month + 1}/$year"
-                editText.setText(selectedDate)
-                editText.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-            },
-            currentYear, currentMonth, currentDay
-        )
-
-        datePickerDialog.setOnShowListener {
-            val positiveButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-            val negativeButton = datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-
-            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-        }
-
-        datePickerDialog.show()
     }
 
     private fun saveExpense() {
         val updatedDescription = etDescription.text.toString()
         val updatedAmount = etAmount.text.toString().toFloatOrNull() ?: 0.0f
-        val updatedDate = etDate.text.toString()
+        val updatedDate = etDate.text.toString().toLong()
 
-        if (updatedDescription.isNotEmpty() && updatedAmount > 0 && updatedDate.isNotEmpty()) {
+        if (updatedDescription.isNotEmpty() && updatedAmount > 0 && updatedDate.toString().isNotEmpty()) {
             expense = expense.copy(description = updatedDescription, amount = updatedAmount, date = updatedDate)
             updateExpenseInDatabase(expense)
         } else {
-            Toast.makeText(requireContext(), "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
+            showToast(requireContext(), "Please fill in all fields")
         }
     }
 
@@ -177,7 +153,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                     )
                 }
 
-                Toast.makeText(requireContext(), "¡Gasto actualizado!", Toast.LENGTH_SHORT).show()
+                showToast(requireContext(), "Expense updated successfully")
                 parentFragmentManager.setFragmentResult(
                     "update_expense_result",
                     bundleOf("updated" to true)
@@ -187,7 +163,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
             } catch (e: Exception) {
                 Log.e("UPDATE_ERROR", "Falló la actualización", e)
-                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showToast(requireContext(), "Failed to update expense ${e.message}")
             }
         }
     }

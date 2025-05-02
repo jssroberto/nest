@@ -19,8 +19,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.auth.signin.SignInActivity
-import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_EXPENSES
-import itson.appsmoviles.nest.ui.home.HomeFragment.Companion.NODE_INCOMES
 
 class ProfileFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
@@ -60,7 +58,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        btnLogOut.setOnClickListener(){
+        btnLogOut.setOnClickListener() {
             FirebaseAuth.getInstance().signOut()
             val intentSignIn = Intent(requireContext(), SignInActivity::class.java)
             intentSignIn.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -155,7 +153,8 @@ class ProfileFragment : Fragment() {
             isPasswordVisible = !isPasswordVisible
 
             if (!isPasswordVisible) {
-                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                editText.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.eye, 0)
             } else {
                 editText.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD

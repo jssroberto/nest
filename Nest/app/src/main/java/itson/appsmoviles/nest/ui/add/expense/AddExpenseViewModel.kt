@@ -1,6 +1,5 @@
 package itson.appsmoviles.nest.ui.add.expense
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,7 @@ import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import kotlinx.coroutines.launch
 
-class ExpenseViewModel : ViewModel() {
+class AddExpenseViewModel : ViewModel() {
     private val repository = ExpenseRepository()
 
     private val _expenses = MutableLiveData<List<Expense>>()
@@ -27,7 +26,7 @@ class ExpenseViewModel : ViewModel() {
         description: String,
         categoryType: CategoryType,
         paymentMethod: String,
-        date: String,
+        date: Long,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {

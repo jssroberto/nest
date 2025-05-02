@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.ui.add
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -14,6 +16,7 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.add.income.AddIncomeFragment
 import itson.appsmoviles.nest.ui.add.expense.AddExpenseFragment
 
+@RequiresApi(Build.VERSION_CODES.O)
 class AddFragment : Fragment() {
 
     private lateinit var switchAdd: SwitchCompat
