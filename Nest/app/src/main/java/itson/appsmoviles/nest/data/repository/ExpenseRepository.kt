@@ -109,7 +109,7 @@ class ExpenseRepository {
                 val inDateRange = (start == null || (expenseDate != null && !expenseDate.before(start))) &&
                         (end == null || (expenseDate != null && !expenseDate.after(end)))
 
-                val inCategory = category == null || expense.categoryType.name == category
+                val inCategory = category == null || expense.category.name == category
 
                 inDateRange && inCategory
             }
@@ -147,7 +147,7 @@ class ExpenseRepository {
                     (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
 
             // Filtrar también por categoría si es necesario
-            val categoryMatches = categoryType == null || expense.categoryType == categoryType
+            val categoryMatches = categoryType == null || expense.category == categoryType
 
             dateMatches && categoryMatches
         }

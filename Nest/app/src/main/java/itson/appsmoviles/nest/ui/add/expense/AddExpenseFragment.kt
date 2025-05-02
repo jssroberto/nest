@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enums.CategoryType
 import itson.appsmoviles.nest.data.enums.PaymentMethod
+import itson.appsmoviles.nest.ui.util.toTitleCase
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -50,7 +51,7 @@ class AddExpenseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(ExpenseViewModel::class.java)
+        viewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
 
         edtAmount = view.findViewById(R.id.edt_amount_expense)
         edtDescription = view.findViewById(R.id.edt_description_expense)
@@ -93,7 +94,7 @@ class AddExpenseFragment : Fragment() {
 
         val monto = obtenerMonto()
         val descripcion = edtDescription.text.toString().trim()
-        val categoria = getCategoryFromString(spinner.selectedItem.toString())
+        val categoria = CategoryType.fromDisplayName(spinner.selectedItem.toString())
         val metodoPago = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
 
         viewModel.addExpense(
@@ -118,29 +119,10 @@ class AddExpenseFragment : Fragment() {
     }
 
 
-    fun getCategoryFromString(categoryName: String): CategoryType {
-        return when (categoryName.lowercase()) {
-            "food" -> CategoryType.FOOD
-            "transport" -> CategoryType.TRANSPORT
-            "recreation", "entertainment" -> CategoryType.RECREATION
-            "living", "home" -> CategoryType.LIVING
-            "health" -> CategoryType.HEALTH
-            "other" -> CategoryType.OTHER
-            else -> CategoryType.OTHER
-        }
-    }
-
-
     private fun setUpSpinner() {
-        val categories = listOf(
-            "Select a category",
-            "Food",
-            "Transport",
-            "Entertainment",
-            "Home",
-            "Health",
-            "Other"
-        )
+        val categories =
+            listOf("Select a Category") + CategoryType.entries.map { it.name.toTitleCase() }
+
         val adapter =
             object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
                 override fun isEnabled(position: Int): Boolean {

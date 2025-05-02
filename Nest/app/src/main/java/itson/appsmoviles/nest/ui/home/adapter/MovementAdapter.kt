@@ -29,7 +29,7 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
         holder.amount.text = "$${item.amount}"
         holder.date.text = item.date.format(formatter)
 
-        val iconResId = when (item.categoryType) {
+        val iconResId = when (item.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
             CategoryType.RECREATION -> R.drawable.icon_category_recreation
             CategoryType.TRANSPORT -> R.drawable.icon_category_transport
@@ -49,7 +49,7 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
                 putString("description", item.description)
                 putFloat("amount", item.amount)
                 putString("date", item.date.toString())
-                putString("category", item.categoryType.name)
+                putString("category", item.category.name)
                 putString("paymentMethod", item.paymentMethod.name)
             }
 

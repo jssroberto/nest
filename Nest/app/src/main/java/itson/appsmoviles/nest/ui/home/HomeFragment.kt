@@ -177,7 +177,7 @@ class HomeFragment : Fragment() {
         } else {
             fullExpenseList.filter { expense ->
                 val descriptionProcessed = expense.description.lowercase().unaccent()
-                val categoryProcessed = expense.categoryType.name.lowercase().unaccent()
+                val categoryProcessed = expense.category.name.lowercase().unaccent()
                 val amountProcessed =
                     expense.amount.toString().lowercase().unaccent() // Use if needed
 
@@ -215,7 +215,7 @@ class HomeFragment : Fragment() {
 
 
     private fun calculateExpenses(expenses: List<Expense>): Map<CategoryType, Float> {
-        return expenses.groupBy { it.categoryType }
+        return expenses.groupBy { it.category }
             .mapValues { entry -> entry.value.sumOf { it.amount.toDouble() }.toFloat() }
     }
 

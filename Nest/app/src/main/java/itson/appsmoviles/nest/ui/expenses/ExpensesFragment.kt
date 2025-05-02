@@ -118,7 +118,7 @@ class ExpensesFragment : Fragment() {
 
         categories.forEach { it.total = 0.0f }
 
-        val groupedExpenses = expenses.groupBy { mapCategoryName(it.categoryType) }
+        val groupedExpenses = expenses.groupBy { mapCategoryName(it.category) }
 
         groupedExpenses.forEach { (name, expensesList) ->
             val totalAmount = expensesList.sumOf { it.amount.toDouble() }.toFloat()
@@ -361,12 +361,12 @@ class ExpensesFragment : Fragment() {
 
         calculateProgressBars(
             requireView(),
-            expenses.filter { mapCategoryName(it.categoryType) == "Food" }.sumOf { it.amount.toDouble() }.toFloat(), 75f,
-            expenses.filter { mapCategoryName(it.categoryType) == "Transport" }.sumOf { it.amount.toDouble() }.toFloat(), 1f,
-            expenses.filter { mapCategoryName(it.categoryType) == "Health" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
-            expenses.filter { mapCategoryName(it.categoryType) == "Others" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
-            expenses.filter { mapCategoryName(it.categoryType) == "Home" }.sumOf { it.amount.toDouble() }.toFloat(), 41f,
-            expenses.filter { mapCategoryName(it.categoryType) == "Recreation" }.sumOf { it.amount.toDouble() }.toFloat(), 20f
+            expenses.filter { mapCategoryName(it.category) == "Food" }.sumOf { it.amount.toDouble() }.toFloat(), 75f,
+            expenses.filter { mapCategoryName(it.category) == "Transport" }.sumOf { it.amount.toDouble() }.toFloat(), 1f,
+            expenses.filter { mapCategoryName(it.category) == "Health" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { mapCategoryName(it.category) == "Others" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { mapCategoryName(it.category) == "Home" }.sumOf { it.amount.toDouble() }.toFloat(), 41f,
+            expenses.filter { mapCategoryName(it.category) == "Recreation" }.sumOf { it.amount.toDouble() }.toFloat(), 20f
         )
     }
 

@@ -44,7 +44,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                     putString("description", expense.description)
                     putFloat("amount", expense.amount)
                     putString("date", expense.date)
-                    putString("category", expense.categoryType.name)
+                    putString("category", expense.category.name)
                     putString("id", expense.id)
                     putString("paymentMethod", expense.paymentMethod.name)
                 }
@@ -87,7 +87,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                 description = getString("description") ?: "",
                 amount = getFloat("amount", 0f),
                 date = getString("date") ?: "",
-                categoryType = categoryType,
+                category = categoryType,
                 paymentMethod = paymentMethodType
             )
         }
@@ -96,7 +96,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         etAmount.setText(expense.amount.toString())
         etDate.setText(expense.date)
 
-        val iconResId = when (expense.categoryType) {
+        val iconResId = when (expense.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
             CategoryType.RECREATION -> R.drawable.icon_category_recreation
             CategoryType.TRANSPORT -> R.drawable.icon_category_transport
@@ -171,7 +171,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
                         expense.id,
                         expense.amount.toDouble(),
                         expense.description,
-                        expense.categoryType,
+                        expense.category,
                         expense.paymentMethod,
                         expense.date
                     )

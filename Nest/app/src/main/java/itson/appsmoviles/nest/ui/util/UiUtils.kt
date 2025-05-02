@@ -53,3 +53,12 @@ fun EditText.setupPasswordVisibilityToggle() {
         return@setOnTouchListener true
     }
 }
+
+fun String.toTitleCase(): String {
+    if (this.isEmpty()) {
+        return this
+    }
+    return this.lowercase().replaceFirstChar { char ->
+        if (char.isLowerCase()) char.titlecase() else char.toString()
+    }
+}

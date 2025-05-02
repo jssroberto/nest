@@ -5,7 +5,7 @@ import itson.appsmoviles.nest.data.enums.PaymentMethod
 
 data class Expense(
     var id: String,
-    var categoryType: CategoryType,
+    var category: CategoryType,
     var description: String,
     var amount: Float,
     var paymentMethod: PaymentMethod,
@@ -14,7 +14,7 @@ data class Expense(
 
     constructor() : this(
         id = "",
-        categoryType = CategoryType.OTHER,
+        category = CategoryType.OTHER,
         description = "",
         amount = 0.0f,
         paymentMethod = PaymentMethod.UNKNOWN,
