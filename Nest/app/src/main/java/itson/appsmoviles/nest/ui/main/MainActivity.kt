@@ -5,10 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.ui.add.AddFragment
 import itson.appsmoviles.nest.ui.budget.BaseBudgetFragment
+import itson.appsmoviles.nest.ui.expenses.ExpensesFragment
 import itson.appsmoviles.nest.ui.home.HomeFragment
 import itson.appsmoviles.nest.ui.profile.ProfileFragment
-import itson.appsmoviles.nest.ui.expenses.ExpensesFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,11 +48,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchFragment(targetFragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+
+        val addFragmentInstance = fragmentManager.findFragmentByTag(AddFragment.TAG)
+
+        if (addFragmentInstance != null && addFragmentInstance.isVisible) {
+            transaction.remove(addFragmentInstance)
+        }
+
+        if (targetFragment == activeFragment) {
+            if (addFragmentInstance != null && addFragmentInstance.isVisible) {
+                transaction.commit()
+            }
+            return
+        }
+
+        transaction.hide(activeFragment).show(targetFragment)
+
+        transaction.commit()
         if (targetFragment != activeFragment) {
-            supportFragmentManager.beginTransaction()
-                .hide(activeFragment)
-                .show(targetFragment)
-                .commit()
             activeFragment = targetFragment
         }
     }

@@ -14,16 +14,15 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.add.income.AddIncomeFragment
 import itson.appsmoviles.nest.ui.add.expense.AddExpenseFragment
 
-/**
- * A simple [androidx.fragment.app.Fragment] subclass.
- * Use the [AddFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddFragment : Fragment() {
 
     private lateinit var switchAdd: SwitchCompat
     private lateinit var txtIncome: TextView
     private lateinit var txtExpense: TextView
+
+    companion object {
+        const val TAG = "AddFragment"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,6 @@ class AddFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
     }
 

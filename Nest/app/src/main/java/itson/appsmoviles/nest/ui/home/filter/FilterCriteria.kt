@@ -6,10 +6,10 @@ import java.time.LocalDate
 data class FilterCriteria(
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
-    val categoryType: CategoryType? = null
+    val category: CategoryType? = null
 ) {
     fun isActive(): Boolean {
-        return startDate != null || endDate != null || categoryType != null
+        return startDate != null || endDate != null || category != null
     }
 
     companion object {

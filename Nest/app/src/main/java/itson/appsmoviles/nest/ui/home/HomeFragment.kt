@@ -38,6 +38,7 @@ import itson.appsmoviles.nest.ui.add.expense.ExpenseViewModel
 import itson.appsmoviles.nest.ui.add.AddFragment
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
+import itson.appsmoviles.nest.ui.main.MainActivity
 import java.text.Normalizer
 import kotlin.collections.iterator
 
@@ -67,7 +68,7 @@ class HomeFragment : Fragment() {
         const val NODE_EXPENSES = "expenses"
         const val NODE_INCOMES = "incomes"
         const val USERS_NODE = "users"
-        const val TAG = "FirebaseSum"
+        const val TAG = "HomeFragment"
     }
 
 
@@ -137,7 +138,7 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupButtonListeners() {
         btnAdd.setOnClickListener {
-            changeAddFragment()
+            changeToAddFragment()
         }
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
@@ -340,16 +341,16 @@ class HomeFragment : Fragment() {
         )
     }
 
-
-
-    private fun changeAddFragment() {
+    private fun changeToAddFragment() {
         val newFragment = AddFragment()
         val transaction = parentFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container, newFragment)
+
+        transaction.add(R.id.fragment_container, newFragment, AddFragment.TAG)
+
         transaction.addToBackStack(null)
+
         transaction.commit()
     }
-
 
     private fun applyBtnAddMargin() {
         bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object :
