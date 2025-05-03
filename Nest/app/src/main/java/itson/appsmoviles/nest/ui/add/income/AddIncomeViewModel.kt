@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.ui.add.income
 
+import android.R.attr.category
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,12 +15,12 @@ class AddIncomeViewModel : ViewModel() {
     private val _isIncomeAdded = MutableLiveData<Boolean>()
     val isIncomeAdded: LiveData<Boolean> get() = _isIncomeAdded
 
-    fun addIncome(amount: Double, category: String, date: String) {
+    fun addIncome(amount: Double, date: Long, description: String) {
         viewModelScope.launch {
             repository.addIncome(
                 amount,
-                category,
                 date,
+                description,
                 onSuccess = { _isIncomeAdded.value = true },
                 onFailure = {
                     Log.e("IncomeViewModel", "Error adding income", it)

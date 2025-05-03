@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enums.CategoryType
 import itson.appsmoviles.nest.data.enums.PaymentMethod
+import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.showDatePicker
 import itson.appsmoviles.nest.ui.util.showToast
@@ -141,20 +142,6 @@ class AddExpenseFragment : Fragment() {
         spinner.setSelection(0)
     }
 
-
-    private fun addDollarSign(edtAmount: EditText) {
-        edtAmount.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(editable: Editable?) {
-                edtAmount.removeTextChangedListener(this)
-                val input = editable.toString()
-                edtAmount.setText(if (!input.startsWith("$")) "$$input" else input)
-                edtAmount.setSelection(edtAmount.text.length)
-                edtAmount.addTextChangedListener(this)
-            }
-        })
-    }
 
     private fun setRadioColors() {
         radioCash.buttonTintList =

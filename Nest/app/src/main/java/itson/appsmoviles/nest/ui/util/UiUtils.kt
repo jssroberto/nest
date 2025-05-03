@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Build
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
 import android.widget.DatePicker
@@ -128,4 +130,22 @@ fun formatDateShortForm(timestampMillis: Long): String?{
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
         .format(DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.getDefault()))
+}
+
+fun addDollarSign(editText: EditText) {
+    editText.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        override fun afterTextChanged(editable: Editable?) {
+            editText.removeTextChangedListener(this)
+
+            val input = editable.toString()
+
+            editText.setText(if (!input.startsWith("$")) "$$input" else input)
+            editText.setSelection(editText.text.length)
+            editText.addTextChangedListener(this)
+        }
+    })
 }

@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.data.repository
 
+import android.R.attr.category
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -12,8 +13,8 @@ class IncomeRepository {
 
     suspend fun addIncome(
         amount: Double,
-        category: String,
-        date: String,
+        date: Long,
+        description: String,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
@@ -23,8 +24,8 @@ class IncomeRepository {
 
         val income = mapOf(
             "amount" to amount,
-            "category" to category,
-            "date" to date
+            "date" to date,
+            "description" to description
         )
 
         try {
