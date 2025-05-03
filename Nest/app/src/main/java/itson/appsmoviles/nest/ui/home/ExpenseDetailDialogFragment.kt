@@ -1,6 +1,5 @@
 package itson.appsmoviles.nest.ui.home
 
-import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +9,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.data.enums.CategoryType
-import itson.appsmoviles.nest.data.enums.PaymentMethod
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.showDatePicker
@@ -28,7 +24,6 @@ import itson.appsmoviles.nest.ui.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ExpenseDetailDialogFragment : DialogFragment() {
@@ -47,7 +42,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
             return ExpenseDetailDialogFragment().apply {
                 arguments = Bundle().apply {
                     putString("description", expense.description)
-                    putFloat("amount", expense.amount)
+                    putDouble("amount", expense.amount)
                     putLong("date", expense.date)
                     putString("category", expense.category.name)
                     putString("id", expense.id)
@@ -59,7 +54,10 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog?.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     override fun onCreateView(
@@ -78,7 +76,8 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
         arguments?.run {
             val categoryName = getString("category") ?: "OTHER"
-            val categoryType = CategoryType.entries.find { it.name == categoryName } ?: CategoryType.OTHER
+            val categoryType =
+                CategoryType.entries.find { it.name == categoryName } ?: CategoryType.OTHER
 
             val paymentMethodName = getString("paymentMethod")
 
@@ -89,16 +88,18 @@ class ExpenseDetailDialogFragment : DialogFragment() {
             expense = Expense(
                 id = getString("id") ?: "",
                 description = getString("description") ?: "",
-                amount = getFloat("amount", 0f),
+                amount = getDouble("amount", 0.0),
                 date = getLong("date", 0L),
                 category = categoryType,
                 paymentMethod = paymentMethodType
             )
         }
 
+        selectedTimestamp = expense.date
+
         etDescription.setText(expense.description)
         etAmount.setText(expense.amount.toString())
-        etDate.setText(formatDateLongForm(expense.date))
+        etDate.setText(formatDateLongForm(expense.date)) // Display the initial date
 
         val iconResId = when (expense.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
@@ -116,6 +117,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         etDate.setOnClickListener {
             showDatePicker(
                 context = requireContext(),
+                initialTimestamp = expense.date,
                 onDateSelected = { timestampMillis ->
                     selectedTimestamp = timestampMillis
                     etDate.setText(formatDateLongForm(selectedTimestamp!!))
@@ -126,45 +128,58 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
     private fun saveExpense() {
         val updatedDescription = etDescription.text.toString()
-        val updatedAmount = etAmount.text.toString().toFloatOrNull() ?: 0.0f
-        val updatedDate = etDate.text.toString().toLong()
+        val updatedAmount = etAmount.text.toString().toDoubleOrNull()
 
-        if (updatedDescription.isNotEmpty() && updatedAmount > 0 && updatedDate.toString().isNotEmpty()) {
-            expense = expense.copy(description = updatedDescription, amount = updatedAmount, date = updatedDate)
-            updateExpenseInDatabase(expense)
-        } else {
-            showToast(requireContext(), "Please fill in all fields")
+        if (updatedDescription.isBlank()) {
+            showToast(requireContext(), "Description cannot be empty")
+            return
         }
+        if (updatedAmount == null || updatedAmount <= 0.0) {
+            showToast(requireContext(), "Please enter a valid positive amount")
+            return
+        }
+        if (selectedTimestamp == null) {
+            showToast(requireContext(), "Please select a date")
+            return
+        }
+
+        expense = expense.copy(
+            description = updatedDescription,
+            amount = updatedAmount,
+            date = selectedTimestamp!!
+        )
+        updateExpense(expense)
     }
 
-    private fun updateExpenseInDatabase(expense: Expense) {
+
+    private fun updateExpense(expense: Expense) {
         val expenseRepository = ExpenseRepository()
 
         lifecycleScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    expenseRepository.updateExpense(
-                        expense.id,
-                        expense.amount.toDouble(),
-                        expense.description,
-                        expense.category,
-                        expense.paymentMethod,
-                        expense.date
-                    )
-                }
-
-                showToast(requireContext(), "Expense updated successfully")
-                parentFragmentManager.setFragmentResult(
-                    "update_expense_result",
-                    bundleOf("updated" to true)
+            withContext(Dispatchers.IO) {
+                expenseRepository.updateExpense(
+                    expense,
+                    onSuccess = {
+                        launch(Dispatchers.Main) {
+                            Log.d("UPDATE_SUCCESS", "Expense updated successfully")
+                            parentFragmentManager.setFragmentResult(
+                                "update_expense_result",
+                                bundleOf("updated" to true)
+                            )
+                            dismiss()
+                        }
+                    },
+                    onFailure = { exception ->
+                        launch(Dispatchers.Main) {
+                            showToast(
+                                requireContext(),
+                                "Failed to update expense: ${exception.message}"
+                            )
+                        }
+                    }
                 )
-                requireActivity().supportFragmentManager.popBackStack()
-                dismiss()
-
-            } catch (e: Exception) {
-                Log.e("UPDATE_ERROR", "Falló la actualización", e)
-                showToast(requireContext(), "Failed to update expense ${e.message}")
             }
         }
     }
 }
+

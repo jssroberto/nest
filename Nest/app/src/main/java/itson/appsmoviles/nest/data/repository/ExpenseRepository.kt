@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.data.enums.CategoryType
-import itson.appsmoviles.nest.data.enums.PaymentMethod
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -15,65 +15,78 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
 
-
     suspend fun addExpense(
-        amount: Double,
-        description: String,
-        categoryType: CategoryType,
-        paymentMethod: String,
-        date: Long,
+        expense: Expense,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
-        val userId = auth.currentUser?.uid ?: return@withContext onFailure(Exception("User not authenticated"))
+        val userId = auth.currentUser?.uid
+
+        if (userId == null) {
+            withContext(Dispatchers.Main) {
+                onFailure(Exception("User not authenticated"))
+            }
+            return@withContext
+        }
+
         val newExpenseRef = database.child("users").child(userId).child("expenses").push()
 
-        val expense = mapOf(
-            "amount" to amount,
-            "description" to description,
-            "date" to date,
-            "category" to categoryType.name,
-            "paymentMethod" to paymentMethod
+        val expenseMap = mapOf(
+            "description" to expense.description,
+            "amount" to expense.amount,
+            "date" to expense.date,
+            "category" to expense.category.name,
+            "paymentMethod" to expense.paymentMethod.name
         )
 
         try {
-            newExpenseRef.setValue(expense).await()
+            newExpenseRef.setValue(expenseMap).await()
             withContext(Dispatchers.Main) { onSuccess() }
         } catch (e: Exception) {
             withContext(Dispatchers.Main) { onFailure(e) }
         }
     }
 
-    // Método para actualizar un gasto
+
     suspend fun updateExpense(
-        expenseId: String,
-        amount: Double,
-        description: String,
-        categoryType: CategoryType,
-        paymentMethod: PaymentMethod,
-        date: Long
-    ) {
-        val userId = auth.currentUser?.uid ?: throw Exception("Invalid user ID")
-        if (expenseId.isEmpty()) throw Exception("Invalid expense ID")
+        expense: Expense,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) = withContext(Dispatchers.IO) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            withContext(Dispatchers.Main) { onFailure(Exception("User not authenticated")) }
+            return@withContext
+        }
+
+        val expenseId = expense.id // Gets ID from the object
+        if (expenseId.isBlank()) {
+            withContext(Dispatchers.Main) { onFailure(IllegalArgumentException("Expense must have a valid ID to be updated")) }
+            return@withContext
+        }
 
         val expenseRef = database.child("users").child(userId).child("expenses").child(expenseId)
 
-        val updatedExpense = mapOf(
-            "amount" to amount,
-            "description" to description,
-            "category" to categoryType.name,
-            "paymentMethod" to paymentMethod.name,
-            "date" to date
+        val updatedExpenseMap = mapOf(
+            "description" to expense.description,
+            "amount" to expense.amount,
+            "date" to expense.date,
+            "category" to expense.category.name,
+            "paymentMethod" to expense.paymentMethod.name
         )
 
-        expenseRef.updateChildren(updatedExpense).await()
+        try {
+            expenseRef.updateChildren(updatedExpenseMap).await()
+            withContext(Dispatchers.Main) { onSuccess() }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) { onFailure(e) }
+        }
     }
 
     // Método para obtener todos los expenses
@@ -81,7 +94,10 @@ class ExpenseRepository {
         val userId = auth.currentUser?.uid ?: return@withContext emptyList()
         return@withContext try {
             val snapshot = database.child("users").child(userId).child("expenses").get().await()
-            Log.d("ExpenseRepository", "Firebase snapshot children count: ${snapshot.childrenCount}")
+            Log.d(
+                "ExpenseRepository",
+                "Firebase snapshot children count: ${snapshot.childrenCount}"
+            )
 
             snapshot.children.mapNotNull { gastoSnapshot ->
                 val expense = gastoSnapshot.getValue(Expense::class.java)
@@ -93,7 +109,11 @@ class ExpenseRepository {
         }
     }
 
-    suspend fun getExpensesFiltered(category: String?, startDate: String?, endDate: String?): List<Expense> {
+    suspend fun getExpensesFiltered(
+        category: String?,
+        startDate: String?,
+        endDate: String?
+    ): List<Expense> {
         val userId = auth.currentUser?.uid ?: return emptyList()
         return try {
             val snapshot = database.child("users").child(userId).child("expenses").get().await()
@@ -105,7 +125,9 @@ class ExpenseRepository {
                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time
                 }
                 val endMillis = endDate?.let {
-                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time?.plus(86_399_999)
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time?.plus(
+                        86_399_999
+                    )
                 }
 
                 val inDateRange = (startMillis == null || expense.date >= startMillis) &&
@@ -121,8 +143,6 @@ class ExpenseRepository {
             emptyList()
         }
     }
-
-
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -143,16 +163,15 @@ class ExpenseRepository {
                 null
             }
 
-            val dateMatches = (startDate == null || expenseDate == null || !expenseDate.isBefore(startDate)) &&
-                    (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
+            val dateMatches =
+                (startDate == null || expenseDate == null || !expenseDate.isBefore(startDate)) &&
+                        (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
 
             val categoryMatches = categoryType == null || expense.category == categoryType
 
             dateMatches && categoryMatches
         }
     }
-
-
 
 
 }

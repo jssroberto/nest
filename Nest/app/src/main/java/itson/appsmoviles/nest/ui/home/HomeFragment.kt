@@ -32,7 +32,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.enums.CategoryType
+import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.ui.add.AddFragment
 import itson.appsmoviles.nest.ui.add.expense.AddExpenseViewModel

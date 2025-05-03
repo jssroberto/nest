@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.data.enums.CategoryType
+import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.ui.home.ExpenseDetailDialogFragment
 import java.time.Instant
 import java.time.ZoneId
@@ -52,7 +52,7 @@ class MovementAdapter(private val items: List<Expense>) : RecyclerView.Adapter<M
             val bundle = Bundle().apply {
                 putString("id", item.id)
                 putString("description", item.description)
-                putFloat("amount", item.amount)
+                putDouble("amount", item.amount)
                 putLong("date", item.date)
                 putString("category", item.category.name)
                 putString("paymentMethod", item.paymentMethod.name)

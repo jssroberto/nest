@@ -1,24 +1,16 @@
 package itson.appsmoviles.nest.data.model
 
-import itson.appsmoviles.nest.data.enums.CategoryType
-import itson.appsmoviles.nest.data.enums.PaymentMethod
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.enum.PaymentMethod
 
 data class Expense(
-    var id: String,
+    override var id: String,
+    override var description: String,
+    override var amount: Double,
+    override var date: Long,
     var category: CategoryType,
-    var description: String,
-    var amount: Float,
-    var paymentMethod: PaymentMethod,
-    var date: Long
-) {
+    var paymentMethod: PaymentMethod
+) : Movement() {
 
-    constructor() : this(
-        id = "",
-        category = CategoryType.OTHER,
-        description = "",
-        amount = 0.0f,
-        paymentMethod = PaymentMethod.UNKNOWN,
-        date = 0L
-    )
-
+    constructor() : this("", "", 0.0, 0L, CategoryType.OTHER, PaymentMethod.UNKNOWN)
 }

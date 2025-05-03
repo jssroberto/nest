@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.data.enums.CategoryType
+import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.model.Category
 import itson.appsmoviles.nest.ui.expenses.drawable.ExpensesDrawable

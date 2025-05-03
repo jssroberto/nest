@@ -2,8 +2,6 @@ package itson.appsmoviles.nest.ui.add.expense
 
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,17 +16,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.enums.CategoryType
-import itson.appsmoviles.nest.data.enums.PaymentMethod
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.enum.PaymentMethod
+import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.showDatePicker
 import itson.appsmoviles.nest.ui.util.showToast
 import itson.appsmoviles.nest.ui.util.toTitleCase
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
@@ -104,21 +99,20 @@ class AddExpenseFragment : Fragment() {
             return
         }
 
-        val monto = getAmount()
-        val descripcion = edtDescription.text.toString().trim()
-        val categoria = CategoryType.fromDisplayName(spinner.selectedItem.toString())
-        val metodoPago = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
+        val expense = Expense(
+            id = "",
+            description = edtDescription.text.toString().trim(),
+            amount = getAmount(),
+            date = selectedTimestamp ?: 0L,
+            category = CategoryType.fromDisplayName(spinner.selectedItem.toString()),
+            paymentMethod = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
+        )
 
         viewModel.addExpense(
-            monto,
-            descripcion,
-            categoria,
-            metodoPago.name,
-            selectedTimestamp!!,
+            expense = expense,
             onSuccess = {
                 clearFields()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
-
             },
             onFailure = { e ->
                 showToast(requireContext(), "Error adding expense: ${e.message}")
@@ -168,6 +162,6 @@ class AddExpenseFragment : Fragment() {
     private fun validateFields(): Boolean {
         return edtAmount.text.isNotEmpty() && spinner.selectedItemPosition != 0 &&
                 edtDescription.text.isNotEmpty() && selectedTimestamp != null &&
-                (radioCash.isChecked || radioCard.isChecked)
+                (radioCash.isChecked || radioCard.isChecked) && selectedTimestamp != null
     }
 }

@@ -1,6 +1,6 @@
 package itson.appsmoviles.nest.ui.home.filter
 
-import itson.appsmoviles.nest.data.enums.CategoryType
+import itson.appsmoviles.nest.data.enum.CategoryType
 import java.time.LocalDate
 
 data class FilterCriteria(

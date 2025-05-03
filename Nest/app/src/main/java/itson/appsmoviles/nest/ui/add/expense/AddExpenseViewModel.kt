@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import itson.appsmoviles.nest.data.enums.CategoryType
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import kotlinx.coroutines.launch
@@ -22,16 +23,16 @@ class AddExpenseViewModel : ViewModel() {
     }
 
     fun addExpense(
-        amount: Double,
-        description: String,
-        categoryType: CategoryType,
-        paymentMethod: String,
-        date: Long,
+        expense: Expense,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         viewModelScope.launch {
-            repository.addExpense(amount, description, categoryType, paymentMethod, date, onSuccess, onFailure)
+            repository.addExpense(
+                expense,
+                onSuccess,
+                onFailure
+            )
         }
     }
 }

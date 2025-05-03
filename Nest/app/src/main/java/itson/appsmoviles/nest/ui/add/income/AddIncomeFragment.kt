@@ -21,9 +21,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.showDatePicker
+import itson.appsmoviles.nest.ui.util.showToast
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -62,16 +64,6 @@ class AddIncomeFragment : Fragment() {
         addDollarSign(edtAmount)
 
         setOnClickListeners()
-
-        viewModel.isIncomeAdded.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                Toast.makeText(requireContext(), "Income added successfully!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Failed to add income", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
     }
 
     private fun setOnClickListeners() {
@@ -107,6 +99,21 @@ class AddIncomeFragment : Fragment() {
             return
         }
 
-        viewModel.addIncome(amount, selectedTimestamp!!, description)
+        val income = Income(
+            id = "",
+            description = description,
+            amount = amount,
+            date = selectedTimestamp!!
+        )
+
+        viewModel.addIncome(
+            income = income,
+            onSuccess = {
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            },
+            onFailure = { exception ->
+                showToast(requireContext(), "Error adding income: ${exception.message}")
+            }
+        )
     }
 }

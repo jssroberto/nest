@@ -9,7 +9,6 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
-import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,6 +18,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Locale
 
 fun showToast(context: Context, message: String) {
@@ -78,20 +78,24 @@ fun String.toTitleCase(): String {
 @RequiresApi(Build.VERSION_CODES.O)
 fun showDatePicker(
     context: Context,
-    initialDate: LocalDate = LocalDate.now(),
-    maxDate: LocalDate = LocalDate.now(),
-    // This shi gets executed once the user selects a date, keep in mind, we can't use a return
+    initialTimestamp: Long = System.currentTimeMillis(),
+    maxTimestamp: Long = System.currentTimeMillis(),
+    // This lambda gets executed once the user selects a date
     onDateSelected: (timestampMillis: Long) -> Unit
 ) {
-    val year = initialDate.year
-    val month = initialDate.monthValue - 1
-    val day = initialDate.dayOfMonth
+    val initialCalendar = Calendar.getInstance().apply {
+        timeInMillis = initialTimestamp
+    }
+    val initialYear = initialCalendar.get(Calendar.YEAR)
+    val initialMonth = initialCalendar.get(Calendar.MONTH)
+    val initialDay = initialCalendar.get(Calendar.DAY_OF_MONTH)
 
     val datePickerDialog = DatePickerDialog(
         context,
         R.style.Nest_DatePicker,
         { _, selectedYear, selectedMonth, selectedDay ->
-            val selectedDate = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
+            val selectedDate =
+                LocalDate.of(selectedYear, selectedMonth + 1, selectedDay)
             val millis = selectedDate
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant()
@@ -99,16 +103,17 @@ fun showDatePicker(
 
             onDateSelected(millis)
         },
-        year, month, day
+        initialYear, initialMonth, initialDay
     )
 
-    val maxMillis = maxDate.atStartOfDay(ZoneId.systemDefault())
-        .toInstant()
-        .toEpochMilli()
-    datePickerDialog.datePicker.maxDate = maxMillis
+    // Set the maximum date using the provided timestamp
+    datePickerDialog.datePicker.maxDate = maxTimestamp
 
     datePickerDialog.setOnShowListener {
-        val txtColor = ContextCompat.getColor(context, R.color.txt_color)
+        val txtColor = ContextCompat.getColor(
+            context,
+            R.color.txt_color
+        )
         datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)?.setTextColor(txtColor)
         datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)?.setTextColor(txtColor)
     }
@@ -117,7 +122,7 @@ fun showDatePicker(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun formatDateLongForm(timestampMillis: Long): String?{
+fun formatDateLongForm(timestampMillis: Long): String? {
     return Instant.ofEpochMilli(timestampMillis)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()
@@ -125,7 +130,7 @@ fun formatDateLongForm(timestampMillis: Long): String?{
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun formatDateShortForm(timestampMillis: Long): String?{
+fun formatDateShortForm(timestampMillis: Long): String? {
     return Instant.ofEpochMilli(timestampMillis)
         .atZone(ZoneId.systemDefault())
         .toLocalDate()

@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.data.enums
+package itson.appsmoviles.nest.data.enum
 
 enum class PaymentMethod {
     CARD,
