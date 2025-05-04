@@ -38,7 +38,7 @@
                     android:layout_marginEnd="5dp"
                     android:drawableEnd="@drawable/calendar"
                     android:gravity="fill_vertical"
-                    android:text="@string/start_date"
+                    android:hint="@string/start_date"
                     android:paddingHorizontal="14dp"
                     android:layout_gravity="center"
                     style="@style/Nest.Selectable" />
@@ -51,7 +51,7 @@
                     android:layout_marginStart="5dp"
                     android:drawableEnd="@drawable/calendar"
                     android:gravity="fill_vertical"
-                    android:text="@string/end_date"
+                    android:hint="@string/end_date"
                     android:paddingHorizontal="14dp"
                     android:layout_gravity="center"
                     style="@style/Nest.Selectable" />
@@ -79,12 +79,6 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="40dp">
 
-
-            <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight=".5" />
-
             <ImageButton
                     android:id="@+id/btn_clear_filters"
                     android:layout_width="wrap_content"
@@ -98,7 +92,7 @@
             <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_weight=".5" />
+                    android:layout_weight="1" />
 
             <Button
                     android:id="@+id/btn_apply_filters"

@@ -6,11 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -21,9 +21,9 @@ import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
+import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
 import itson.appsmoviles.nest.ui.util.showToast
-import itson.appsmoviles.nest.ui.util.toTitleCase
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
@@ -59,7 +59,7 @@ class AddExpenseFragment : Fragment() {
         radioCard = view.findViewById(R.id.radio_card)
         btnAddExpense = view.findViewById(R.id.btn_add_expense)
 
-        setUpSpinner()
+        setUpSpinner(requireContext(), spinner)
         addDollarSign(edtAmount)
 
         setUpClickListeners()
@@ -94,7 +94,7 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun addExpense() {
-        if (!validateFields()) {
+        if (!areFieldsValid()) {
             showToast(requireContext(), "Please fill in all fields")
             return
         }
@@ -120,30 +120,12 @@ class AddExpenseFragment : Fragment() {
         )
     }
 
-
-    private fun setUpSpinner() {
-        val categories =
-            listOf("Select a Category") + CategoryType.entries.map { it.name.toTitleCase() }
-
-        val adapter =
-            object : ArrayAdapter<String>(requireContext(), R.layout.spinner_item, categories) {
-                override fun isEnabled(position: Int): Boolean {
-                    return position != 0
-                }
-            }
-        adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.adapter = adapter
-        spinner.setSelection(0)
-    }
-
-
     private fun setRadioColors() {
         radioCash.buttonTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
         radioCard.buttonTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
-
 
     private fun clearFields() {
         edtAmount.text.clear()
@@ -159,9 +141,32 @@ class AddExpenseFragment : Fragment() {
         return edtAmount.text.toString().replace("$", "").replace(",", ".").toDouble()
     }
 
-    private fun validateFields(): Boolean {
-        return edtAmount.text.isNotEmpty() && spinner.selectedItemPosition != 0 &&
-                edtDescription.text.isNotEmpty() && selectedTimestamp != null &&
-                (radioCash.isChecked || radioCard.isChecked) && selectedTimestamp != null
+    private fun areFieldsValid(): Boolean {
+        if (edtAmount.text.isNullOrEmpty()) {
+            Toast.makeText(context, "Please enter an amount.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (spinner.selectedItemPosition == 0) {
+            Toast.makeText(context, "Please select a category.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (edtDescription.text.isNullOrEmpty()) {
+            Toast.makeText(context, "Please enter a description.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedTimestamp == null) {
+            Toast.makeText(context, "Please select a date.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (!radioCash.isChecked && !radioCard.isChecked) {
+            Toast.makeText(context, "Please select a payment method (Cash or Card).", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
     }
 }

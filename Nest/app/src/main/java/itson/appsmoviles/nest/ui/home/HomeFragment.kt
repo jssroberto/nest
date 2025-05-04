@@ -38,6 +38,7 @@ import itson.appsmoviles.nest.ui.add.AddFragment
 import itson.appsmoviles.nest.ui.add.expense.AddExpenseViewModel
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
+import itson.appsmoviles.nest.ui.main.MainActivity
 import java.text.Normalizer
 
 
@@ -137,7 +138,7 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupButtonListeners() {
         btnAdd.setOnClickListener {
-            changeToAddFragment()
+            (activity as? MainActivity)?.showAddFragment()
         }
         btnFilter.setOnClickListener {
             val dialog = FilterMovementsFragment()
@@ -338,16 +339,6 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun changeToAddFragment() {
-        val newFragment = AddFragment()
-        val transaction = parentFragmentManager.beginTransaction()
-
-        transaction.add(R.id.fragment_container, newFragment, AddFragment.TAG)
-
-        transaction.addToBackStack(null)
-
-        transaction.commit()
-    }
 
     private fun applyBtnAddMargin() {
         bottonNav.viewTreeObserver.addOnGlobalLayoutListener(object :

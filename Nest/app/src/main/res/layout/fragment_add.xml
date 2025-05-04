@@ -6,7 +6,6 @@
         android:layout_height="match_parent"
         tools:context=".ui.add.AddFragment"
         android:layout_gravity="center_horizontal"
-        android:background="@color/background"
         >
 
     <RelativeLayout
@@ -63,15 +62,11 @@
 
     </RelativeLayout>
 
-
     <FrameLayout
             android:id="@+id/fragment_add_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="60dp"
-            android:background="@color/background"
-
             />
-
 
 </FrameLayout>

@@ -9,11 +9,17 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.data.enum.CategoryType
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -154,3 +160,26 @@ fun addDollarSign(editText: EditText) {
         }
     })
 }
+
+
+fun setUpSpinner(context: Context, spinner: Spinner) {
+    val hint = "Select a Category"
+    val actualCategories = CategoryType.entries.map { it.name.toTitleCase() }
+
+    val adapter = object :
+        ArrayAdapter<String>(context, R.layout.spinner_item, actualCategories) {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = super.getView(position, convertView, parent)
+            if (spinner.selectedItemPosition == 0) {
+                (view as TextView).text = hint
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
+            }
+            return view
+        }
+    }
+
+    adapter.setDropDownViewResource(R.layout.spinner_item)
+    spinner.adapter = adapter
+    spinner.setSelection(0)
+}
+

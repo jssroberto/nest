@@ -55,7 +55,7 @@
     <string name="health">Health</string>
     <string name="other">Other</string>
     <string name="living">Living</string>
-    <string name="select_date">Select date</string>
+    <string name="select_date">Select Date</string>
     <string name="end_date">End date</string>
     <string name="start_date">Start date</string>
     <string name="apply_filters">Apply Filters</string>
