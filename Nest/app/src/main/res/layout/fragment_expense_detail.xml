@@ -27,7 +27,7 @@
             android:gravity="center"
             android:hint="Description"
             android:background="@android:color/transparent"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:text="Expense Description"
             android:textSize="18sp"
             android:textStyle="bold" />
