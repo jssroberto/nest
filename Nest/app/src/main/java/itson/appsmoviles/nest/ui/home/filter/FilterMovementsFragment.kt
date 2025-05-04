@@ -11,8 +11,8 @@ import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.ui.util.SpinnerUtils.setUpSpinner
 import itson.appsmoviles.nest.ui.util.formatDateShortForm
-import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
 import itson.appsmoviles.nest.ui.util.showToast
 

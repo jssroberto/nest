@@ -9,22 +9,14 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.enum.CategoryType
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
@@ -160,59 +152,6 @@ fun addDollarSign(editText: EditText) {
             editText.addTextChangedListener(this)
         }
     })
-}
-
-
-fun setUpSpinner(context: Context, spinner: Spinner) {
-    val hint = "Select a Category"
-    val actualCategories = CategoryType.entries.map { it.name.toTitleCase() }
-    val items = listOf(hint) + actualCategories // Hint goes first
-
-    val adapter = object : ArrayAdapter<String>(context, R.layout.spinner_item, items) {
-        override fun isEnabled(position: Int): Boolean {
-            // Disable the hint item (first item)
-            return position != 0
-        }
-
-        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = super.getDropDownView(position, convertView, parent) as TextView
-            if (position == 0) {
-                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
-            } else {
-                view.setTextColor(ContextCompat.getColor(context, R.color.black))
-            }
-            return view
-        }
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = super.getView(position, convertView, parent) as TextView
-            if (position == 0) {
-                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
-            } else {
-                view.setTextColor(ContextCompat.getColor(context, R.color.black))
-            }
-            return view
-        }
-    }
-
-    adapter.setDropDownViewResource(R.layout.spinner_item)
-    spinner.adapter = adapter
-    spinner.setSelection(0) // Show hint by default
-}
-
-fun clearFilters(
-    spinner: Spinner,
-    startDateButton: Button,
-    endDateButton: Button,
-    context: Context
-) {
-
-    spinner.setSelection(0)
-
-    startDateButton.text = context.getString(R.string.start_date)
-    endDateButton.text = context.getString(R.string.end_date)
-
-    showToast(context, "Filtros reiniciados")
 }
 
 

@@ -28,7 +28,7 @@ class ExpensesViewModel(
         val expenses = expenseRepository.getFilteredExpensesFromFirebase(
             startDate,
             endDate,
-            category?.displayName // Pasa null si no hay categoría válida
+            category?.displayName
         )
 
         emit(expenses)

@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.ui.expenses.drawable
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
@@ -7,21 +8,27 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.view.MotionEvent
+import android.view.View
+import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Category
 import kotlin.math.atan2
 
-class PieChartDrawable(context: Context, var categories: ArrayList<Category>) : Drawable() {
+class PieChartDrawable(
+    private val context: Context,
+    var categories: List<Category>,
+    private val categoryTextViews: List<TextView>,
+    private val onCategorySelected: ((String?) -> Unit)? = null
+) : Drawable() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var coordenadas: RectF? = null
     private var anguloInicio: Float = 0.0f
     private val padding = 25.0f
-    private val context: Context = context
     var selectedCategory: Category? = null
-    private var touchX = 0f
-    private var touchY = 0f
 
     init {
         paint.style = Paint.Style.FILL
@@ -41,26 +48,23 @@ class PieChartDrawable(context: Context, var categories: ArrayList<Category>) : 
             e.percentage = (e.total / total) * 100
         }
 
-        if (categories.isNotEmpty()) {
-            for (e in categories) {
-                val sweep = (e.percentage * 360) / 100
-                val anguloBarrido = if (sweep >= 360f) 359.9f else sweep
+        for (e in categories) {
+            val sweep = (e.percentage * 360) / 100
+            val anguloBarrido = if (sweep >= 360f) 359.9f else sweep
 
-
-                val color = if (selectedCategory == null || e == selectedCategory) {
-                    ContextCompat.getColor(context, e.color) // Colores normales si no hay selección
-                } else {
-                    ContextCompat.getColor(context, R.color.gray) // Gris solo si hay algo seleccionado
-                }
-
-                paint.color = color
-
-                coordenadas?.let {
-                    canvas.drawArc(it, anguloInicio, anguloBarrido, true, paint)
-                }
-
-                anguloInicio += anguloBarrido
+            val color = if (selectedCategory == null || e == selectedCategory) {
+                ContextCompat.getColor(context, e.color)
+            } else {
+                ContextCompat.getColor(context, R.color.gray)
             }
+
+            paint.color = color
+
+            coordenadas?.let {
+                canvas.drawArc(it, anguloInicio, anguloBarrido, true, paint)
+            }
+
+            anguloInicio += anguloBarrido
         }
     }
 
@@ -72,9 +76,8 @@ class PieChartDrawable(context: Context, var categories: ArrayList<Category>) : 
         paint.colorFilter = colorFilter
     }
 
-    override fun getOpacity(): Int {
-        return PixelFormat.OPAQUE
-    }
+    override fun getOpacity(): Int = PixelFormat.OPAQUE
+
     fun getCategoryFromTouch(x: Float, y: Float): Category? {
         coordenadas?.let { rect ->
             val cx = rect.centerX()
@@ -83,15 +86,11 @@ class PieChartDrawable(context: Context, var categories: ArrayList<Category>) : 
             val dy = y - cy
             val distance = Math.hypot(dx.toDouble(), dy.toDouble()).toFloat()
 
-            // Si tocó fuera del círculo
-            val radius = rect.width() / 2
-            if (distance > radius) return null
+            if (distance > rect.width() / 2) return null
 
-            // Ángulo tocado
             var angle = Math.toDegrees(atan2(dy.toDouble(), dx.toDouble())).toFloat()
             if (angle < 0) angle += 360f
 
-            // Recorrer cada categoría para ver en qué ángulo está
             var startAngle = 0f
             for (categoria in categories) {
                 val sweepAngle = (categoria.percentage * 360) / 100
@@ -103,10 +102,46 @@ class PieChartDrawable(context: Context, var categories: ArrayList<Category>) : 
                 startAngle = endAngle
             }
         }
-
         return null
     }
 
+    fun handleTouch(x: Float, y: Float) {
+        val clickedCategory = getCategoryFromTouch(x, y)
+        if (clickedCategory != null) {
+            if (clickedCategory == selectedCategory) {
+                selectedCategory = null
+                highlightSelectedCategory(null)
+                onCategorySelected?.invoke(null)
+            } else {
+                selectedCategory = clickedCategory
+                highlightSelectedCategory(clickedCategory.type.displayName)
+                onCategorySelected?.invoke(clickedCategory.type.displayName)
+            }
+        } else {
+            selectedCategory = null
+            highlightSelectedCategory(null)
+            onCategorySelected?.invoke(null)
+        }
+        invalidateSelf()
+    }
+
+    private fun highlightSelectedCategory(categoryName: String?) {
+        clearAllCategorySelections()
+        if (categoryName == null) return
+
+        val selectedTextView = categoryTextViews.find { it.tag == categoryName } ?: return
+        selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.black))
+
+        val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
+        selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
+    }
+
+    private fun clearAllCategorySelections() {
+        categoryTextViews.forEach { view ->
+            view.setTextColor(ContextCompat.getColor(context, R.color.gray))
+            view.text = view.tag?.toString() ?: ""
+        }
+    }
 
 
 }
