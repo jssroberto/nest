@@ -1,3 +1,5 @@
 package itson.appsmoviles.nest.data.model
 
-data class Category(var name: String, var percentage:Float, var color: Int, var total: Float)
+import itson.appsmoviles.nest.data.enum.CategoryType
+
+data class Category(val type: CategoryType, var percentage:Float, var color: Int, var total: Float)

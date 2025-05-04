@@ -31,18 +31,18 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="7dp">
 
-            <Button
-                    android:id="@+id/btn_start_date_filter"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:drawableEnd="@drawable/calendar"
-                    android:gravity="fill_vertical"
-                    android:hint="@string/start_date"
-                    android:paddingHorizontal="14dp"
-                    android:layout_gravity="center"
-                    style="@style/Nest.Selectable" />
 
+            <Button
+                android:id="@+id/btn_start_date_filter"
+                style="@style/Nest.Selectable"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
+                android:drawableEnd="@drawable/calendar"
+                android:gravity="fill_vertical"
+                android:hint="@string/start_date"
+                android:paddingHorizontal="14dp" />
 
             <Button
                     android:id="@+id/btn_end_date_filter"

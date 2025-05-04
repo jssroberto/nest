@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class ExpenseRepository {
@@ -143,18 +144,30 @@ class ExpenseRepository {
             emptyList()
         }
     }
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getFilteredExpensesFromFirebase(
-        startDate: LocalDate?,
-        endDate: LocalDate?,
-        categoryType: CategoryType? = null
+        startDate: Long?,
+        endDate: Long?,
+        categoryName: String?
     ): List<Expense> {
         val allExpenses = getMovementsFromFirebase()
 
+        val isCategoryValid = !categoryName.isNullOrBlank() && !categoryName.equals("Select a category", ignoreCase = true)
+        val hasStartDate = startDate != null
+        val hasEndDate = endDate != null
+
+        if (!hasStartDate && !hasEndDate && !isCategoryValid) {
+            return allExpenses
+        }
+
+        val startLocalDate = startDate?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+        }
+        val endLocalDate = endDate?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+        }
+
         return allExpenses.filter { expense ->
-            // Convert the Long timestamp to LocalDate
             val expenseDate = try {
                 Instant.ofEpochMilli(expense.date)
                     .atZone(ZoneId.systemDefault())
@@ -163,15 +176,18 @@ class ExpenseRepository {
                 null
             }
 
-            val dateMatches =
-                (startDate == null || expenseDate == null || !expenseDate.isBefore(startDate)) &&
-                        (endDate == null || expenseDate == null || !expenseDate.isAfter(endDate))
+            val dateMatches = expenseDate != null &&
+                    (startLocalDate == null || !expenseDate.isBefore(startLocalDate)) &&
+                    (endLocalDate == null || !expenseDate.isAfter(endLocalDate))
 
-            val categoryMatches = categoryType == null || expense.category == categoryType
+            val categoryMatches = !isCategoryValid ||
+                    expense.category.displayName.equals(categoryName, ignoreCase = true)
 
             dateMatches && categoryMatches
         }
     }
+
+
 
 
 }

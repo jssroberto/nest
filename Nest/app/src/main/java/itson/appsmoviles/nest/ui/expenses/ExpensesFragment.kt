@@ -11,19 +11,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.model.Category
+import itson.appsmoviles.nest.ui.add.expense.ExpensesViewModel
 import itson.appsmoviles.nest.ui.expenses.drawable.ExpensesDrawable
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
+import itson.appsmoviles.nest.ui.util.clearFilters
+import itson.appsmoviles.nest.ui.util.formatDateShortForm
+import itson.appsmoviles.nest.ui.util.setUpSpinner
+import itson.appsmoviles.nest.ui.util.showDatePicker
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,17 +43,28 @@ class ExpensesFragment : Fragment() {
 
     private val expenseRepository = ExpenseRepository()
     private val categories = arrayListOf(
-        Category("Health", 0.0f, R.color.lightest_blue, 0.0f),
-        Category("Home", 0.0f, R.color.lighter_blue, 0.0f),
-        Category("Food", 0.0f, R.color.light_blue, 0.0f),
-        Category("Recreation", 0.0f, R.color.dark_blue, 0.0f),
-        Category("Transport", 0.0f, R.color.darker_blue, 0.0f),
-        Category("Others", 0.0f, R.color.blue, 0.0f)
+        Category(CategoryType.LIVING, 0.0f, R.color.category_living, 0.0f),
+        Category(CategoryType.RECREATION, 0.0f, R.color.category_recreation, 0.0f),
+        Category(CategoryType.TRANSPORT, 0.0f, R.color.category_transport, 0.0f),
+        Category(CategoryType.FOOD, 0.0f, R.color.category_food, 0.0f),
+        Category(CategoryType.HEALTH, 0.0f, R.color.category_health, 0.0f),
+        Category(CategoryType.OTHER, 0.0f, R.color.category_other, 0.0f)
     )
 
     private var selectedCategoryName: String? = null
     private lateinit var pieChartDrawable: PieChartDrawable
     private val categoryTextViews = mutableListOf<TextView>()
+    private var startSelectedTimestamp: Long? = null
+    private var endSelectedTimestamp: Long? = null
+    private val viewModel: ExpensesViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return ExpensesViewModel(ExpenseRepository()) as T
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -59,20 +79,45 @@ class ExpensesFragment : Fragment() {
         val startDateButton: Button = view.findViewById(R.id.btn_date_income)
         val endDateButton: Button = view.findViewById(R.id.btn_end_date)
         val totalExpensesTextView = view.findViewById<TextView>(R.id.totalExpenses)
+        val clean: ImageButton = view.findViewById(R.id.btn_delete_filters)
 
-        configureSpinner(view)
+        setUpSpinner(requireContext(), view.findViewById(R.id.spinner_categories_income))
+
         configurePieChart(view)
 
-        startDateButton.setOnClickListener { showDatePicker(startDateButton) }
-        endDateButton.setOnClickListener { showDatePicker(endDateButton) }
+        startDateButton.setOnClickListener { showDatePicker(
+                context = requireContext(),
+                onDateSelected = { timestampMillis ->
+                    startSelectedTimestamp = timestampMillis
+                    startDateButton.text = formatDateShortForm(timestampMillis)
+                }
+        ) }
+        endDateButton.setOnClickListener {
+            showDatePicker(
+                context = requireContext(),
+                onDateSelected = { timestampMillis ->
+                    endSelectedTimestamp = timestampMillis
+                    endDateButton.text = formatDateShortForm(timestampMillis)
+                }
+            )
+        }
 
-        totalExpensesTextView.text = "$${calculateTotal()}"
-
-        setupCategoryTextViews(view)
+        clean.setOnClickListener {
+            clearFilters(
+                view.findViewById(R.id.spinner_categories_income),
+                startDateButton,
+                endDateButton,
+                requireContext()
+            )
+        }
 
         view.findViewById<Button>(R.id.btn_filter)?.setOnClickListener {
             filterAndLoadExpenses()
         }
+
+        totalExpensesTextView.text = "$${calculateTotal()}"
+
+        setupCategoryTextViews(view)
 
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -81,50 +126,31 @@ class ExpensesFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun parseDateFromButton(button: Button): LocalDate? {
-        return try {
-            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy", Locale.getDefault())
-            LocalDate.parse(button.text.toString(), formatter)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun parseSelectedCategory(spinner: Spinner): CategoryType? {
-        return when (spinner.selectedItem.toString()) {
-            "Food" -> CategoryType.FOOD
-            "Transport" -> CategoryType.TRANSPORT
-            "Entertainment" -> CategoryType.RECREATION
-            "Home" -> CategoryType.LIVING
-            "Health" -> CategoryType.HEALTH
-            "Other" -> CategoryType.OTHER
-            else -> null
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun filterAndLoadExpenses() {
-        val startDate = parseDateFromButton(requireView().findViewById(R.id.btn_date_income))
-        val endDate = parseDateFromButton(requireView().findViewById(R.id.btn_end_date))
-        val category = parseSelectedCategory(requireView().findViewById(R.id.spinner_categories_income))
+        val spinner = requireView().findViewById<Spinner>(R.id.spinner_categories_income)
+        val selectedCategoryText = spinner.selectedItem?.toString()
+        val selectedCategoryName = if (
+            selectedCategoryText.isNullOrBlank() ||
+            selectedCategoryText.equals("Select a category", ignoreCase = true)
+        ) null else selectedCategoryText
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            val filteredExpenses = expenseRepository.getFilteredExpensesFromFirebase(startDate, endDate, category)
-            updateChartWithExpenses(filteredExpenses)
-        }
+        viewModel.getFilteredExpenses(startSelectedTimestamp, endSelectedTimestamp, selectedCategoryName)
+            .observe(viewLifecycleOwner) { expenses ->
+                updateChartWithExpenses(expenses)
+            }
     }
 
     private fun updateChartWithExpenses(expenses: List<Expense>) {
 
         categories.forEach { it.total = 0.0f }
 
-        val groupedExpenses = expenses.groupBy { mapCategoryName(it.category) }
+        val groupedExpenses = expenses.groupBy { it.category.displayName }
 
         groupedExpenses.forEach { (name, expensesList) ->
             val totalAmount = expensesList.sumOf { it.amount.toDouble() }.toFloat()
 
 
-            categories.find { it.name == name }?.let {
+            categories.find { it.type.displayName == name }?.let {
                 it.total = totalAmount
             }
         }
@@ -151,32 +177,31 @@ class ExpensesFragment : Fragment() {
             recreationTextView to "Recreation",
             othersTextView to "Others"
         ).forEach { (textView, text) ->
-            textView.tag = text // Guardamos el texto original
+            textView.tag = text
             categoryTextViews.add(textView)
 
-            // Aseguramos que el color inicial sea el correspondiente
+
             textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
-            // Configura el clic para la categoría
+
             setupCategoryClick(textView, text)
         }
     }
 
-
     private fun setupCategoryClick(textView: TextView, categoryName: String) {
         textView.setOnClickListener {
             if (selectedCategoryName == categoryName) {
-                // Si ya está seleccionada, deselecciona
+
                 selectedCategoryName = null
                 clearAllCategorySelections()
                 pieChartDrawable.selectedCategory = null
-                requireView().findViewById<View>(R.id.graph).invalidate() // Redibuja el gráfico
+                requireView().findViewById<View>(R.id.graph).invalidate()
             } else {
-                // Si no está seleccionada, selecciona esta categoría
+
                 selectedCategoryName = categoryName
                 highlightSelectedCategory(textView, categoryName)
-                pieChartDrawable.selectedCategory = categories.find { it.name == categoryName }
-                requireView().findViewById<View>(R.id.graph).invalidate() // Redibuja el gráfico
+                pieChartDrawable.selectedCategory = categories.find { it.type.displayName == categoryName }
+                requireView().findViewById<View>(R.id.graph).invalidate()
             }
         }
     }
@@ -209,37 +234,9 @@ class ExpensesFragment : Fragment() {
 
 
 
-        val percentage = categories.find { it.name == categoryName }?.percentage ?: 0.0f
+        val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
         selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
 
-    }
-
-
-
-    private fun configureSpinner(view: View) {
-        val spinner = view.findViewById<Spinner>(R.id.spinner_categories_income)
-        val categoryList = listOf(
-            "Food", "Transport", "Entertainment", "Home", "Health", "Other", "All categories"
-        )
-        val spinnerItems = listOf("Select a Category") + categoryList
-
-        val adapter = object : ArrayAdapter<String>(
-            requireContext(), R.layout.spinner_item, spinnerItems
-        ) {
-            override fun isEnabled(position: Int) = position != 0
-
-            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-                val view = super.getDropDownView(position, convertView, parent)
-                val textView = view as TextView
-                val colorRes = if (position == 0) R.color.edt_text else R.color.txt_color
-                textView.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
-                return view
-            }
-        }
-
-        adapter.setDropDownViewResource(R.layout.spinner_item)
-        spinner.adapter = adapter
-        spinner.setSelection(0)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -262,10 +259,10 @@ class ExpensesFragment : Fragment() {
                         clearAllCategorySelections()
                     } else {
                         // Selecciona nueva categoría
-                        selectedCategoryName = clickedCategory.name
+                        selectedCategoryName = clickedCategory.type.displayName
                         pieChartDrawable.selectedCategory = clickedCategory
-                        categoryTextViews.find { it.tag == clickedCategory.name }?.let {
-                            highlightSelectedCategory(it, clickedCategory.name)
+                        categoryTextViews.find { it.tag == clickedCategory.type.displayName }?.let {
+                            highlightSelectedCategory(it, clickedCategory.type.displayName)
                         }
                     }
                 } else {
@@ -281,61 +278,10 @@ class ExpensesFragment : Fragment() {
         }
     }
 
-
-        private fun showDatePicker(button: Button) {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        val datePickerDialog = DatePickerDialog(
-            requireContext(), R.style.Nest_DatePicker,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-                button.text = selectedDate
-                button.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-            },
-            year, month, day
-        )
-
-        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
-
-        datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar") { _, _ ->
-            when (button.id) {
-                R.id.btn_date_income -> button.text = "Start date"
-                R.id.btn_end_date -> button.text = "End date"
-                else -> button.text = "Select date"
-            }
-            button.setTextColor(ContextCompat.getColor(requireContext(), R.color.darker_blue))
-        }
-
-        datePickerDialog.setOnShowListener {
-            datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-                .setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-            datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-                .setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-        }
-
-        datePickerDialog.show()
-    }
-
-
-
-
     private fun calculateTotal(): Float {
         return categories.sumOf { it.total.toDouble() }.toFloat()
     }
 
-    private fun mapCategoryName(categoryType: CategoryType): String {
-        return when (categoryType) {
-            CategoryType.LIVING -> "Home"
-            CategoryType.RECREATION -> "Recreation"
-            CategoryType.TRANSPORT -> "Transport"
-            CategoryType.FOOD -> "Food"
-            CategoryType.HEALTH -> "Health"
-            CategoryType.OTHER -> "Others"
-        }
-    }
 
     private suspend fun loadExpenses() {
         val startDate = view?.findViewById<Button>(R.id.btn_date_income)?.text?.toString()
@@ -361,12 +307,12 @@ class ExpensesFragment : Fragment() {
 
         calculateProgressBars(
             requireView(),
-            expenses.filter { mapCategoryName(it.category) == "Food" }.sumOf { it.amount.toDouble() }.toFloat(), 75f,
-            expenses.filter { mapCategoryName(it.category) == "Transport" }.sumOf { it.amount.toDouble() }.toFloat(), 1f,
-            expenses.filter { mapCategoryName(it.category) == "Health" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
-            expenses.filter { mapCategoryName(it.category) == "Others" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
-            expenses.filter { mapCategoryName(it.category) == "Home" }.sumOf { it.amount.toDouble() }.toFloat(), 41f,
-            expenses.filter { mapCategoryName(it.category) == "Recreation" }.sumOf { it.amount.toDouble() }.toFloat(), 20f
+            expenses.filter { it.category.displayName == "Food" }.sumOf { it.amount.toDouble() }.toFloat(), 75f,
+            expenses.filter { it.category.displayName == "Transport" }.sumOf { it.amount.toDouble() }.toFloat(), 1f,
+            expenses.filter { it.category.displayName == "Health" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { it.category.displayName == "Others" }.sumOf { it.amount.toDouble() }.toFloat(), 50f,
+            expenses.filter { it.category.displayName == "Home" }.sumOf { it.amount.toDouble() }.toFloat(), 41f,
+            expenses.filter { it.category.displayName == "Recreation" }.sumOf { it.amount.toDouble() }.toFloat(), 20f
         )
     }
 

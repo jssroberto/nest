@@ -22,75 +22,82 @@
 
 
         <Spinner
-                android:id="@+id/spinner_categories_income"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/edittext_rounded"
-                style="@style/Nest.Selectable"
+            android:id="@+id/spinner_categories_income"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/edittext_rounded"
+            android:backgroundTint="@color/edt_text"
+            android:paddingVertical="3dp" />
 
-                />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="7dp">
 
 
             <Button
-                    android:id="@+id/btn_date_income"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_marginTop="@dimen/horizontalMargin"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/calendar"
-                    android:gravity="fill_vertical"
-                    android:text="@string/start_date"
-                    android:paddingHorizontal="14dp"
-                    android:layout_gravity="center"
-                    style="@style/Nest.Selectable" />
-
-            <View
-                    android:layout_width="8dp"
-                    android:layout_height="0dp" />
-
-            <Button
-                android:id="@+id/btn_end_date"
-                android:layout_weight="1"
+                android:id="@+id/btn_date_income"
                 style="@style/Nest.Selectable"
-                android:layout_height="wrap_content"
                 android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/horizontalMargin"
                 android:layout_marginEnd="5dp"
                 android:drawableEnd="@drawable/calendar"
                 android:gravity="fill_vertical"
+                android:hint="@string/start_date"
+                android:paddingHorizontal="14dp" />
+
+            <Button
+                android:id="@+id/btn_end_date"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:drawableEnd="@drawable/calendar"
+                android:gravity="fill_vertical"
+                android:hint="@string/end_date"
                 android:paddingHorizontal="14dp"
-                android:text="@string/end_date"
-
-
-                />
-
+                android:layout_gravity="center"
+                style="@style/Nest.Selectable" />
 
         </LinearLayout>
 
 
-        <Button
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageButton
+                android:id="@+id/btn_delete_filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/button"
+                android:contentDescription="@string/clear_filters"
+                android:src="@drawable/btn_clear_filter"
+                android:layout_gravity="center" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
                 android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:background="@drawable/edittext_rounded"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/darker_blue"
-                android:textSize="12sp"
+                android:layout_height="wrap_content"
                 android:text="@string/filter"
                 android:textAllCaps="true"
-                android:textColor="@color/lightest_blue"
-                android:fontFamily="@font/lexend_bold"
-                android:foregroundGravity="center_vertical" />
-
+                android:background="@drawable/button"
+                android:layout_gravity="center" />
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/graph"
@@ -164,7 +171,7 @@
 
                 <TextView
                     android:id="@+id/recreationTextView"
-                    android:layout_width="140dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:text="@string/recreation" />
 
