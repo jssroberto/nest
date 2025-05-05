@@ -38,8 +38,8 @@ class FilterManager(
         startTimestamp = null
         endTimestamp = null
         spinner.setSelection(0)
-        startDateButton.text = context.getString(R.string.select_start_date)
-        endDateButton.text = context.getString(R.string.select_end_date)
+        startDateButton.text = context.getString(R.string.start_date)
+        endDateButton.text = context.getString(R.string.end_date)
     }
 
     fun getSelectedCategory(): String? {

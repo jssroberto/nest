@@ -1,6 +1,5 @@
 package itson.appsmoviles.nest.ui.expenses.drawable
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.ColorFilter
@@ -8,10 +7,7 @@ import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.view.MotionEvent
-import android.view.View
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Category
@@ -126,22 +122,28 @@ class PieChartDrawable(
     }
 
     private fun highlightSelectedCategory(categoryName: String?) {
-        clearAllCategorySelections()
-        if (categoryName == null) return
+        if (categoryName == null) {
 
-        val selectedTextView = categoryTextViews.find { it.tag == categoryName } ?: return
-        selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.black))
+            categoryTextViews.forEach { view ->
+                view.setTextColor(ContextCompat.getColor(context, R.color.black))
+                view.text = view.tag?.toString() ?: ""
+            }
+        } else {
 
-        val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
-        selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
-    }
+            categoryTextViews.forEach { view ->
+                view.setTextColor(ContextCompat.getColor(context, R.color.gray))
+                view.text = view.tag?.toString() ?: ""
+            }
 
-    private fun clearAllCategorySelections() {
-        categoryTextViews.forEach { view ->
-            view.setTextColor(ContextCompat.getColor(context, R.color.gray))
-            view.text = view.tag?.toString() ?: ""
+            val selectedTextView = categoryTextViews.find { it.tag == categoryName } ?: return
+            selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.black))
+
+            val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
+            selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
         }
     }
+
+
 
 
 }
