@@ -53,7 +53,7 @@
                             android:id="@+id/txt_income_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$0.0"
+                            android:text="$0"
                             android:textSize="@dimen/text_size_large"
                             android:textColor="@color/txt_income"
                             android:gravity="center" />
@@ -80,7 +80,7 @@
                             android:id="@+id/txt_expenses_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$0.0"
+                            android:text="$0"
                             android:textSize="@dimen/text_size_large"
                             android:gravity="center"
                             android:textColor="@color/txt_expenses" />
@@ -105,7 +105,7 @@
                             android:id="@+id/txt_net_balance_home"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$999"
+                            android:text="$0"
                             android:textSize="@dimen/text_size_large"
                             android:gravity="center" />
 

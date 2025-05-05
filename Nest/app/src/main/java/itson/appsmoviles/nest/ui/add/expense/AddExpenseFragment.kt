@@ -14,11 +14,13 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.ui.common.SharedViewModel
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
@@ -37,6 +39,8 @@ class AddExpenseFragment : Fragment() {
     private var selectedTimestamp: Long? = null
 
     private lateinit var viewModel: AddExpenseViewModel
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,7 +99,6 @@ class AddExpenseFragment : Fragment() {
 
     private fun addExpense() {
         if (!areFieldsValid()) {
-            showToast(requireContext(), "Please fill in all fields")
             return
         }
 
@@ -111,7 +114,7 @@ class AddExpenseFragment : Fragment() {
         viewModel.addExpense(
             expense = expense,
             onSuccess = {
-                clearFields()
+                sharedViewModel.notifyMovementsUpdated()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             },
             onFailure = { e ->

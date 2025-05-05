@@ -13,6 +13,7 @@ import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.data.model.Movement
 import itson.appsmoviles.nest.ui.home.detail.ExpenseDetailDialogFragment
+import itson.appsmoviles.nest.ui.util.showToast
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -41,7 +42,7 @@ class MovementAdapter(
 
         when (movement) {
             is Expense -> {
-                holder.amount.text = String.format(Locale.getDefault(), "-$%.2f", movement.amount)
+                holder.amount.text = String.format(Locale.getDefault(), "-$%d", movement.amount.toInt())
                 holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_expenses))
 
                 val iconResId = when (movement.category) {
@@ -73,15 +74,18 @@ class MovementAdapter(
             }
 
             is Income -> {
-                holder.amount.text = String.format(Locale.getDefault(), "+$%.2f", movement.amount)
+                holder.amount.text = String.format(Locale.getDefault(), "+$%d", movement.amount.toInt())
                 holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_income))
                 holder.icon.setImageResource(R.drawable.icon_category_income) // Use a specific income icon resource
 
                 // Handle click listener for Income
                 // Option 1: Disable click or show a simple message
-                holder.itemView.setOnClickListener(null)
+                holder.itemView.setOnClickListener{
+                    showToast(holder.itemView.context, "Income item clicked: ${movement.description}")
+                }
 
-                // Option 2: Show a different dialog for Income (if you create one)
+
+                // Show a different dialog for Income
                 /*
                 holder.itemView.setOnClickListener {
                     val bundle = Bundle().apply {

@@ -34,7 +34,17 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation = findViewById(R.id.bottomNavigation)
         initializeFragments()
         setupBottomNavigation()
+
+        supportFragmentManager.addOnBackStackChangedListener {
+            val addFragment = supportFragmentManager.findFragmentByTag(AddFragment.TAG)
+            if (addFragment == null) {
+                // AddFragment has been popped, so return to HomeFragment
+                switchFragment(fragments.getValue(R.id.nav_home))
+                bottomNavigation.selectedItemId = R.id.nav_home
+            }
+        }
     }
+
 
     private fun initializeFragments() {
         val transaction = supportFragmentManager.beginTransaction()

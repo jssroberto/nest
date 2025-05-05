@@ -7,6 +7,6 @@ class NestApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // Initialize Firebase Realtime Database for caching
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
     }
 }

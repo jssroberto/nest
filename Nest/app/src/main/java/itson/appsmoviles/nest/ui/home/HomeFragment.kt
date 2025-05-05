@@ -18,12 +18,14 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.ui.common.SharedViewModel
 import itson.appsmoviles.nest.ui.common.UiState
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.drawable.ExpensesBarPainter
@@ -35,6 +37,7 @@ import itson.appsmoviles.nest.ui.util.showToast
 class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var movementAdapter: MovementAdapter
     private lateinit var expensesBarPainter: ExpensesBarPainter
@@ -66,10 +69,12 @@ class HomeFragment : Fragment() {
         bindViews(view)
         setupRecyclerView()
         setUpClickListeners()
-        setupFragmentResultListener()
+//        setupFragmentResultListener()
         setupSearchListener()
         applyBtnAddMargin()
-        observeViewModel()
+        observeViewModels()
+        
+
     }
 
     private fun bindViews(view: View) {
@@ -114,9 +119,14 @@ class HomeFragment : Fragment() {
             "update_expense_result",
             viewLifecycleOwner
         ) { _, result ->
+            Log.d("HomeFragment", "Received result: $result")
             if (result.getBoolean("updated", false)) {
+                Log.d("HomeFragment", "Data updated, refreshing...")
                 viewModel.refreshAllData()
+            } else {
+                Log.d("HomeFragment", "No data updated.")
             }
+
         }
     }
 
@@ -127,21 +137,23 @@ class HomeFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.applySearchQuery(s?.toString() ?: "")
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
     @SuppressLint("SetTextI18n")
-    private fun observeViewModel() {
+    private fun observeViewModels() {
         // Observe Overview State (Income, Expenses, Balance, Budget, User)
         viewModel.overviewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Loading -> {
-                    txtIncome.text = "..."
-                    txtExpenses.text = "..."
-                    txtNetBalance.text = "..."
-                    txtBudget.text = "..."
+//                    txtIncome.text = "..."
+//                    txtExpenses.text = "..."
+//                    txtNetBalance.text = "..."
+//                    txtBudget.text = "..."
                 }
+
                 is UiState.Success -> {
                     val overview = state.data
                     txtWelcome.text = "Hi ${overview.userName}\nhere's your monthly overview"
@@ -152,8 +164,9 @@ class HomeFragment : Fragment() {
 
                     val painterNeedsInitialization = !::expensesBarPainter.isInitialized
 
-                    if (painterNeedsInitialization){
-                        expensesBarPainter = ExpensesBarPainter(requireContext(), expensesBar, overview.budget)
+                    if (painterNeedsInitialization) {
+                        expensesBarPainter =
+                            ExpensesBarPainter(requireContext(), expensesBar, overview.budget)
                         lastExpensesData?.let { cachedData ->
                             expensesBarPainter.paintBudget(cachedData.categoryTotals)
                         }
@@ -162,6 +175,7 @@ class HomeFragment : Fragment() {
                         expensesBarPainter.updateBudget(overview.budget)
                     }
                 }
+
                 is UiState.Error -> {
                     Log.e("HomeFragment", "Error loading overview: ${state.message}")
                     showToast(requireContext(), "Error loading overview: ${state.message}")
@@ -175,6 +189,7 @@ class HomeFragment : Fragment() {
                 is UiState.Loading -> {
 
                 }
+
                 is UiState.Success -> {
                     val expensesData = state.data
 
@@ -185,12 +200,18 @@ class HomeFragment : Fragment() {
                         expensesBarPainter.paintBudget(expensesData.categoryTotals)
                     }
                 }
+
                 is UiState.Error -> {
                     lastExpensesData = null
                     Log.e("HomeFragment", "Error loading expenses: ${state.message}")
                     showToast(requireContext(), "Error loading expenses: ${state.message}")
                 }
             }
+        }
+
+        sharedViewModel.movementsUpdated.observe(viewLifecycleOwner) {
+            Log.d("HomeFragment", "Observed expense update, refreshing data...")
+            viewModel.refreshAllData()
         }
     }
 

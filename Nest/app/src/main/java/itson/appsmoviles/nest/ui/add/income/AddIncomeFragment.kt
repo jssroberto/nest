@@ -19,9 +19,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Income
+import itson.appsmoviles.nest.ui.common.SharedViewModel
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.showDatePicker
@@ -40,6 +42,8 @@ class AddIncomeFragment : Fragment() {
     private var selectedTimestamp: Long? = null
     private lateinit var viewModel: AddIncomeViewModel
     private lateinit var addIncomeButton: Button
+
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +113,7 @@ class AddIncomeFragment : Fragment() {
         viewModel.addIncome(
             income = income,
             onSuccess = {
+                sharedViewModel.notifyMovementsUpdated()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             },
             onFailure = { exception ->

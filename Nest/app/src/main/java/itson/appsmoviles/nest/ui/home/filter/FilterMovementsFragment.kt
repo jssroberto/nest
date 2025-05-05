@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.DialogFragment
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.util.formatDateShortForm
@@ -76,9 +77,11 @@ class FilterMovementsFragment : DialogFragment() {
         }
 
         btnApplyFilters.setOnClickListener {
-            if (areFieldsValid()) {
-                dismiss()
-            }
+
+        }
+
+        btnClearFilters.setOnClickListener {
+            clearFilters()
         }
     }
 
@@ -91,16 +94,14 @@ class FilterMovementsFragment : DialogFragment() {
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    private fun areFieldsValid(): Boolean {
-        if (startSelectedTimestamp == null || endSelectedTimestamp == null || spinner.selectedItemPosition == 0) {
-            showToast(requireContext(), "Please fill in all fields")
-            return false
-        }
-
-        if (startSelectedTimestamp!! > endSelectedTimestamp!!) {
-            showToast(requireContext(), "Start date cannot be after end date")
-            return false
-        }
-        return true
+    private fun clearFilters() {
+        btnStartDate.text = ""
+        btnEndDate.text = ""
+        btnStartDate.hint = getString(R.string.start_date)
+        btnEndDate.hint = getString(R.string.end_date)
+        startSelectedTimestamp = null
+        endSelectedTimestamp = null
+        spinner.setSelection(0)
     }
+
 }
