@@ -1,26 +1,78 @@
 package itson.appsmoviles.nest.data.repository
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 import itson.appsmoviles.nest.data.enum.CategoryType
-import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.ui.home.HomeOverviewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.io.IOException
 
 class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
+
+    suspend fun getOverviewData(): HomeOverviewState? = withContext(Dispatchers.IO) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Log.e("ExpenseRepository", "getOverviewData: User not authenticated")
+            return@withContext null
+        }
+        return@withContext try {
+            val userName = auth.currentUser?.displayName ?: "User"
+            val totalIncome = fetchTotalForNode(userId, "incomes")
+            val totalExpenses = fetchTotalForNode(userId, "expenses")
+            val budget = fetchBudget(userId)
+
+            HomeOverviewState(
+                userName = userName,
+                totalIncome = totalIncome,
+                totalExpenses = totalExpenses,
+                budget = budget
+            )
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error fetching overview data", e)
+            null
+        }
+    }
+
+    private suspend fun fetchTotalForNode(userId: String, nodeName: String): Double {
+        return try {
+            val path = database.child("users").child(userId).child("movements").child(nodeName)
+            val snapshot = path.get().await()
+            if (!snapshot.exists()) return 0.0
+
+            snapshot.children.sumOf { itemSnapshot ->
+                getAmountFromSnapshot(itemSnapshot) ?: 0.0
+            }
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error fetching total for $nodeName", e)
+            throw IOException("Error fetching total for $nodeName", e)
+        }
+    }
+
+    private fun getAmountFromSnapshot(snapshot: DataSnapshot): Double? {
+        return snapshot.child("amount").getValue(Double::class.java)
+            ?: snapshot.child("amount").getValue(Long::class.java)?.toDouble()
+    }
+
+    // TODO: Replace placeholder with actual Firebase database call
+    private suspend fun fetchBudget(userId: String): Double {
+        return try {
+            // Example: Fetching a single value
+            // val snapshot = database.child("users").child(userId).child("profile").child("budget").get().await()
+            // snapshot.getValue(Double::class.java) ?: 150.0 // Default if null or not found
+            150.0
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error fetching budget", e)
+            throw IOException("Error fetching budget", e)
+        }
+    }
 
     suspend fun addExpense(
         expense: Expense,
@@ -28,15 +80,12 @@ class ExpenseRepository {
         onFailure: (Exception) -> Unit
     ) = withContext(Dispatchers.IO) {
         val userId = auth.currentUser?.uid
-
         if (userId == null) {
-            withContext(Dispatchers.Main) {
-                onFailure(Exception("User not authenticated"))
-            }
+            withContext(Dispatchers.Main) { onFailure(Exception("User not authenticated")) }
             return@withContext
         }
-
-        val newExpenseRef = database.child("users").child(userId).child("expenses").push()
+        val expensesRef = database.child("users").child(userId).child("movements").child("expenses")
+        val newExpenseRef = expensesRef.push()
 
         val expenseMap = mapOf(
             "description" to expense.description,
@@ -50,10 +99,10 @@ class ExpenseRepository {
             newExpenseRef.setValue(expenseMap).await()
             withContext(Dispatchers.Main) { onSuccess() }
         } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error adding expense", e)
             withContext(Dispatchers.Main) { onFailure(e) }
         }
     }
-
 
     suspend fun updateExpense(
         expense: Expense,
@@ -66,13 +115,15 @@ class ExpenseRepository {
             return@withContext
         }
 
-        val expenseId = expense.id // Gets ID from the object
+        val expenseId = expense.id
         if (expenseId.isBlank()) {
-            withContext(Dispatchers.Main) { onFailure(IllegalArgumentException("Expense must have a valid ID to be updated")) }
+            val error = IllegalArgumentException("Expense must have a valid ID to be updated")
+            withContext(Dispatchers.Main) { onFailure(error) }
             return@withContext
         }
 
-        val expenseRef = database.child("users").child(userId).child("expenses").child(expenseId)
+        val expenseRef = database.child("users").child(userId).child("movements").child("expenses")
+            .child(expenseId)
 
         val updatedExpenseMap = mapOf(
             "description" to expense.description,
@@ -86,108 +137,114 @@ class ExpenseRepository {
             expenseRef.updateChildren(updatedExpenseMap).await()
             withContext(Dispatchers.Main) { onSuccess() }
         } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error updating expense with ID: $expenseId", e)
             withContext(Dispatchers.Main) { onFailure(e) }
         }
     }
 
-    // Método para obtener todos los expenses
-    suspend fun getMovementsFromFirebase(): List<Expense> = withContext(Dispatchers.IO) {
-        val userId = auth.currentUser?.uid ?: return@withContext emptyList()
+
+    suspend fun deleteExpense(
+        expenseId: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) = withContext(Dispatchers.IO) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            withContext(Dispatchers.Main) { onFailure(Exception("User not authenticated")) }
+            return@withContext
+        }
+
+        if (expenseId.isBlank()) {
+            val error = IllegalArgumentException("Expense ID cannot be blank for deletion")
+            withContext(Dispatchers.Main) { onFailure(error) }
+            return@withContext
+        }
+        val expenseRef = database.child("users").child(userId).child("movements").child("expenses")
+            .child(expenseId)
+
+        try {
+            expenseRef.removeValue().await()
+            withContext(Dispatchers.Main) { onSuccess() }
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error deleting expense with ID: $expenseId", e)
+            withContext(Dispatchers.Main) { onFailure(e) }
+        }
+    }
+
+
+    suspend fun getAllExpenses(): List<Expense> = withContext(Dispatchers.IO) {
+        val userId =
+            auth.currentUser?.uid ?: return@withContext emptyList() // Return early if no user
+
         return@withContext try {
-            val snapshot = database.child("users").child(userId).child("expenses").get().await()
+            val snapshot =
+                database.child("users").child(userId).child("movements").child("expenses")
+                    .get().await()
             Log.d(
                 "ExpenseRepository",
-                "Firebase snapshot children count: ${snapshot.childrenCount}"
+                "getAllExpenses: Fetched ${snapshot.childrenCount} raw expenses."
             )
 
-            snapshot.children.mapNotNull { gastoSnapshot ->
-                val expense = gastoSnapshot.getValue(Expense::class.java)
-                expense?.copy(id = gastoSnapshot.key ?: "")
+            snapshot.children.mapNotNull { dataSnapshot ->
+                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
             }
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error obteniendo datos de Firebase", e)
+            Log.e("ExpenseRepository", "Error getting all expenses from Firebase", e)
             emptyList()
         }
     }
+
 
     suspend fun getExpensesFiltered(
-        category: String?,
-        startDate: String?,
-        endDate: String?
-    ): List<Expense> {
-        val userId = auth.currentUser?.uid ?: return emptyList()
-        return try {
-            val snapshot = database.child("users").child(userId).child("expenses").get().await()
+        startDate: Long? = null,
+        endDate: Long? = null,
+        category: CategoryType? = null
+    ): List<Expense> = withContext(Dispatchers.IO) {
 
-            snapshot.children.mapNotNull { gastoSnapshot ->
-                gastoSnapshot.getValue(Expense::class.java)?.copy(id = gastoSnapshot.key ?: "")
-            }.filter { expense ->
-                val startMillis = startDate?.let {
-                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time
-                }
-                val endMillis = endDate?.let {
-                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it)?.time?.plus(
-                        86_399_999
-                    )
-                }
+        val userId =
+            auth.currentUser?.uid ?: return@withContext emptyList()
 
-                val inDateRange = (startMillis == null || expense.date >= startMillis) &&
-                        (endMillis == null || expense.date <= endMillis)
+        try {
+            // Build the query progressively
+            var query: Query =
+                database.child("users").child(userId).child("movements").child("expenses")
+                    .orderByChild("date") // Assuming 'date' is stored appropriately (e.g., timestamp)
 
-                val inCategory = category == null || expense.category.name == category
-
-                inDateRange && inCategory
+            // Apply date filters if they exist
+            if (startDate != null) {
+                query =
+                    query.startAt(startDate.toDouble()) // Use Double for Firebase Realtime DB if date is Number
             }
+            if (endDate != null) {
+                query = query.endAt(endDate.toDouble())
+            }
+
+            val snapshot = query.get().await()
+            Log.d(
+                "ExpenseRepository",
+                "getExpensesFiltered: Fetched ${snapshot.childrenCount} expenses after date query."
+            )
+
+            val expenses = snapshot.children.mapNotNull { dataSnapshot ->
+                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
+            }
+
+            // Apply category filter in memory if it exists
+            val finalExpenses = if (category != null) {
+                expenses.filter { it.category == category }
+            } else {
+                expenses
+            }
+
+            Log.d(
+                "ExpenseRepository",
+                "getExpensesFiltered: Returning ${finalExpenses.size} expenses after category filter."
+            )
+            finalExpenses
 
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error filtrando expenses", e)
-            emptyList()
+            Log.e("ExpenseRepository", "Error filtering expenses", e)
+            emptyList() // Return empty list on error
         }
     }
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getFilteredExpensesFromFirebase(
-        startDate: Long?,
-        endDate: Long?,
-        categoryName: String?
-    ): List<Expense> {
-        val allExpenses = getMovementsFromFirebase()
-
-        val isCategoryValid = !categoryName.isNullOrBlank() && !categoryName.equals("Select a category", ignoreCase = true)
-        val hasStartDate = startDate != null
-        val hasEndDate = endDate != null
-
-        if (!hasStartDate && !hasEndDate && !isCategoryValid) {
-            return allExpenses
-        }
-
-        val startLocalDate = startDate?.let {
-            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-        }
-        val endLocalDate = endDate?.let {
-            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-        }
-
-        return allExpenses.filter { expense ->
-            val expenseDate = try {
-                Instant.ofEpochMilli(expense.date)
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-            } catch (e: Exception) {
-                null
-            }
-
-            val dateMatches = expenseDate != null &&
-                    (startLocalDate == null || !expenseDate.isBefore(startLocalDate)) &&
-                    (endLocalDate == null || !expenseDate.isAfter(endLocalDate))
-
-            val categoryMatches = !isCategoryValid ||
-                    expense.category.displayName.equals(categoryName, ignoreCase = true)
-
-            dateMatches && categoryMatches
-        }
-    }
-
-
-
-
 }

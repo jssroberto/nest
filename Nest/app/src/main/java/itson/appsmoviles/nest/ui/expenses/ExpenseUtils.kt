@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.ui.add.expense
+package itson.appsmoviles.nest.ui.expenses
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -31,7 +31,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="welcome_example">Hi (username)\nhere\'s your monthly overview</string>
     <string name="this_months_budget">This month\'s budget:</string>
-    <string name="budget_example">$520</string>
+    <string name="budget_example">$0.0</string>
     <string name="entretenimiento">Entertainment</string>
     <string name="transporte">Transporte</string>
     <string name="alimentacion">Alimentación</string>

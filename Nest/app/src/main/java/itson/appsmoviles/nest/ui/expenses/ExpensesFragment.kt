@@ -18,16 +18,12 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.model.Category
-import itson.appsmoviles.nest.ui.add.expense.ExpensesViewModel
-import itson.appsmoviles.nest.ui.add.expense.configure
-import itson.appsmoviles.nest.ui.add.expense.setup
 import itson.appsmoviles.nest.ui.expenses.manager.CategoryManager
 import itson.appsmoviles.nest.ui.expenses.manager.CategorySelectionManager
 import itson.appsmoviles.nest.ui.expenses.manager.FilterManager
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
 import itson.appsmoviles.nest.ui.expenses.manager.ExpensesController
-import itson.appsmoviles.nest.ui.util.SpinnerUtils.clearFilters
-import itson.appsmoviles.nest.ui.util.SpinnerUtils.setUpSpinner
+import itson.appsmoviles.nest.ui.util.setUpSpinner
 
 class ExpensesFragment : Fragment() {
 
@@ -69,12 +65,7 @@ class ExpensesFragment : Fragment() {
         val clearFiltersButton = view.findViewById<ImageButton>(R.id.btn_delete_filters)
 
         setUpSpinner(requireContext(), spinner)
-        clearFilters(
-            spinner,
-            startDateButton,
-            endDateButton,
-            requireContext()
-        )
+
         categoryManager = CategoryManager(categories)
         filterManager = FilterManager(requireContext(), startDateButton, endDateButton, spinner)
         filterManager.setup()

@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import itson.appsmoviles.nest.data.enum.CategoryType
-import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import kotlinx.coroutines.launch
@@ -18,7 +16,7 @@ class AddExpenseViewModel : ViewModel() {
 
     fun fetchExpenses() {
         viewModelScope.launch {
-            _expenses.value = repository.getMovementsFromFirebase()
+            _expenses.value = repository.getAllExpenses()
         }
     }
 

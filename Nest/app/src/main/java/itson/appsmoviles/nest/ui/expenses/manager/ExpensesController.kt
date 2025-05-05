@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.ui.add.expense.ExpensesViewModel
+import itson.appsmoviles.nest.ui.expenses.ExpensesViewModel
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
 
 class ExpensesController(

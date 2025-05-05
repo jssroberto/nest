@@ -3,20 +3,30 @@ package itson.appsmoviles.nest.ui.util
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.data.enum.CategoryType
+import java.text.Normalizer
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
@@ -154,9 +164,24 @@ fun addDollarSign(editText: EditText) {
     })
 }
 
+fun getCategoryColors(context: Context): Map<CategoryType, String> {
+    fun colorToHex(colorResId: Int): String {
+        val colorInt = ContextCompat.getColor(context, colorResId)
+        return String.format("#%06X", 0xFFFFFF and colorInt)
+    }
 
+    return mapOf(
+        CategoryType.LIVING to colorToHex(R.color.category_living),
+        CategoryType.RECREATION to colorToHex(R.color.category_recreation),
+        CategoryType.TRANSPORT to colorToHex(R.color.category_transport),
+        CategoryType.FOOD to colorToHex(R.color.category_food),
+        CategoryType.HEALTH to colorToHex(R.color.category_health),
+        CategoryType.OTHER to colorToHex(R.color.category_other)
+    )
+}
 
-
-
-
-
+fun String.unaccent(): String {
+    val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)
+    val regex = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+    return regex.replace(normalized, "")
+}

@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.ui.add.expense
+package itson.appsmoviles.nest.ui.expenses
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -25,10 +25,10 @@ class ExpensesViewModel(
 
         val category = cleanedCategory?.let { CategoryType.fromDisplayName(it) }
 
-        val expenses = expenseRepository.getFilteredExpensesFromFirebase(
+        val expenses = expenseRepository.getExpensesFiltered(
             startDate,
             endDate,
-            category?.displayName
+            category
         )
 
         emit(expenses)

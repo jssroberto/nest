@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.ui.home
+package itson.appsmoviles.nest.ui.home.detail
 
 import android.os.Build
 import android.os.Bundle
@@ -182,4 +182,3 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         }
     }
 }
-
