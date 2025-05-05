@@ -10,10 +10,28 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import itson.appsmoviles.nest.R
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class ValueBudgetFragment : Fragment() {
 
-    private var isEditing = false // Evitar el bucle infinito
+    private lateinit var editTextBudget: EditText
+    private lateinit var editTextAmountFood: EditText
+    private lateinit var editTextAmountHome: EditText
+    private lateinit var editTextAmountRecreation: EditText
+    private lateinit var editTextAmountHealth: EditText
+    private lateinit var editTextAmountTransport: EditText
+    private lateinit var editTextAmountOthers: EditText
+    private val currencyFields = mutableListOf<EditText>()
+    private val currencyFormatter = DecimalFormat("$#,##0.00").apply {
+        roundingMode = RoundingMode.DOWN
+        isGroupingUsed = true
+        maximumIntegerDigits = 7
+        maximumFractionDigits = 2
+        minimumFractionDigits = 2
+    }
+    private var isCurrencyFormatting = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,96 +46,130 @@ class ValueBudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val editTextAmountFood: EditText = view.findViewById(R.id.et_food)
-        val editTextAmountHome: EditText = view.findViewById(R.id.et_home)
-        val editTextAmountRecreation: EditText = view.findViewById(R.id.et_recreation)
-        val editTextAmountTransport: EditText = view.findViewById(R.id.et_transport)
-        val editTextAmountOthers: EditText = view.findViewById(R.id.et_others)
-        val editTextAmountHealth: EditText = view.findViewById(R.id.et_health)
-        val editTextBudget: EditText = view.findViewById(R.id.monthly_budget)
+        editTextAmountFood = view.findViewById(R.id.et_food)
+        editTextAmountHome = view.findViewById(R.id.et_home)
+        editTextAmountHealth = view.findViewById(R.id.et_health)
+        editTextAmountRecreation = view.findViewById(R.id.et_recreation)
+        editTextAmountTransport = view.findViewById(R.id.et_transport)
+        editTextAmountOthers = view.findViewById(R.id.et_others)
 
-        setUpCurrencyEditText(editTextAmountFood)
-        setUpCurrencyEditText(editTextBudget)
-        setUpCurrencyEditText(editTextAmountHome)
-        setUpCurrencyEditText(editTextAmountRecreation)
-        setUpCurrencyEditText(editTextAmountTransport)
-        setUpCurrencyEditText(editTextAmountOthers)
-        setUpCurrencyEditText(editTextAmountHealth)
+        currencyFields.addAll(listOf(
+            editTextAmountFood,
+            editTextAmountHome,
+            editTextAmountHealth,
+            editTextAmountRecreation,
+            editTextAmountTransport,
+            editTextAmountOthers))
+
+        editTextBudget = view.findViewById(R.id.monthly_budget)
+
+        listOf(editTextBudget).plus(currencyFields).forEach {
+            it.setText("$0.00")
+        }
+
+        setupCurrencyFormatting()
+
     }
 
-    private fun setUpCurrencyEditText(editText: EditText) {
-        editText.setText("$0.00")
+    private fun setupCurrencyFormatting() {
+        editTextBudget.addTextChangedListener(createMainTextWatcher())
+        currencyFields.forEach { editText ->
+            editText.addTextChangedListener(createAdditionalTextWatcher(editText))
+        }
+    }
 
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, count: Int, after: Int) {
-                // No es necesario realizar ninguna acción aquí
+    private fun createMainTextWatcher(): TextWatcher {
+        return object : TextWatcher {
+            private var previousMainValue = BigDecimal.ZERO
+
+            override fun beforeTextChanged(s: CharSequence?, st: Int, co: Int, af: Int) {
+                previousMainValue = parseCurrency(s.toString())
             }
 
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                if (isEditing) return // Evita cambios cuando estamos actualizando el texto
-
-                var input = charSequence.toString().replace("$", "") // Eliminar el símbolo $
-
-                // Evitar que se borre todo y deje el campo vacío
-                if (input.isEmpty()) {
-                    return
-                }
-
-                // Permitir solo números y un solo punto decimal
-                if (!input.matches("^[0-9]*\\.?[0-9]{0,2}$".toRegex())) {
-                    editText.setText("")
-                    Toast.makeText(requireContext(), "Solo números y un punto decimal permitidos", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                try {
-                    isEditing = true // Marcar que estamos modificando el texto
-
-                    // Si el usuario solo ingresó un punto, no formateamos aún
-                    if (input == ".") {
-                        editText.setText("$0.")
-                        editText.setSelection(editText.text.length)
-                        return
-                    }
-
-                    var amount = input.toDoubleOrNull()
-
-                    // Si es null, dejamos la entrada como está (permite escribir el punto correctamente)
-                    if (amount == null) {
-                        isEditing = false
-                        return
-                    }
-
-                    // Validación de límites
-                    if (amount < 0.00) {
-                        amount = 0.00
-                    } else if (amount > 999999.00) {
-                        Toast.makeText(requireContext(), "El valor no puede ser mayor a $999,999.00", Toast.LENGTH_SHORT).show()
-                        isEditing = false
-                        return
-                    }
-
-                    // Formatear el número sin afectar la entrada del usuario
-                    val formattedAmount = if (input.contains(".")) {
-                        "$$input" // Mantener los decimales como los ingresa el usuario
-                    } else {
-                        "$${amount.toInt()}" // Si no hay punto decimal, mostramos sin decimales
-                    }
-
-                    editText.setText(formattedAmount)
-                    editText.setSelection(editText.text.length) // Mantener el cursor al final
-
-                } catch (e: NumberFormatException) {
-                    // Ignorar error si ocurre
-                } finally {
-                    isEditing = false // Marcar que ya terminamos de modificar el texto
-                }
-            }
+            override fun onTextChanged(s: CharSequence?, st: Int, be: Int, co: Int) {}
 
             override fun afterTextChanged(editable: Editable?) {
-                // No se necesita realizar ninguna acción aquí
+                if (isCurrencyFormatting) return
+                isCurrencyFormatting = true
+
+                val (formatted, parsed) = processCurrencyInput(editable.toString())
+                val currentSum = calculateAdditionalSum()
+
+                when {
+                    parsed < currentSum -> {
+                        editTextBudget.setText(currencyFormatter.format(previousMainValue))
+                        editTextBudget.setSelection(editTextBudget.text?.length ?: 0)
+                    }
+                    formatted != editable.toString() -> {
+                        editTextBudget.setText(formatted)
+                        editTextBudget.setSelection(formatted.length)
+                    }
+                }
+                
+                currencyFields.forEach { field ->
+                    if (field.text.toString() != "0.00") {
+                        field.setText(field.text.toString())
+                    }
+                }
+
+                isCurrencyFormatting = false
             }
-        })
+        }
+    }
+
+    private fun createAdditionalTextWatcher(currentField: EditText): TextWatcher {
+        return object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(editable: Editable?) {
+                if (isCurrencyFormatting) return
+                isCurrencyFormatting = true
+
+                val mainValue = parseCurrency(editTextBudget.text.toString())
+
+                val sumOthers = currencyFields
+                    .filter { it != currentField }
+                    .sumOf { parseCurrency(it.text.toString()) }
+
+                val maxAllowed = (mainValue - sumOthers).coerceAtLeast(BigDecimal.ZERO)
+
+                val (formatted, parsed) = processCurrencyInput(editable.toString())
+                val adjustedValue = parsed.coerceAtMost(maxAllowed)
+
+                if (adjustedValue != parsed || formatted != editable.toString()) {
+                    val finalText = currencyFormatter.format(adjustedValue)
+                    currentField.setText(finalText)
+                    currentField.setSelection(finalText.length)
+                }
+
+                isCurrencyFormatting = false
+            }
+        }
+    }
+
+    private fun processCurrencyInput(input: String): Pair<String, BigDecimal> {
+        val clean = input.replace("[^\\d]".toRegex(), "")
+        val parsed = try {
+            BigDecimal(clean).movePointLeft(2)
+        } catch (e: Exception) {
+            BigDecimal.ZERO
+        }
+        return currencyFormatter.format(parsed) to parsed
+    }
+
+    private fun parseCurrency(input: String): BigDecimal {
+        return try {
+            BigDecimal(input.replace("[^\\d]".toRegex(), "")).movePointLeft(2)
+        } catch (e: Exception) {
+            BigDecimal.ZERO
+        }
+    }
+
+    private fun calculateAdditionalSum(): BigDecimal {
+        return currencyFields.fold(BigDecimal.ZERO) { acc, et ->
+            acc + parseCurrency(et.text.toString())
+        }
     }
 
 }
