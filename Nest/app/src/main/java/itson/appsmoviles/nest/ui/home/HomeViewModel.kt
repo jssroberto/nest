@@ -1,13 +1,14 @@
 package itson.appsmoviles.nest.ui.home
 
-import android.R.attr.category
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.data.model.Movement
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
+import itson.appsmoviles.nest.data.repository.MovementRepository
 import itson.appsmoviles.nest.ui.common.UiState
 import itson.appsmoviles.nest.ui.util.unaccent
 import kotlinx.coroutines.launch
@@ -16,14 +17,16 @@ import java.util.Locale
 class HomeViewModel : ViewModel() {
 
     private val expenseRepository: ExpenseRepository = ExpenseRepository()
+    private val movementRepository: MovementRepository = MovementRepository()
 
     private val _overviewState = MutableLiveData<UiState<HomeOverviewState>>(UiState.Loading)
     val overviewState: LiveData<UiState<HomeOverviewState>> get() = _overviewState
 
-    private val _expensesState = MutableLiveData<UiState<ExpensesState>>(UiState.Loading)
-    val expensesState: LiveData<UiState<ExpensesState>> get() = _expensesState
+    private val _movementsState = MutableLiveData<UiState<MovementsState>>(UiState.Loading)
+    val movementsState: LiveData<UiState<MovementsState>> get() = _movementsState
 
-    private var fullExpenseList: List<Expense> = listOf()
+    private var fullMovementsList: List<Movement> = listOf()
+    private var fullExpensesList: List<Expense> = listOf()
     private var currentSearchQuery: String = ""
 
     init {
@@ -32,13 +35,13 @@ class HomeViewModel : ViewModel() {
 
     fun refreshAllData() {
         fetchOverviewData()
-        fetchExpensesInternal()
+        fetchMovementsInternal()
     }
 
     private fun fetchOverviewData() {
         viewModelScope.launch {
             _overviewState.value = UiState.Loading
-            val overviewData = expenseRepository.getOverviewData() // Returns HomeOverviewState?
+            val overviewData = movementRepository.getOverviewData() // Returns HomeOverviewState?
 
             if (overviewData != null) {
                 _overviewState.value = UiState.Success(overviewData)
@@ -48,14 +51,15 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun fetchExpensesInternal() {
+    private fun fetchMovementsInternal() {
         viewModelScope.launch {
-            _expensesState.value = UiState.Loading
+            _movementsState.value = UiState.Loading
             try {
-                fullExpenseList = expenseRepository.getAllExpenses().sortedByDescending { it.date }
+                fullMovementsList = movementRepository.getAllMovements().sortedByDescending { it.date }
+                fullExpensesList = expenseRepository.getAllExpenses().sortedByDescending { it.date }
                 applyFilterAndSearch()
             } catch (e: Exception) {
-                _expensesState.value = UiState.Error("Failed to load expenses: ${e.message}")
+                _movementsState.value = UiState.Error("Failed to load expenses: ${e.message}")
             }
         }
     }
@@ -67,24 +71,24 @@ class HomeViewModel : ViewModel() {
 
     private fun applyFilterAndSearch() {
         val filteredList = if (currentSearchQuery.isEmpty()) {
-            fullExpenseList
+            fullMovementsList
         } else {
-            fullExpenseList.filter { expense ->
+            fullMovementsList.filter { expense ->
                 val description = expense.description.lowercase(Locale.getDefault()).unaccent()
-//                val category = expense.category.name.lowercase(Locale.getDefault()).unaccent()
+                //val category = expense.category.name.lowercase(Locale.getDefault()).unaccent()
                 val amount = expense.amount.toString()
 
                 description.contains(currentSearchQuery) ||
-//                        category.contains(currentSearchQuery) ||
+                        //category.contains(currentSearchQuery) ||
                         amount.contains(currentSearchQuery)
             }
         }
 
         // val categoryTotals = calculateCategoryTotals(filteredList) // Based on filtered
-        val categoryTotals = calculateCategoryTotals(fullExpenseList) // Based on full list
+        val categoryTotals = calculateCategoryTotals(fullExpensesList) // Based on full list
 
-        _expensesState.value = UiState.Success(
-            ExpensesState(
+        _movementsState.value = UiState.Success(
+            MovementsState(
                 displayedExpenses = filteredList,
                 categoryTotals = categoryTotals
             )

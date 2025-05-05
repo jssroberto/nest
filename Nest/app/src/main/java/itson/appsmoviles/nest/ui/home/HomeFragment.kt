@@ -19,14 +19,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.ui.common.UiState
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.drawable.ExpensesBarPainter
@@ -54,7 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var btnAdd: ImageButton
     private lateinit var bottonNav: BottomNavigationView
 
-    private var lastExpensesData: ExpensesState? = null
+    private var lastExpensesData: MovementsState? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -173,7 +170,7 @@ class HomeFragment : Fragment() {
         }
 
         // Observe Expenses State (List for RecyclerView, Category Totals for Bar)
-        viewModel.expensesState.observe(viewLifecycleOwner) { state ->
+        viewModel.movementsState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Loading -> {
 

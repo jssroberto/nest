@@ -8,14 +8,14 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.ui.expenses.ExpensesViewModel
+import itson.appsmoviles.nest.ui.expenses.FilteredExpensesViewModel
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
 
 class ExpensesController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
     private val rootView: View,
-    private val viewModel: ExpensesViewModel,
+    private val viewModel: FilteredExpensesViewModel,
     private val categoryManager: CategoryManager,
     private val filterManager: FilterManager,
     private val pieChartDrawable: PieChartDrawable

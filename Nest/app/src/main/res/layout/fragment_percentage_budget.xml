@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
                         android:text="@string/expense"
-                        android:textColor="@color/txt_expense" />
+                        android:textColor="@color/txt_expenses" />
 
                     <TextView
                         android:layout_width="15dp"
@@ -118,14 +118,14 @@
                         android:gravity="center"
                         android:text="-"
                         android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/txt_expense" />
+                        android:textColor="@color/txt_expenses" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="$250"
                         android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/txt_expense" />
+                        android:textColor="@color/txt_expenses" />
                 </LinearLayout>
             </LinearLayout>
 

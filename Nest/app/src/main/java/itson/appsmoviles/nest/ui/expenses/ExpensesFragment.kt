@@ -42,11 +42,11 @@ class ExpensesFragment : Fragment() {
     private lateinit var pieChartDrawable: PieChartDrawable
     private lateinit var expensesController: ExpensesController
 
-    private val viewModel: ExpensesViewModel by viewModels {
+    private val viewModel: FilteredExpensesViewModel by viewModels {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return ExpensesViewModel(ExpenseRepository()) as T
+                return FilteredExpensesViewModel() as T
             }
         }
     }

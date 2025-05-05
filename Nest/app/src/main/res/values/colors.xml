@@ -18,16 +18,17 @@
     <color name="red">#AD2224</color>
     <color name="dark_gray">#313131</color>
     <color name="black">#0B0B0B</color>
-    <color name="dark_orange">#40250A</color>
+    <color name="dark_orange">#764718</color>
     <color name="orange">#EFCAA8</color>
     <color name="light_orange">#F2E7DA</color>
     <color name="cash_light">#E1F4DE</color>
-    <color name="cash_strong">#133C0A</color>
+    <color name="cash_strong">#25521B</color>
+    <color name="dark_red">#A2591A1A</color>
 
     <!--variables-->
     <color name="edt_text">@color/light_gray</color>
     <color name="txt_income">@color/blue_mid</color>
-    <color name="txt_expenses">@color/dark_orange</color>
+    <color name="txt_expenses">@color/dark_red</color>
     <color name="primary_color">@color/darker_blue</color>
     <color name="dateButton">@color/lightest_blue</color>
     <color name="dateButtonLetters">@color/darker_blue</color>
@@ -41,7 +42,6 @@
     <color name="background_color_radio_card">@color/light_orange</color>
     <color name="category_spinner">@color/off_white</color>
     <color name="budgetCategory">@color/light_gray</color>
-    <color name="txt_expense">#FF5722</color>
     <color name="txt_hint">@color/darker_blue_low</color>
 
     <!--categories-->

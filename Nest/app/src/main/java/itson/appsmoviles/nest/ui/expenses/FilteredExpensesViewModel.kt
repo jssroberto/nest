@@ -8,10 +8,10 @@ import androidx.lifecycle.liveData
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
+import itson.appsmoviles.nest.data.repository.MovementRepository
 
-class ExpensesViewModel(
-    private val expenseRepository: ExpenseRepository
-) : ViewModel() {
+class FilteredExpensesViewModel: ViewModel() {
+    private val expenseRepository: ExpenseRepository = ExpenseRepository()
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getFilteredExpenses(

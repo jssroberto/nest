@@ -17,7 +17,6 @@
     <color name="background_color_radio_card">@color/dark_orange</color>
     <color name="category_spinner">@color/darker_blue</color>
     <color name="budgetCategory">@color/darker_blue</color>
-    <color name="txt_expense">@color/off_white</color>
     <color name="txt_hint">@color/light_gray_low</color>
 
     <!--categories-->

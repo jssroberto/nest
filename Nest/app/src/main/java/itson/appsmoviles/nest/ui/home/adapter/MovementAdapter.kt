@@ -8,8 +8,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.data.model.Income
+import itson.appsmoviles.nest.data.model.Movement
 import itson.appsmoviles.nest.ui.home.detail.ExpenseDetailDialogFragment
 import java.time.Instant
 import java.time.ZoneId
@@ -17,8 +19,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MovementAdapter(
-    // Initialize with an empty list, it will be updated
-    private var items: MutableList<Expense> = mutableListOf()
+    private var items: MutableList<Movement> = mutableListOf()
 ) : RecyclerView.Adapter<MovementViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovementViewHolder {
@@ -27,46 +28,76 @@ class MovementAdapter(
         return MovementViewHolder(view)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O) // Keep if API level requires
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MovementViewHolder, position: Int) {
-        val item = items[position]
-        // Keep your existing binding logic...
-        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) // Corrected pattern: yyyy
+        val movement = items[position]
 
-        holder.description.text = item.description
-        holder.amount.text = String.format(Locale.getDefault(), "$%.2f", item.amount) // Format amount nicely
-        val dateTime = Instant.ofEpochMilli(item.date)
+        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault())
+        holder.description.text = movement.description
+        val dateTime = Instant.ofEpochMilli(movement.date)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
         holder.date.text = dateTime.format(formatter)
 
-        val iconResId = when (item.category) {
-            CategoryType.LIVING -> R.drawable.icon_category_living
-            CategoryType.RECREATION -> R.drawable.icon_category_recreation
-            CategoryType.TRANSPORT -> R.drawable.icon_category_transport
-            CategoryType.FOOD -> R.drawable.icon_category_food
-            CategoryType.HEALTH -> R.drawable.icon_category_health
-            CategoryType.OTHER -> R.drawable.icon_category_other
-            // Consider removing 'else' if CategoryType is a sealed class or enum covering all cases
-            // else -> R.drawable.alert_circle
-        }
-        holder.icon.setImageResource(iconResId)
+        when (movement) {
+            is Expense -> {
+                holder.amount.text = String.format(Locale.getDefault(), "-$%.2f", movement.amount)
+                holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_expenses))
 
-        holder.itemView.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("id", item.id)
-                putString("description", item.description)
-                putDouble("amount", item.amount)
-                putLong("date", item.date)
-                putString("category", item.category.name)
-                putString("paymentMethod", item.paymentMethod.name)
+                val iconResId = when (movement.category) {
+                    CategoryType.LIVING -> R.drawable.icon_category_living
+                    CategoryType.RECREATION -> R.drawable.icon_category_recreation
+                    CategoryType.TRANSPORT -> R.drawable.icon_category_transport
+                    CategoryType.FOOD -> R.drawable.icon_category_food
+                    CategoryType.HEALTH -> R.drawable.icon_category_health
+                    CategoryType.OTHER -> R.drawable.icon_category_other
+                }
+                holder.icon.setImageResource(iconResId)
+
+                holder.itemView.setOnClickListener {
+                    val bundle = Bundle().apply {
+                        putString("movementType", "Expense")
+                        putString("id", movement.id)
+                        putString("description", movement.description)
+                        putDouble("amount", movement.amount)
+                        putLong("date", movement.date)
+                        putString("category", movement.category.name)
+                        putString("paymentMethod", movement.paymentMethod.name)
+                    }
+                    val dialog = ExpenseDetailDialogFragment() // Use your existing dialog
+                    dialog.arguments = bundle
+                    (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
+                        dialog.show(fm, "ExpenseDetailDialog")
+                    }
+                }
             }
 
-            val dialog = ExpenseDetailDialogFragment()
-            dialog.arguments = bundle
-            // Ensure context is an Activity context for FragmentManager
-            (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
-                dialog.show(fm, "ExpenseDetailDialog")
+            is Income -> {
+                holder.amount.text = String.format(Locale.getDefault(), "+$%.2f", movement.amount)
+                holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_income))
+                holder.icon.setImageResource(R.drawable.icon_category_income) // Use a specific income icon resource
+
+                // Handle click listener for Income
+                // Option 1: Disable click or show a simple message
+                holder.itemView.setOnClickListener(null)
+
+                // Option 2: Show a different dialog for Income (if you create one)
+                /*
+                holder.itemView.setOnClickListener {
+                    val bundle = Bundle().apply {
+                        putString("movementType", "Income") // Add type identifier
+                        putString("id", movement.id)
+                        putString("description", movement.description)
+                        putDouble("amount", movement.amount)
+                        putLong("date", movement.date)
+                    }
+                    // val dialog = IncomeDetailDialogFragment() // If you create this
+                    // dialog.arguments = bundle
+                    // (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
+                    //     dialog.show(fm, "IncomeDetailDialog")
+                    // }
+                }
+                */
             }
         }
     }
@@ -75,14 +106,9 @@ class MovementAdapter(
         return items.size
     }
 
-    /**
-     * Updates the data in the adapter and notifies the RecyclerView.
-     * @param newItems The new list of expenses to display.
-     */
-    fun updateData(newItems: List<Expense>) {
+    fun updateData(newItems: List<Movement>) {
         items.clear()
         items.addAll(newItems)
-        // This is crucial to tell the RecyclerView to redraw
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Consider using DiffUtil for better performance
     }
 }
