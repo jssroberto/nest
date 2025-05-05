@@ -19,6 +19,7 @@ import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.model.Category
 import itson.appsmoviles.nest.ui.expenses.manager.CategoryManager
+import itson.appsmoviles.nest.ui.expenses.manager.ExpenseProgressManager
 import itson.appsmoviles.nest.ui.expenses.manager.CategorySelectionManager
 import itson.appsmoviles.nest.ui.expenses.manager.FilterManager
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
@@ -41,6 +42,7 @@ class ExpensesFragment : Fragment() {
     private lateinit var filterManager: FilterManager
     private lateinit var pieChartDrawable: PieChartDrawable
     private lateinit var expensesController: ExpensesController
+    private lateinit var expenseProgressManager: ExpenseProgressManager
 
     private val viewModel: FilteredExpensesViewModel by viewModels {
         object : ViewModelProvider.Factory {
@@ -51,7 +53,11 @@ class ExpensesFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_expenses, container, false)
     }
 
@@ -64,11 +70,13 @@ class ExpensesFragment : Fragment() {
         val spinner = view.findViewById<Spinner>(R.id.spinner_categories_income)
         val clearFiltersButton = view.findViewById<ImageButton>(R.id.btn_delete_filters)
 
-        setUpSpinner(requireContext(), spinner)
 
+        setUpSpinner(requireContext(), spinner)
         categoryManager = CategoryManager(categories)
         filterManager = FilterManager(requireContext(), startDateButton, endDateButton, spinner)
         filterManager.setup()
+        expenseProgressManager = ExpenseProgressManager(requireContext())
+
 
         val (textViews, selectionManager) = setup(
             requireContext(), view, categories
@@ -80,20 +88,26 @@ class ExpensesFragment : Fragment() {
 
         categorySelectionManager = selectionManager
         pieChartDrawable = configure(
-            requireContext(), view.findViewById(R.id.graph), categories, textViews
+            requireContext(),
+            view.findViewById(R.id.graph),
+            categories,
+            textViews
         ) { selectedName ->
             expensesController.selectedCategoryName = selectedName
         }
 
+        // Setup controller
         expensesController = ExpensesController(
-            requireContext(),
-            viewLifecycleOwner,
-            view,
-            viewModel,
-            categoryManager,
-            filterManager,
-            pieChartDrawable
+            context = requireContext(),
+            lifecycleOwner = viewLifecycleOwner,
+            rootView = view,
+            viewModel = viewModel,
+            categoryManager = categoryManager,
+            filterManager = filterManager,
+            pieChartDrawable = pieChartDrawable,
+            progressManager = expenseProgressManager
         )
+
 
         view.findViewById<Button>(R.id.btn_filter)?.setOnClickListener {
             expensesController.filterAndLoadExpenses()
@@ -101,7 +115,9 @@ class ExpensesFragment : Fragment() {
 
         clearFiltersButton.setOnClickListener {
             filterManager.clearFilters()
+            expensesController.filterAndLoadExpenses()
         }
+
 
         expensesController.loadExpenses()
     }

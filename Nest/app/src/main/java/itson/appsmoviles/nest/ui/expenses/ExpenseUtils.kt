@@ -49,9 +49,9 @@ fun setup(
     onCategorySelected: (String?) -> Unit
 ): Pair<List<TextView>, CategorySelectionManager> {
     val ids = listOf(
-        R.id.foodTextView, R.id.transportTextView,
-        R.id.healthTextView, R.id.homeTextView,
-        R.id.recreationTextView, R.id.othersTextView
+        R.id.homeTextView, R.id.recreationTextView,
+        R.id.transportTextView, R.id.foodTextView,
+        R.id.healthTextView, R.id.othersTextView
     )
 
     val textViews = ids.mapIndexed { index, id ->

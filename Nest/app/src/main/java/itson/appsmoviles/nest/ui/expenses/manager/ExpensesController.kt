@@ -18,7 +18,8 @@ class ExpensesController(
     private val viewModel: FilteredExpensesViewModel,
     private val categoryManager: CategoryManager,
     private val filterManager: FilterManager,
-    private val pieChartDrawable: PieChartDrawable
+    private val pieChartDrawable: PieChartDrawable,
+    private val progressManager: ExpenseProgressManager // 👈 NUEVO parámetro
 ) {
     var selectedCategoryName: String? = null
 
@@ -31,6 +32,7 @@ class ExpensesController(
             selectedCategoryName
         ).observe(lifecycleOwner) { expenses ->
             updateChartWithExpenses(expenses)
+            updateProgressBars(expenses)
         }
     }
 
@@ -42,21 +44,9 @@ class ExpensesController(
             selectedCategoryName
         ).observe(lifecycleOwner) { expenses ->
             updateChartWithExpenses(expenses)
-            val expenseSums = categoryManager.calculateCategorySums(expenses)
-
-            val targets = mapOf(
-                "Food" to 75f,
-                "Transport" to 1f,
-                "Health" to 50f,
-                "Others" to 50f,
-                "Home" to 41f,
-                "Recreation" to 20f
-            )
-
-            ExpenseProgressManager(context).updateProgressBars(rootView, expenseSums, targets)
+            updateProgressBars(expenses)
         }
     }
-
 
     private fun updateChartWithExpenses(expenses: List<Expense>) {
         categoryManager.updateWithExpenses(expenses)
@@ -66,5 +56,20 @@ class ExpensesController(
 
     private fun updateTotal() {
         rootView.findViewById<TextView>(R.id.totalExpenses).text = "$${categoryManager.calculateTotal()}"
+    }
+
+    private fun updateProgressBars(expenses: List<Expense>) {
+        val expenseSums = categoryManager.calculateCategorySums(expenses)
+
+        val targets = mapOf(
+            "Food" to 75f,
+            "Transport" to 1f,
+            "Health" to 50f,
+            "Others" to 50f,
+            "Home" to 41f,
+            "Recreation" to 20f
+        )
+
+        progressManager.updateProgressBars(rootView, expenseSums, targets)
     }
 }
