@@ -95,17 +95,21 @@ class ValueBudgetFragment : Fragment() {
                 val (formatted, parsed) = processCurrencyInput(editable.toString())
                 val currentSum = calculateAdditionalSum()
 
+
                 when {
                     parsed < currentSum -> {
-                        editTextBudget.setText(currencyFormatter.format(previousMainValue))
-                        editTextBudget.setSelection(editTextBudget.text?.length ?: 0)
+                        // Revert to previous value with cursor at end
+                        val safeText = currencyFormatter.format(previousMainValue)
+                        editTextBudget.setText(safeText)
+                        editTextBudget.setSelection(safeText.length)
                     }
                     formatted != editable.toString() -> {
+                        // Force cursor to end after formatting
                         editTextBudget.setText(formatted)
                         editTextBudget.setSelection(formatted.length)
                     }
                 }
-                
+
                 currencyFields.forEach { field ->
                     if (field.text.toString() != "0.00") {
                         field.setText(field.text.toString())
@@ -127,21 +131,17 @@ class ValueBudgetFragment : Fragment() {
                 isCurrencyFormatting = true
 
                 val mainValue = parseCurrency(editTextBudget.text.toString())
-
                 val sumOthers = currencyFields
                     .filter { it != currentField }
                     .sumOf { parseCurrency(it.text.toString()) }
 
                 val maxAllowed = (mainValue - sumOthers).coerceAtLeast(BigDecimal.ZERO)
-
                 val (formatted, parsed) = processCurrencyInput(editable.toString())
                 val adjustedValue = parsed.coerceAtMost(maxAllowed)
 
-                if (adjustedValue != parsed || formatted != editable.toString()) {
-                    val finalText = currencyFormatter.format(adjustedValue)
-                    currentField.setText(finalText)
-                    currentField.setSelection(finalText.length)
-                }
+                val finalText = currencyFormatter.format(adjustedValue)
+                currentField.setText(finalText)
+                currentField.setSelection(finalText.length)
 
                 isCurrencyFormatting = false
             }

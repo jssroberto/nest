@@ -55,8 +55,9 @@
                     android:backgroundTint="@color/edt_text"
                     android:gravity="center"
                     android:hint="$0.00"
-                    android:inputType="numberDecimal"
-                    android:maxLength="12"
+                    android:inputType="numberDecimal|textNoSuggestions"
+                    android:maxLength="15"
+                    android:ellipsize="end"
                     android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_xx_large" />
 
