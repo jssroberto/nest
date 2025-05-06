@@ -44,3 +44,36 @@ fun setUpSpinner(context: Context, spinner: Spinner) {
     spinner.adapter = adapter
 }
 
+fun setUpTypesSpinner(context: Context, spinner: Spinner) {
+    val hint = "Select a Type"
+    val actualTypes = listOf("Incomes", "Expenses")
+    val itemsWithHint = listOf(hint) + actualTypes
+
+    val adapter = object : ArrayAdapter<String>(context, R.layout.spinner_item, itemsWithHint) {
+        override fun isEnabled(position: Int): Boolean {
+            return position != 0
+        }
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = super.getDropDownView(position, convertView, parent) as TextView
+            if (position == 0) {
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
+            } else {
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
+            }
+            return view
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = super.getView(position, convertView, parent) as TextView
+            if (position == 0) {
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
+            }
+            return view
+        }
+    }
+
+    adapter.setDropDownViewResource(R.layout.spinner_item)
+    spinner.adapter = adapter
+}
+

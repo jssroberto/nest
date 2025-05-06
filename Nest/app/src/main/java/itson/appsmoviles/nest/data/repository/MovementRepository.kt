@@ -9,7 +9,7 @@ import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.data.model.Movement
-import itson.appsmoviles.nest.ui.home.HomeOverviewState
+import itson.appsmoviles.nest.ui.home.state.HomeOverviewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -121,6 +121,7 @@ class MovementRepository {
         }
     }
 
+    // TODO: Maybe we are not using this function
     suspend fun getMovementsFiltered(
         startDate: Long? = null,
         endDate: Long? = null,

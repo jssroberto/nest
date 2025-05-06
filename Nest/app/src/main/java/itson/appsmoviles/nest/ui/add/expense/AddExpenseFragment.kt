@@ -20,7 +20,7 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.ui.common.SharedViewModel
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
@@ -40,7 +40,7 @@ class AddExpenseFragment : Fragment() {
 
     private lateinit var viewModel: AddExpenseViewModel
 
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -114,7 +114,7 @@ class AddExpenseFragment : Fragment() {
         viewModel.addExpense(
             expense = expense,
             onSuccess = {
-                sharedViewModel.notifyMovementsUpdated()
+                sharedMovementsViewModel.notifyMovementsUpdated()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             },
             onFailure = { e ->

@@ -1,11 +1,10 @@
-package itson.appsmoviles.nest.ui.common
+package itson.appsmoviles.nest.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-
-class SharedViewModel : ViewModel() {
+class SharedMovementsViewModel : ViewModel() {
     private val _movementsUpdated = MutableLiveData<Unit>()
     val movementsUpdated: LiveData<Unit> = _movementsUpdated
 

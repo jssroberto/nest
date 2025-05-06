@@ -84,7 +84,6 @@ class MovementAdapter(
                     showToast(holder.itemView.context, "Income item clicked: ${movement.description}")
                 }
 
-
                 // Show a different dialog for Income
                 /*
                 holder.itemView.setOnClickListener {

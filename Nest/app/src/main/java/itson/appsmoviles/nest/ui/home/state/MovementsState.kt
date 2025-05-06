@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.ui.home
+package itson.appsmoviles.nest.ui.home.state
 
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Movement

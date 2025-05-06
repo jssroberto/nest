@@ -2,28 +2,17 @@ package itson.appsmoviles.nest.data.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
-import itson.appsmoviles.nest.ui.home.HomeOverviewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class ExpenseRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance().reference
-
-
-
-    private fun getAmountFromSnapshot(snapshot: DataSnapshot): Double? {
-        return snapshot.child("amount").getValue(Double::class.java)
-            ?: snapshot.child("amount").getValue(Long::class.java)?.toDouble()
-    }
-
 
     suspend fun addExpense(
         expense: Expense,
@@ -52,6 +41,78 @@ class ExpenseRepository {
         } catch (e: Exception) {
             Log.e("ExpenseRepository", "Error adding expense", e)
             withContext(Dispatchers.Main) { onFailure(e) }
+        }
+    }
+
+    suspend fun getAllExpenses(): List<Expense> = withContext(Dispatchers.IO) {
+        val userId =
+            auth.currentUser?.uid ?: return@withContext emptyList()
+
+        return@withContext try {
+            val snapshot =
+                database.child("users").child(userId).child("movements").child("expenses")
+                    .get().await()
+            Log.d(
+                "ExpenseRepository",
+                "getAllExpenses: Fetched ${snapshot.childrenCount} raw expenses."
+            )
+
+            snapshot.children.mapNotNull { dataSnapshot ->
+                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
+            }
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error getting all expenses from Firebase", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getExpensesFiltered(
+        startDate: Long? = null,
+        endDate: Long? = null,
+        category: CategoryType? = null
+    ): List<Expense> = withContext(Dispatchers.IO) {
+
+        val userId =
+            auth.currentUser?.uid ?: return@withContext emptyList()
+
+        try {
+            var query: Query =
+                database.child("users").child(userId).child("movements").child("expenses")
+                    .orderByChild("date")
+
+            if (startDate != null) {
+                query =
+                    query.startAt(startDate.toDouble())
+            }
+            if (endDate != null) {
+                query = query.endAt(endDate.toDouble())
+            }
+
+            val snapshot = query.get().await()
+            Log.d(
+                "ExpenseRepository",
+                "getExpensesFiltered: Fetched ${snapshot.childrenCount} expenses after date query."
+            )
+
+            val expenses = snapshot.children.mapNotNull { dataSnapshot ->
+                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
+            }
+
+            val finalExpenses = if (category != null) {
+                expenses.filter { it.category == category }
+            } else {
+                expenses
+            }
+
+            Log.d(
+                "ExpenseRepository",
+                "getExpensesFiltered: Returning ${finalExpenses.size} expenses after category filter."
+            )
+            finalExpenses
+
+        } catch (e: Exception) {
+            Log.e("ExpenseRepository", "Error filtering expenses", e)
+            emptyList()
         }
     }
 
@@ -121,74 +182,4 @@ class ExpenseRepository {
             withContext(Dispatchers.Main) { onFailure(e) }
         }
     }
-
-
-    suspend fun getAllExpenses(): List<Expense> = withContext(Dispatchers.IO) {
-        val userId =
-            auth.currentUser?.uid ?: return@withContext emptyList() // Return early if no user
-
-        return@withContext try {
-            val snapshot =
-                database.child("users").child(userId).child("movements").child("expenses")
-                    .get().await()
-            Log.d(
-                "ExpenseRepository",
-                "getAllExpenses: Fetched ${snapshot.childrenCount} raw expenses."
-            )
-
-            snapshot.children.mapNotNull { dataSnapshot ->
-                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
-            }
-        } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error getting all expenses from Firebase", e)
-            emptyList()
-        }
-    }
-
-
-    suspend fun getExpensesFiltered(
-        startDate: Long? = null,
-        endDate: Long? = null,
-        category: CategoryType? = null
-    ): List<Expense> = withContext(Dispatchers.IO) {
-
-        val userId = auth.currentUser?.uid ?: return@withContext emptyList()
-
-        try {
-            val snapshot = database
-                .child("users")
-                .child(userId)
-                .child("movements")
-                .child("expenses")
-                .get()
-                .await()
-
-            Log.d("ExpenseRepository", "Fetched ${snapshot.childrenCount} expenses from DB.")
-
-            val allExpenses = snapshot.children.mapNotNull { dataSnapshot ->
-                dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
-            }
-
-
-            val filteredByDate = allExpenses.filter { expense ->
-                (startDate == null || expense.date >= startDate) &&
-                        (endDate == null || expense.date <= endDate)
-            }
-
-
-            val finalExpenses = if (category != null) {
-                filteredByDate.filter { it.category == category }
-            } else {
-                filteredByDate
-            }
-
-            Log.d("ExpenseRepository", "Returning ${finalExpenses.size} filtered expenses.")
-            finalExpenses
-
-        } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error filtering expenses", e)
-            emptyList()
-        }
-    }
-
 }

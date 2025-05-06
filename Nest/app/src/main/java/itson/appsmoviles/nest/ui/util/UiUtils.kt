@@ -89,6 +89,7 @@ fun String.toTitleCase(): String {
 fun showDatePicker(
     context: Context,
     initialTimestamp: Long = System.currentTimeMillis(),
+    minTimestamp: Long = 0,
     maxTimestamp: Long = System.currentTimeMillis(),
     onDateSelected: (timestampMillis: Long) -> Unit
 ) {
@@ -115,7 +116,7 @@ fun showDatePicker(
         initialYear, initialMonth, initialDay
     )
 
-
+    datePickerDialog.datePicker.minDate = minTimestamp
     datePickerDialog.datePicker.maxDate = maxTimestamp
 
     datePickerDialog.setOnShowListener {

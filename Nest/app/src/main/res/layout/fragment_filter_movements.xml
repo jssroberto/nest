@@ -20,9 +20,27 @@
                 android:layout_gravity="center" />
 
         <TextView
+                android:id="@+id/tv_by_type_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="By date"
+                android:text="By Type"
+                android:layout_marginTop="15dp" />
+
+        <Spinner
+                android:id="@+id/spinner_types_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/edittext_rounded"
+                android:backgroundTint="@color/edt_text"
+                android:paddingVertical="3dp" />
+
+
+        <TextView
+                android:id="@+id/tv_by_date_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By Date"
                 android:layout_marginTop="15dp" />
 
         <LinearLayout
@@ -59,9 +77,10 @@
         </LinearLayout>
 
         <TextView
+                android:id="@+id/tv_by_category_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="By category"
+                android:text="By Category"
                 android:layout_marginTop="15dp" />
 
         <Spinner

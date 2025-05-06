@@ -1,4 +1,4 @@
-package itson.appsmoviles.nest.ui.home
+package itson.appsmoviles.nest.ui.home.state
 
 data class HomeOverviewState(
     val userName: String = "User",

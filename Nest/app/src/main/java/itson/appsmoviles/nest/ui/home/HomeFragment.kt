@@ -25,19 +25,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.ui.common.SharedViewModel
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
 import itson.appsmoviles.nest.ui.common.UiState
 import itson.appsmoviles.nest.ui.home.adapter.MovementAdapter
 import itson.appsmoviles.nest.ui.home.drawable.ExpensesBarPainter
 import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
+import itson.appsmoviles.nest.ui.home.state.MovementsState
 import itson.appsmoviles.nest.ui.main.MainActivity
 import itson.appsmoviles.nest.ui.util.showToast
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
 
-    private val viewModel: HomeViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     private lateinit var movementAdapter: MovementAdapter
     private lateinit var expensesBarPainter: ExpensesBarPainter
@@ -73,8 +74,6 @@ class HomeFragment : Fragment() {
         setupSearchListener()
         applyBtnAddMargin()
         observeViewModels()
-        
-
     }
 
     private fun bindViews(view: View) {
@@ -209,7 +208,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        sharedViewModel.movementsUpdated.observe(viewLifecycleOwner) {
+        sharedMovementsViewModel.movementsUpdated.observe(viewLifecycleOwner) {
             Log.d("HomeFragment", "Observed expense update, refreshing data...")
             viewModel.refreshAllData()
         }
