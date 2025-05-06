@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
-                    android:text="Monthly Budget"
+                    android:text="@string/monthly_budget"
                     android:textSize="@dimen/text_size_medium_large" />
 
             <LinearLayout

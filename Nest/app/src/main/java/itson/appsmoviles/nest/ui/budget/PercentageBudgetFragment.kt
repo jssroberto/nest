@@ -68,7 +68,7 @@ class PercentageBudgetFragment : Fragment() {
         editTextBudget.setText("$0.00")
 
         setupPercentageListeners()
-        setupCurrencyListener()
+        setupCurrencyFormatting()
     }
 
     private fun setupPercentageListeners() {
@@ -84,87 +84,57 @@ class PercentageBudgetFragment : Fragment() {
         }
     }
 
-    private fun setupCurrencyListener() {
-        editTextBudget.addTextChangedListener(object : TextWatcher {
-            private var lastValidInput = ""
-            private var currentCursorPos = 0
+    private fun setupCurrencyFormatting() {
+        editTextBudget.addTextChangedListener(createMainTextWatcher())
+    }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                currentCursorPos = editTextBudget.selectionStart
+    private fun createMainTextWatcher(): TextWatcher {
+        return object : TextWatcher {
+            private var previousMainValue = BigDecimal.ZERO
+
+            override fun beforeTextChanged(s: CharSequence?, st: Int, co: Int, af: Int) {
+                previousMainValue = parseCurrency(s.toString())
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, st: Int, be: Int, co: Int) {}
 
             override fun afterTextChanged(editable: Editable?) {
                 if (isCurrencyFormatting) return
                 isCurrencyFormatting = true
 
-                val original = editable.toString()
-                val (cleanInput, newCursorPos) = processInput(original, currentCursorPos)
+                val (formatted, parsed) = processCurrencyInput(editable.toString())
 
-                try {
-                    val parsed = BigDecimal(cleanInput).movePointLeft(2)
-                    val validated = parsed.coerceIn(BigDecimal.ZERO, BigDecimal("9999999.99"))
-
-                    val formatted = currencyFormatter.format(validated)
-                    if (formatted != original) {
+                when {
+                    formatted != editable.toString() -> {
                         editTextBudget.setText(formatted)
-                        val selection = calculateCursorPosition(formatted, newCursorPos)
-                        editTextBudget.setSelection(selection.coerceIn(1, formatted.length))
+                        editTextBudget.setSelection(formatted.length)
                     }
-                    lastValidInput = formatted
-                } catch (e: Exception) {
-                    editTextBudget.setText(lastValidInput)
-                    editTextBudget.setSelection(lastValidInput.length)
                 }
+
 
                 isCurrencyFormatting = false
             }
-        })
+        }
     }
 
-    private fun processInput(input: String, cursorPos: Int): Pair<String, Int> {
-        val sb = StringBuilder()
-        var newCursorPos = cursorPos
-        var decimalFound = false
-        var digitsAfterDecimal = 0
-
-        // Track decimal point and digits
-        input.forEachIndexed { index, c ->
-            when {
-                c == '.' && !decimalFound -> {
-                    decimalFound = true
-                    if (index <= cursorPos) newCursorPos--
-                }
-                c.isDigit() -> {
-                    if (decimalFound) digitsAfterDecimal++
-                    if (digitsAfterDecimal <= 2) sb.append(c)
-                    else if (index < cursorPos) newCursorPos--
-                }
-                else -> if (index < cursorPos) newCursorPos--
-            }
+    private fun processCurrencyInput(input: String): Pair<String, BigDecimal> {
+        val clean = input.replace("[^\\d]".toRegex(), "")
+        val parsed = try {
+            BigDecimal(clean).movePointLeft(2)
+        } catch (e: Exception) {
+            BigDecimal.ZERO
         }
-
-        val cleanInput = when {
-            decimalFound -> sb.toString().padEnd(sb.indexOf('.') + 3, '0')
-            else -> sb.append("00").toString()
-        }
-
-        return cleanInput to newCursorPos
+        return currencyFormatter.format(parsed) to parsed
     }
 
-    private fun calculateCursorPosition(formatted: String, originalCursor: Int): Int {
-        val unformatted = formatted.replace("[^\\d]".toRegex(), "")
-        var currentPos = 0
-        var formattedPos = 0
-
-        while (currentPos < originalCursor && formattedPos < formatted.length) {
-            if (formatted[formattedPos].isDigit()) currentPos++
-            formattedPos++
+    private fun parseCurrency(input: String): BigDecimal {
+        return try {
+            BigDecimal(input.replace("[^\\d]".toRegex(), "")).movePointLeft(2)
+        } catch (e: Exception) {
+            BigDecimal.ZERO
         }
-
-        return formattedPos
     }
+
 
     private fun handlePercentageChange(currentEditText: EditText, editable: Editable?) {
         isPercentageChange = true
@@ -172,36 +142,22 @@ class PercentageBudgetFragment : Fragment() {
         val input = editable?.toString()?.replace(Regex("[^\\d]"), "") ?: ""
         var value = input.toIntOrNull() ?: 0
 
-        // Individual maximum
         value = value.coerceAtMost(100)
 
-        // Calculate sum of other fields
         val sumOthers = percentageFields
             .filter { it != currentEditText }
             .sumOf {
                 it.text.toString().replace(Regex("[^\\d]"), "").toIntOrNull() ?: 0
             }
 
-        // Total maximum
         val maxAllowed = (100 - sumOthers).coerceAtLeast(0)
         value = value.coerceAtMost(maxAllowed)
 
-        // Update text
         val newText = "$value%"
         currentEditText.setText(newText)
         currentEditText.setSelection(newText.length - 1)
 
         isPercentageChange = false
     }
-
-
-
-    private fun selectionPosition(original: String, formatted: String): Int {
-        val commaCountOriginal = original.count { it == ',' }
-        val commaCountFormatted = formatted.count { it == ',' }
-        return formatted.length - (original.length - editTextBudget.selectionStart) +
-                (commaCountFormatted - commaCountOriginal)
-    }
-
 
 }

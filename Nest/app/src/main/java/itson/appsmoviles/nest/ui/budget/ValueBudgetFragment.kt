@@ -98,13 +98,11 @@ class ValueBudgetFragment : Fragment() {
 
                 when {
                     parsed < currentSum -> {
-                        // Revert to previous value with cursor at end
                         val safeText = currencyFormatter.format(previousMainValue)
                         editTextBudget.setText(safeText)
                         editTextBudget.setSelection(safeText.length)
                     }
                     formatted != editable.toString() -> {
-                        // Force cursor to end after formatting
                         editTextBudget.setText(formatted)
                         editTextBudget.setSelection(formatted.length)
                     }
