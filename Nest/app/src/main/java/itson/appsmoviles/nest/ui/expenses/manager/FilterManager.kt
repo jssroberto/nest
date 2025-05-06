@@ -26,14 +26,14 @@ class FilterManager(
             showDatePicker(context) { timestamp ->
                 startTimestamp = timestamp
                 startDateButton.text = formatDateShortForm(timestamp)
-                startDateButton.setTextColor(ContextCompat.getColor(context, R.color.darker_blue))
+                startDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
             }
         }
         endDateButton.setOnClickListener {
             showDatePicker(context) { timestamp ->
                 endTimestamp = timestamp
                 endDateButton.text = formatDateShortForm(timestamp)
-                endDateButton.setTextColor(ContextCompat.getColor(context, R.color.darker_blue))
+                endDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
             }
         }
     }

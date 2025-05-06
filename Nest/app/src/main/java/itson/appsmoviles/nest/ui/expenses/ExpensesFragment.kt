@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -116,6 +117,7 @@ class ExpensesFragment : Fragment() {
                 maxTimestamp = System.currentTimeMillis()
             ) { selectedMillis ->
                 filterManager.startTimestamp = selectedMillis
+                startDateButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
                 startDateButton.text = formatDateShortForm(selectedMillis)
                 filterManager.validateDatesAndToggleButton(
                     filterManager.startTimestamp,
@@ -132,6 +134,7 @@ class ExpensesFragment : Fragment() {
                 maxTimestamp = System.currentTimeMillis()
             ) { selectedMillis ->
                 filterManager.endTimestamp = selectedMillis
+                endDateButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
                 endDateButton.text = formatDateShortForm(selectedMillis)
                 filterManager.validateDatesAndToggleButton(
                     filterManager.startTimestamp,
