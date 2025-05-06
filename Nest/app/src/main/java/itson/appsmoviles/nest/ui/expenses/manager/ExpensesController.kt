@@ -19,7 +19,7 @@ class ExpensesController(
     private val categoryManager: CategoryManager,
     private val filterManager: FilterManager,
     private val pieChartDrawable: PieChartDrawable,
-    private val progressManager: ExpenseProgressManager // 👈 NUEVO parámetro
+    private val progressManager: ExpenseProgressManager
 ) {
     var selectedCategoryName: String? = null
 

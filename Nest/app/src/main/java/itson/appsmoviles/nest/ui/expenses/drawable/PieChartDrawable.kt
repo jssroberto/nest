@@ -125,20 +125,21 @@ class PieChartDrawable(
         if (categoryName == null) {
 
             categoryTextViews.forEach { view ->
-                view.setTextColor(ContextCompat.getColor(context, R.color.black))
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
                 view.text = view.tag?.toString() ?: ""
             }
         } else {
 
             categoryTextViews.forEach { view ->
-                view.setTextColor(ContextCompat.getColor(context, R.color.gray))
+                view.setTextColor(ContextCompat.getColor(context, R.color.txt_hint))
                 view.text = view.tag?.toString() ?: ""
             }
 
             val selectedTextView = categoryTextViews.find { it.tag == categoryName } ?: return
-            selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.black))
+            selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
 
             val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
+
             selectedTextView.text = "$categoryName  ${"%.1f".format(percentage)}%"
         }
     }

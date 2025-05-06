@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
-import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.model.Category
 import itson.appsmoviles.nest.ui.expenses.manager.CategoryManager
 import itson.appsmoviles.nest.ui.expenses.manager.ExpenseProgressManager
@@ -24,7 +23,9 @@ import itson.appsmoviles.nest.ui.expenses.manager.CategorySelectionManager
 import itson.appsmoviles.nest.ui.expenses.manager.FilterManager
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
 import itson.appsmoviles.nest.ui.expenses.manager.ExpensesController
+import itson.appsmoviles.nest.ui.util.formatDateShortForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
+import itson.appsmoviles.nest.ui.util.showDatePicker
 
 class ExpensesFragment : Fragment() {
 
@@ -68,6 +69,7 @@ class ExpensesFragment : Fragment() {
         val startDateButton = view.findViewById<Button>(R.id.btn_date_income)
         val endDateButton = view.findViewById<Button>(R.id.btn_end_date)
         val spinner = view.findViewById<Spinner>(R.id.spinner_categories_income)
+        val filterButton = view.findViewById<Button>(R.id.btn_filter)
         val clearFiltersButton = view.findViewById<ImageButton>(R.id.btn_delete_filters)
 
 
@@ -96,7 +98,6 @@ class ExpensesFragment : Fragment() {
             expensesController.selectedCategoryName = selectedName
         }
 
-        // Setup controller
         expensesController = ExpensesController(
             context = requireContext(),
             lifecycleOwner = viewLifecycleOwner,
@@ -108,8 +109,39 @@ class ExpensesFragment : Fragment() {
             progressManager = expenseProgressManager
         )
 
+        startDateButton.setOnClickListener {
+            showDatePicker(
+                context = requireContext(),
+                initialTimestamp = filterManager.startTimestamp ?: System.currentTimeMillis(),
+                maxTimestamp = System.currentTimeMillis()
+            ) { selectedMillis ->
+                filterManager.startTimestamp = selectedMillis
+                startDateButton.text = formatDateShortForm(selectedMillis)
+                filterManager.validateDatesAndToggleButton(
+                    filterManager.startTimestamp,
+                    filterManager.endTimestamp,
+                    filterButton
+                )
+            }
+        }
 
-        view.findViewById<Button>(R.id.btn_filter)?.setOnClickListener {
+        endDateButton.setOnClickListener {
+            showDatePicker(
+                context = requireContext(),
+                initialTimestamp = filterManager.endTimestamp ?: System.currentTimeMillis(),
+                maxTimestamp = System.currentTimeMillis()
+            ) { selectedMillis ->
+                filterManager.endTimestamp = selectedMillis
+                endDateButton.text = formatDateShortForm(selectedMillis)
+                filterManager.validateDatesAndToggleButton(
+                    filterManager.startTimestamp,
+                    filterManager.endTimestamp,
+                    filterButton
+                )
+            }
+        }
+
+        filterButton.setOnClickListener {
             expensesController.filterAndLoadExpenses()
         }
 

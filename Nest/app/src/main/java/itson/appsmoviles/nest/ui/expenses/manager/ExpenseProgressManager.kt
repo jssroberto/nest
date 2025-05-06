@@ -35,28 +35,30 @@ class ExpenseProgressManager(private val context: Context) {
         for (categoryKey in sortedCategories) {
             val total = expenseSums[categoryKey] ?: 0f
             val target = targets[categoryKey] ?: 1f
-            val hasExpense = total > 0f
+            val isZeroExpense = total <= 0f
 
-            // 🔁 Nombre visible (traducido o amigable)
             val displayName = when (categoryKey.uppercase()) {
                 "FOOD" -> context.getString(R.string.food)
                 "TRANSPORT" -> context.getString(R.string.transport)
                 "HEALTH" -> context.getString(R.string.health)
                 "HOME" -> context.getString(R.string.home)
-                "RECREATION" -> context.getString(R.string.recreation) // Ajusta según tu strings.xml
+                "RECREATION" -> context.getString(R.string.recreation)
                 "OTHERS" -> context.getString(R.string.other)
                 else -> categoryKey
             }
 
-            // 🏷️ Texto del nombre de la categoría
             val label = TextView(context).apply {
                 text = displayName
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                setTextColor(ContextCompat.getColor(context, R.color.black))
+                setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        if (isZeroExpense) R.color.txt_hint else R.color.txt_color
+                    )
+                )
                 setPadding(0, 24, 0, 8)
             }
 
-            // 📊 Barra personalizada con animación
             val bar = View(context).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -65,9 +67,12 @@ class ExpenseProgressManager(private val context: Context) {
                 background = ExpensesDrawable(
                     total = target,
                     current = total,
-                    currentColor = ContextCompat.getColor(context, R.color.txt_income),
-                    totalColor = ContextCompat.getColor(context, R.color.txt_color),
-                    typeface = ResourcesCompat.getFont(context, R.font.lexend_bold),
+                    totalColor = ContextCompat.getColor(context, R.color.light_blue),
+                    textColor = ContextCompat.getColor(
+                        context,
+                        if (isZeroExpense) R.color.txt_hint else R.color.off_white
+                    ),
+                    context = context
                 )
             }
 
@@ -75,6 +80,7 @@ class ExpenseProgressManager(private val context: Context) {
             container.addView(bar)
         }
     }
+
 
 
 }

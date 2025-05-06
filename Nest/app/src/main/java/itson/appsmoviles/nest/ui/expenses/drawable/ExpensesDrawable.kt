@@ -10,16 +10,17 @@ import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import itson.appsmoviles.nest.R
 
 class ExpensesDrawable(
     private val total: Float,
     private val current: Float,
-    private val currentColor: Int,
     private val totalColor: Int,
-    private val typeface: Typeface?,
-    private val isFiltered: Boolean = false
+    private val isFiltered: Boolean = false,
+    private val textColor: Int,
+    private val context: Context
 ) : Drawable() {
 
     private var animatedProgress: Float = 0f
@@ -42,24 +43,26 @@ class ExpensesDrawable(
         val height = bounds.height().toFloat()
         if (width == 0f || height == 0f) return
 
-
         val isZeroExpense = current == 0f
         val shouldGrayOut = isFiltered || isZeroExpense
 
         val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            color = if (shouldGrayOut) Color.GRAY else currentColor
+            color = if (shouldGrayOut)
+                ContextCompat.getColor(context, R.color.category_living)
+            else
+                ContextCompat.getColor(context, R.color.category_living)
         }
 
         val totalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            color = if (shouldGrayOut) Color.GRAY else totalColor
+            color = if (shouldGrayOut) ContextCompat.getColor(context, R.color.edt_text) else totalColor
         }
 
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
+            color = textColor
             textSize = 40f
-            this.typeface = typeface
+            typeface = ResourcesCompat.getFont(context, R.font.lexend_regular)
         }
 
         val margin = 16f
@@ -87,7 +90,6 @@ class ExpensesDrawable(
             canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
         }
     }
-
 
     override fun setAlpha(alpha: Int) {}
     override fun setColorFilter(colorFilter: ColorFilter?) {}

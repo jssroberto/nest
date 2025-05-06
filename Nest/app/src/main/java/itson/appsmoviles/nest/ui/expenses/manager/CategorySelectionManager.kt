@@ -17,7 +17,7 @@ class CategorySelectionManager(
     fun setup() {
         categoryTextViews.forEach { textView ->
             val categoryName = textView.tag as? String ?: return@forEach
-            textView.setTextColor(ContextCompat.getColor(context, R.color.black))
+            textView.setTextColor(ContextCompat.getColor(context, R.color.category_spinner))
             textView.setOnClickListener {
                 handleSelection(textView, categoryName)
             }
@@ -26,28 +26,46 @@ class CategorySelectionManager(
 
     private fun handleSelection(textView: TextView, categoryName: String) {
         selectedCategoryName = if (selectedCategoryName == categoryName) {
-            clearSelections()
+            selectedCategoryName = null
+            updateTextViewColors(null)
             onCategorySelected(null)
             null
         } else {
-            highlight(textView, categoryName)
+            selectedCategoryName = categoryName
+            updateTextViewColors(categoryName)
             onCategorySelected(categoryName)
             categoryName
         }
     }
 
     fun clearSelections() {
-        categoryTextViews.forEach {
-            it.setTextColor(ContextCompat.getColor(context, R.color.black))
-            it.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-            it.text = it.tag?.toString() ?: ""
+        selectedCategoryName = null
+        updateTextViewColors(null)
+    }
+
+    private fun updateTextViewColors(selectedName: String?) {
+        val colorDefault = ContextCompat.getColor(context, R.color.category_spinner)
+        val colorHint = ContextCompat.getColor(context, R.color.txt_hint)
+        val colorSelected = ContextCompat.getColor(context, R.color.category_spinner)
+
+        categoryTextViews.forEach { textView ->
+            val categoryName = textView.tag as? String ?: return@forEach
+            val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
+
+            textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+
+            if (selectedName == null) {
+                textView.setTextColor(colorDefault)
+                textView.text = categoryName
+            } else if (selectedName == categoryName) {
+                textView.setTextColor(colorSelected) // 👈 Color al estar seleccionada
+                textView.text = "$categoryName  ${"%.1f".format(percentage)}%"
+            } else {
+                textView.setTextColor(colorHint)
+                textView.text = categoryName
+            }
         }
     }
 
-    private fun highlight(textView: TextView, categoryName: String) {
-        clearSelections()
-        val percentage = categories.find { it.type.displayName == categoryName }?.percentage ?: 0.0f
-        textView.setTextColor(ContextCompat.getColor(context, R.color.black))
-        textView.text = "$categoryName  ${"%.1f".format(percentage)}%"
-    }
+
 }
