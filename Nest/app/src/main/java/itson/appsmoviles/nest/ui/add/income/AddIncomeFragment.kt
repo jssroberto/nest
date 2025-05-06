@@ -100,7 +100,7 @@ class AddIncomeFragment : Fragment() {
         viewModel.addIncome(
             income = income,
             onSuccess = {
-                sharedViewModel.notifyMovementsUpdated()
+                sharedViewModel.notifyMovementDataChanged()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             },
             onFailure = { exception ->

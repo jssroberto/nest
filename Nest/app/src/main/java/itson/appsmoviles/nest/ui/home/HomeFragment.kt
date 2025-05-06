@@ -20,6 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +39,19 @@ import itson.appsmoviles.nest.ui.util.showToast
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
 
-    private val viewModel: HomeViewModel by activityViewModels()
+    private val viewModel: HomeViewModel by activityViewModels {
+        Log.d("VM_FACTORY_CALL", "HomeVM Factory CALLED for HomeFragment. Current HomeFrag.SharedVM hash for injection: ${System.identityHashCode(sharedMovementsViewModel)}")
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                Log.d("VM_FACTORY_CREATE", "HomeVM Factory create(): Injecting SharedVM: ${System.identityHashCode(sharedMovementsViewModel)} into new HomeViewModel for HomeFragment")
+                if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                    return HomeViewModel(sharedMovementsViewModel) as T // Pass the correct instance
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
+    }
     private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     private lateinit var movementAdapter: MovementAdapter
@@ -70,7 +84,6 @@ class HomeFragment : Fragment() {
         bindViews(view)
         setupRecyclerView()
         setUpClickListeners()
-//        setupFragmentResultListener()
         setupSearchListener()
         applyBtnAddMargin()
         observeViewModels()
@@ -113,22 +126,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun setupFragmentResultListener() {
-        parentFragmentManager.setFragmentResultListener(
-            "update_expense_result",
-            viewLifecycleOwner
-        ) { _, result ->
-            Log.d("HomeFragment", "Received result: $result")
-            if (result.getBoolean("updated", false)) {
-                Log.d("HomeFragment", "Data updated, refreshing...")
-                viewModel.refreshAllData()
-            } else {
-                Log.d("HomeFragment", "No data updated.")
-            }
-
-        }
-    }
-
     private fun setupSearchListener() {
         edtSearchHome.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -143,14 +140,9 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun observeViewModels() {
-        // Observe Overview State (Income, Expenses, Balance, Budget, User)
         viewModel.overviewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Loading -> {
-//                    txtIncome.text = "..."
-//                    txtExpenses.text = "..."
-//                    txtNetBalance.text = "..."
-//                    txtBudget.text = "..."
                 }
 
                 is UiState.Success -> {
@@ -158,7 +150,12 @@ class HomeFragment : Fragment() {
                     txtWelcome.text = "Hi ${overview.userName}\nhere's your monthly overview"
                     txtIncome.text = "$${overview.totalIncome.toInt()}"
                     txtExpenses.text = "$${overview.totalExpenses.toInt()}"
-                    txtNetBalance.text = "$${overview.netBalance.toInt()}"
+                    val balance = overview.netBalance.toInt()
+                    if (balance < 0) {
+                        txtNetBalance.text = "-$${kotlin.math.abs(balance)}"
+                    } else {
+                        txtNetBalance.text = "$$${balance}"
+                    }
                     txtBudget.text = "$${overview.budget.toInt()}"
 
                     val painterNeedsInitialization = !::expensesBarPainter.isInitialized
@@ -182,7 +179,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Observe Expenses State (List for RecyclerView, Category Totals for Bar)
         viewModel.movementsState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Loading -> {
@@ -190,14 +186,19 @@ class HomeFragment : Fragment() {
                 }
 
                 is UiState.Success -> {
-                    val expensesData = state.data
-
-                    lastExpensesData = expensesData
-                    movementAdapter.updateData(expensesData.displayedExpenses)
-
+                    val movementsData = state.data
+                    movementAdapter.updateData(movementsData.displayedExpenses)
                     if (::expensesBarPainter.isInitialized) {
-                        expensesBarPainter.paintBudget(expensesData.categoryTotals)
+                        expensesBarPainter.paintBudget(movementsData.categoryTotals)
+                    } else {
+                        viewModel.overviewState.value?.let { overviewState ->
+                            if (overviewState is UiState.Success) {
+                                expensesBarPainter = ExpensesBarPainter(requireContext(), expensesBar, overviewState.data.budget)
+                                expensesBarPainter.paintBudget(movementsData.categoryTotals)
+                            }
+                        }
                     }
+                    lastExpensesData = movementsData
                 }
 
                 is UiState.Error -> {
@@ -208,8 +209,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        sharedMovementsViewModel.movementsUpdated.observe(viewLifecycleOwner) {
-            Log.d("HomeFragment", "Observed expense update, refreshing data...")
+        sharedMovementsViewModel.movementDataChanged.observe(viewLifecycleOwner) {
             viewModel.refreshAllData()
         }
     }

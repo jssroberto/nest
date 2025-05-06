@@ -29,6 +29,8 @@ import itson.appsmoviles.nest.ui.util.showToast
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+
     private lateinit var edtAmount: EditText
     private lateinit var edtDescription: EditText
     private lateinit var btnDate: Button
@@ -40,7 +42,6 @@ class AddExpenseFragment : Fragment() {
 
     private lateinit var viewModel: AddExpenseViewModel
 
-    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -114,7 +115,7 @@ class AddExpenseFragment : Fragment() {
         viewModel.addExpense(
             expense = expense,
             onSuccess = {
-                sharedMovementsViewModel.notifyMovementsUpdated()
+                sharedMovementsViewModel.notifyMovementDataChanged()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             },
             onFailure = { e ->

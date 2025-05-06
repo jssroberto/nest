@@ -1,22 +1,28 @@
 package itson.appsmoviles.nest.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.data.model.Movement
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.repository.MovementRepository
 import itson.appsmoviles.nest.ui.common.UiState
+import itson.appsmoviles.nest.ui.home.filter.FilterCriteria
 import itson.appsmoviles.nest.ui.home.state.HomeOverviewState
 import itson.appsmoviles.nest.ui.home.state.MovementsState
 import itson.appsmoviles.nest.ui.util.unaccent
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val sharedMovementsViewModel: SharedMovementsViewModel
+) : ViewModel() {
 
     private val expenseRepository: ExpenseRepository = ExpenseRepository()
     private val movementRepository: MovementRepository = MovementRepository()
@@ -24,14 +30,35 @@ class HomeViewModel : ViewModel() {
     private val _overviewState = MutableLiveData<UiState<HomeOverviewState>>(UiState.Loading)
     val overviewState: LiveData<UiState<HomeOverviewState>> get() = _overviewState
 
-    private val _movementsState = MutableLiveData<UiState<MovementsState>>(UiState.Loading)
+    private val _movementsState = MediatorLiveData<UiState<MovementsState>>(UiState.Loading)
     val movementsState: LiveData<UiState<MovementsState>> get() = _movementsState
 
     private var fullMovementsList: List<Movement> = listOf()
     private var fullExpensesList: List<Expense> = listOf()
     private var currentSearchQuery: String = ""
+    private var currentFilterCriteria: FilterCriteria = FilterCriteria()
+
+    private val _fetchedMovements = MutableLiveData<UiState<List<Movement>>>(UiState.Loading)
+
 
     init {
+        _movementsState.addSource(sharedMovementsViewModel.filterCriteria) { criteria ->
+            currentFilterCriteria = criteria
+            applyFilterAndSearch()
+        }
+
+        _movementsState.addSource(_fetchedMovements) { fetchedState ->
+            when (fetchedState) {
+                is UiState.Loading -> _movementsState.value = UiState.Loading
+                is UiState.Success -> {
+                    fullMovementsList = fetchedState.data
+                    fullExpensesList = fullMovementsList.filterIsInstance<Expense>()
+                    applyFilterAndSearch()
+                }
+                is UiState.Error -> _movementsState.value = UiState.Error(fetchedState.message)
+            }
+        }
+
         refreshAllData()
     }
 
@@ -43,7 +70,7 @@ class HomeViewModel : ViewModel() {
     private fun fetchOverviewData() {
         viewModelScope.launch {
             _overviewState.value = UiState.Loading
-            val overviewData = movementRepository.getOverviewData() // Returns HomeOverviewState?
+            val overviewData = movementRepository.getOverviewData()
 
             if (overviewData != null) {
                 _overviewState.value = UiState.Success(overviewData)
@@ -72,22 +99,44 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun applyFilterAndSearch() {
-        val filteredList = if (currentSearchQuery.isEmpty()) {
-            fullMovementsList
-        } else {
-            fullMovementsList.filter { expense ->
-                val description = expense.description.lowercase(Locale.getDefault()).unaccent()
-                //val category = expense.category.name.lowercase(Locale.getDefault()).unaccent()
-                val amount = expense.amount.toString()
+        if (fullMovementsList.isEmpty() && _fetchedMovements.value !is UiState.Success) {
+            return
+        }
 
-                description.contains(currentSearchQuery) ||
-                        //category.contains(currentSearchQuery) ||
-                        amount.contains(currentSearchQuery)
+        var filteredList = fullMovementsList
+
+        currentFilterCriteria.startDate?.let { start ->
+            filteredList = filteredList.filter { it.date >= start }
+        }
+        currentFilterCriteria.endDate?.let { end ->
+            filteredList = filteredList.filter { it.date <= end }
+        }
+
+        when (currentFilterCriteria.movementType) {
+            "Incomes" -> filteredList = filteredList.filterIsInstance<Income>()
+            "Expenses" -> filteredList = filteredList.filterIsInstance<Expense>()
+        }
+
+        currentFilterCriteria.category?.let { category ->
+            filteredList = filteredList.filter { movement ->
+                movement is Expense && movement.category == category
             }
         }
 
-        // val categoryTotals = calculateCategoryTotals(filteredList) // Based on filtered
-        val categoryTotals = calculateCategoryTotals(fullExpensesList) // Based on full list
+        if (currentSearchQuery.isNotEmpty()) {
+            filteredList = filteredList.filter { movement ->
+                val description = movement.description.lowercase(Locale.getDefault()).unaccent()
+                val amount = movement.amount.toString()
+                val categoryMatch = if (movement is Expense) {
+                    movement.category.name.lowercase(Locale.getDefault()).unaccent().contains(currentSearchQuery)
+                } else {
+                    false
+                }
+                description.contains(currentSearchQuery) || amount.contains(currentSearchQuery) || categoryMatch
+            }
+        }
+
+        val categoryTotals = calculateCategoryTotals(fullExpensesList)
 
         _movementsState.value = UiState.Success(
             MovementsState(

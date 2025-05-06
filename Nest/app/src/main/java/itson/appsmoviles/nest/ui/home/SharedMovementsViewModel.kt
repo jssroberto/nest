@@ -3,12 +3,24 @@ package itson.appsmoviles.nest.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import itson.appsmoviles.nest.ui.home.filter.FilterCriteria
 
 class SharedMovementsViewModel : ViewModel() {
-    private val _movementsUpdated = MutableLiveData<Unit>()
-    val movementsUpdated: LiveData<Unit> = _movementsUpdated
+    private val _movementDataChanged = MutableLiveData<Unit>()
+    val movementDataChanged: LiveData<Unit> = _movementDataChanged
 
-    fun notifyMovementsUpdated() {
-        _movementsUpdated.value = Unit
+    private val _filterCriteria = MutableLiveData(FilterCriteria()) // Initialize with default (no filters)
+    val filterCriteria: LiveData<FilterCriteria> = _filterCriteria
+
+    fun notifyMovementDataChanged() {
+        _movementDataChanged.value = Unit
+    }
+
+    fun updateFilters(newCriteria: FilterCriteria) {
+        _filterCriteria.value = newCriteria
+    }
+
+    fun clearFilters() {
+        _filterCriteria.value = FilterCriteria()
     }
 }
