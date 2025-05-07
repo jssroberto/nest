@@ -29,23 +29,26 @@ class MovementRepository {
             Log.e("ExpenseRepository", "getOverviewData: User not authenticated")
             return@withContext null
         }
+
         return@withContext try {
             val userName = auth.currentUser?.displayName ?: "User"
             val totalIncome = fetchTotalForNode(userId, "incomes")
             val totalExpenses = fetchTotalForNode(userId, "expenses")
-            val budget = budgetRepository.fetchBudget(userId)
+            val budget = budgetRepository.getBudgetDataSuspend()?.totalBudget ?: 0f
 
             HomeOverviewState(
                 userName = userName,
                 totalIncome = totalIncome,
                 totalExpenses = totalExpenses,
-                budget = budget
+                budget = budget.toDouble()
             )
         } catch (e: Exception) {
             Log.e("ExpenseRepository", "Error fetching overview data", e)
             null
         }
     }
+
+
 
     private suspend fun fetchTotalForNode(userId: String, nodeName: String): Double {
         return try {
