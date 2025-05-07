@@ -1,20 +1,32 @@
 package itson.appsmoviles.nest.ui.budget
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.ui.common.UiState
+import itson.appsmoviles.nest.ui.home.HomeViewModel
+import itson.appsmoviles.nest.ui.home.drawable.ExpensesBarPainter
+import itson.appsmoviles.nest.ui.util.showToast
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class ValueBudgetFragment : Fragment() {
+
+    private lateinit var textViewNetBalance: TextView
+    private lateinit var textViewIncome: TextView
+    private lateinit var textViewExpense: TextView
 
     private lateinit var editTextBudget: EditText
     private lateinit var editTextAmountFood: EditText
@@ -33,6 +45,8 @@ class ValueBudgetFragment : Fragment() {
     }
     private var isCurrencyFormatting = false
 
+    private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,6 +60,10 @@ class ValueBudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        textViewNetBalance = view.findViewById(R.id.txt_net_balance_budget)
+        textViewIncome = view.findViewById(R.id.txt_income_budget)
+        textViewExpense = view.findViewById(R.id.txt_expense_budget)
+
         editTextAmountFood = view.findViewById(R.id.et_food)
         editTextAmountHome = view.findViewById(R.id.et_home)
         editTextAmountHealth = view.findViewById(R.id.et_health)
@@ -53,13 +71,16 @@ class ValueBudgetFragment : Fragment() {
         editTextAmountTransport = view.findViewById(R.id.et_transport)
         editTextAmountOthers = view.findViewById(R.id.et_others)
 
-        currencyFields.addAll(listOf(
-            editTextAmountFood,
-            editTextAmountHome,
-            editTextAmountHealth,
-            editTextAmountRecreation,
-            editTextAmountTransport,
-            editTextAmountOthers))
+        currencyFields.addAll(
+            listOf(
+                editTextAmountFood,
+                editTextAmountHome,
+                editTextAmountHealth,
+                editTextAmountRecreation,
+                editTextAmountTransport,
+                editTextAmountOthers
+            )
+        )
 
         editTextBudget = view.findViewById(R.id.monthly_budget)
 
@@ -68,7 +89,76 @@ class ValueBudgetFragment : Fragment() {
         }
 
         setupCurrencyFormatting()
+        observeViewModels()
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun observeViewModels() {
+        viewModel.overviewState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UiState.Loading -> {
+
+                }
+
+                is UiState.Success -> {
+                    val overview = state.data
+                    textViewIncome.text = "$${overview.totalIncome.toInt()}"
+                    textViewExpense.text = "$${overview.totalExpenses.toInt()}"
+                    textViewNetBalance.text = "$${overview.netBalance.toInt()}"
+
+                    setBudgetValue(overview.budget)
+
+                }
+
+                is UiState.Error -> {
+                    Log.e("BudgetFragment", "Error loading overview: ${state.message}")
+                    showToast(requireContext(), "Error loading overview: ${state.message}")
+                }
+            }
+        }
+
+        viewModel.overviewState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UiState.Loading -> {
+
+                }
+
+                is UiState.Success -> {
+                    val overview = state.data
+                    textViewIncome.text = "$${overview.totalIncome.toInt()}"
+                    textViewExpense.text = "$${overview.totalExpenses.toInt()}"
+                    textViewNetBalance.text = "$${overview.netBalance.toInt()}"
+
+                    setBudgetValue(overview.budget)
+
+                }
+
+                is UiState.Error -> {
+                    Log.e("BudgetFragment", "Error loading overview: ${state.message}")
+                    showToast(requireContext(), "Error loading overview: ${state.message}")
+                }
+            }
+        }
+
+    }
+
+    private fun formatCurrency(amount: Double): String {
+        return try {
+            currencyFormatter.format(BigDecimal(amount.toString()))
+        } catch (e: Exception) {
+            "$0.00"
+        }
+    }
+
+    private fun setBudgetValue(budget: Double) {
+        val formatted = formatCurrency(budget)
+        editTextBudget.apply {
+            isCurrencyFormatting = true
+            setText(formatted)
+            setSelection(formatted.length)
+            isCurrencyFormatting = false
+        }
     }
 
     private fun setupCurrencyFormatting() {
@@ -102,6 +192,7 @@ class ValueBudgetFragment : Fragment() {
                         editTextBudget.setText(safeText)
                         editTextBudget.setSelection(safeText.length)
                     }
+
                     formatted != editable.toString() -> {
                         editTextBudget.setText(formatted)
                         editTextBudget.setSelection(formatted.length)

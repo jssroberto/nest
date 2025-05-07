@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.budget.PercentageBudgetFragment">
 
@@ -16,8 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:paddingBottom="15dp"
             android:fontFamily="@font/lexend_medium"
+            android:paddingBottom="15dp"
             android:text="@string/edit_budget"
             android:textSize="@dimen/text_size_large" />
 
@@ -50,11 +50,11 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/layout_rounded_bg"
                     android:backgroundTint="@color/edt_text"
+                    android:ellipsize="end"
                     android:gravity="center"
                     android:hint="$0.00"
                     android:inputType="numberDecimal|textNoSuggestions"
                     android:maxLength="15"
-                    android:ellipsize="end"
                     android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_xx_large" />
             </LinearLayout>
@@ -68,10 +68,10 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="start"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:paddingVertical="10dp"
-                android:layout_gravity="start">
+                android:paddingVertical="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -83,22 +83,22 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
                         android:text="@string/income"
-                        android:textSize="@dimen/text_size_medium"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/text_size_medium" />
 
                     <TextView
                         android:layout_width="15dp"
                         android:layout_height="wrap_content"
                         android:text="+"
-                        android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/text_size_large" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="$520"
-                        android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/text_size_large" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -118,15 +118,15 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="-"
-                        android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/txt_expenses" />
+                        android:textColor="@color/txt_expenses"
+                        android:textSize="@dimen/text_size_large" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="$250"
-                        android:textSize="@dimen/text_size_large"
-                        android:textColor="@color/txt_expenses" />
+                        android:textColor="@color/txt_expenses"
+                        android:textSize="@dimen/text_size_large" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -140,8 +140,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="end">
+                    android:layout_gravity="end"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -154,8 +154,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="end">
+                    android:layout_gravity="end"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -164,8 +164,7 @@
                         android:gravity="top"
 
                         android:text="$270"
-                        android:textSize="@dimen/text_size_x_large"
-                        />
+                        android:textSize="@dimen/text_size_x_large" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -178,11 +177,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/categories_budget"
-            android:textSize="@dimen/text_size_medium"
             android:fontFamily="@font/lexend_medium"
             android:gravity="center_horizontal"
-            android:paddingVertical="5dp" />
+            android:paddingVertical="5dp"
+            android:text="@string/categories_budget"
+            android:textSize="@dimen/text_size_medium" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -199,11 +198,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -230,10 +229,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
                         <EditText
@@ -241,27 +240,26 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
 
                 </LinearLayout>
 
 
-
                 <EditText
                     android:id="@+id/et_food"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:inputType="numberDecimal"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
@@ -271,8 +269,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/edt_text"
-                android:background="@drawable/layout_rounded_bg" />
+                android:background="@drawable/layout_rounded_bg"
+                android:backgroundTint="@color/edt_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -283,11 +281,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -314,10 +312,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
 
@@ -326,10 +324,10 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
 
@@ -338,14 +336,14 @@
 
                 <EditText
                     android:id="@+id/et_home"
-                    android:inputType="numberDecimal"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
@@ -355,8 +353,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/edt_text"
-                android:background="@drawable/layout_rounded_bg" />
+                android:background="@drawable/layout_rounded_bg"
+                android:backgroundTint="@color/edt_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -367,11 +365,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -398,10 +396,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
                         <EditText
@@ -409,24 +407,24 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <EditText
                     android:id="@+id/et_health"
-                    android:inputType="numberDecimal"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
@@ -436,8 +434,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/edt_text"
-                android:background="@drawable/layout_rounded_bg" />
+                android:background="@drawable/layout_rounded_bg"
+                android:backgroundTint="@color/edt_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -448,11 +446,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -479,10 +477,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
 
@@ -491,24 +489,24 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <EditText
                     android:id="@+id/et_recreation"
-                    android:inputType="numberDecimal"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
@@ -518,8 +516,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/edt_text"
-                android:background="@drawable/layout_rounded_bg" />
+                android:background="@drawable/layout_rounded_bg"
+                android:backgroundTint="@color/edt_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -530,11 +528,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -561,10 +559,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
 
@@ -573,24 +571,24 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <EditText
                     android:id="@+id/et_transport"
-                    android:inputType="numberDecimal"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
@@ -600,8 +598,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="3dp"
-                android:backgroundTint="@color/edt_text"
-                android:background="@drawable/layout_rounded_bg" />
+                android:background="@drawable/layout_rounded_bg"
+                android:backgroundTint="@color/edt_text" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -612,11 +610,11 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/circle"
-                    app:tint="@color/blue"
                     android:layout_gravity="center_vertical"
                     android:paddingHorizontal="5dp"
-                    android:paddingTop="5dp" />
+                    android:paddingTop="5dp"
+                    android:src="@drawable/circle"
+                    app:tint="@color/blue" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -643,10 +641,10 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="0dp"
                             android:layout_marginEnd="5dp"
+                            android:buttonTint="@color/dateButtonLetters"
                             android:checked="false"
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters"
-                            android:buttonTint="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
 
@@ -655,29 +653,38 @@
                             android:layout_width="80dp"
                             android:layout_height="25dp"
                             android:layout_gravity="center"
-                            android:gravity="center"
                             android:background="@drawable/edittext_rounded"
-                            android:inputType="number"
+                            android:gravity="center"
                             android:hint="$600"
+                            android:inputType="number"
                             android:paddingVertical="2dp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <EditText
                     android:id="@+id/et_others"
-                    android:inputType="numberDecimal"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="@drawable/edittext_rounded"
                     android:backgroundTint="@color/budgetCategory"
                     android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     android:importantForAccessibility="yes"
+                    android:inputType="numberDecimal"
                     android:maxLength="10"
                     android:text="0%"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_save"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="end"
+            android:background="@drawable/btn_filter" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
