@@ -23,18 +23,24 @@ class FilterManager(
     @RequiresApi(Build.VERSION_CODES.O)
     fun setup() {
         startDateButton.setOnClickListener {
-            showDatePicker(context) { timestamp ->
-                startTimestamp = timestamp
-                startDateButton.text = formatDateShortForm(timestamp)
-                startDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
-            }
+            showDatePicker(
+                context = context,
+                maxTimestamp = endTimestamp ?: System.currentTimeMillis(),
+                onDateSelected = { timestampMillis ->
+                    startTimestamp = timestampMillis
+                    startDateButton.text = formatDateShortForm(timestampMillis)
+                }
+            )
         }
         endDateButton.setOnClickListener {
-            showDatePicker(context) { timestamp ->
-                endTimestamp = timestamp
-                endDateButton.text = formatDateShortForm(timestamp)
-                endDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
-            }
+            showDatePicker(
+                context = context,
+                minTimestamp = startTimestamp ?: 0,
+                onDateSelected = { timestampMillis ->
+                    endTimestamp = timestampMillis
+                    endDateButton.text = formatDateShortForm(timestampMillis)
+                }
+            )
         }
     }
 

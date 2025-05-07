@@ -72,42 +72,37 @@ class ExpenseRepository {
         category: CategoryType? = null
     ): List<Expense> = withContext(Dispatchers.IO) {
 
-        val userId =
-            auth.currentUser?.uid ?: return@withContext emptyList()
+        val userId = auth.currentUser?.uid ?: return@withContext emptyList()
 
         try {
-            var query: Query =
-                database.child("users").child(userId).child("movements").child("expenses")
-                    .orderByChild("date")
+            val snapshot = database
+                .child("users")
+                .child(userId)
+                .child("movements")
+                .child("expenses")
+                .get()
+                .await()
 
-            if (startDate != null) {
-                query =
-                    query.startAt(startDate.toDouble())
-            }
-            if (endDate != null) {
-                query = query.endAt(endDate.toDouble())
-            }
+            Log.d("ExpenseRepository", "Fetched ${snapshot.childrenCount} expenses from DB.")
 
-            val snapshot = query.get().await()
-            Log.d(
-                "ExpenseRepository",
-                "getExpensesFiltered: Fetched ${snapshot.childrenCount} expenses after date query."
-            )
-
-            val expenses = snapshot.children.mapNotNull { dataSnapshot ->
+            val allExpenses = snapshot.children.mapNotNull { dataSnapshot ->
                 dataSnapshot.getValue(Expense::class.java)?.copy(id = dataSnapshot.key ?: "")
             }
 
-            val finalExpenses = if (category != null) {
-                expenses.filter { it.category == category }
-            } else {
-                expenses
+
+            val filteredByDate = allExpenses.filter { expense ->
+                (startDate == null || expense.date >= startDate) &&
+                        (endDate == null || expense.date <= endDate)
             }
 
-            Log.d(
-                "ExpenseRepository",
-                "getExpensesFiltered: Returning ${finalExpenses.size} expenses after category filter."
-            )
+
+            val finalExpenses = if (category != null) {
+                filteredByDate.filter { it.category == category }
+            } else {
+                filteredByDate
+            }
+
+            Log.d("ExpenseRepository", "Returning ${finalExpenses.size} filtered expenses.")
             finalExpenses
 
         } catch (e: Exception) {

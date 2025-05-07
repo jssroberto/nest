@@ -45,18 +45,28 @@ class ExpensesDrawable(
 
         val isZeroExpense = current == 0f
         val shouldGrayOut = isFiltered || isZeroExpense
+        val overBudget = current > total
 
-        val currentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.FILL
-            color = if (shouldGrayOut)
-                ContextCompat.getColor(context, R.color.category_living)
-            else
-                ContextCompat.getColor(context, R.color.category_living)
+        val baseColor = if (shouldGrayOut) {
+            ContextCompat.getColor(context, R.color.edt_text)
+        } else {
+            totalColor
         }
 
-        val totalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        val currentColor = if (overBudget) {
+            ContextCompat.getColor(context, R.color.dark_orange)
+        } else {
+            ContextCompat.getColor(context, R.color.category_living)
+        }
+
+        val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            color = if (shouldGrayOut) ContextCompat.getColor(context, R.color.edt_text) else totalColor
+            color = baseColor
+        }
+
+        val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.FILL
+            color = currentColor
         }
 
         val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -71,25 +81,20 @@ class ExpensesDrawable(
         val totalText = "$${"%.2f".format(total)}"
         val currentText = "$${"%.2f".format(current)}"
         val totalTextWidth = textPaint.measureText(totalText)
-        val currentTextWidth = textPaint.measureText(currentText)
 
-        if (current > total) {
-            val totalRatio = total / current
-            val totalWidth = animatedProgress * totalRatio * width
-            canvas.drawRect(0f, 0f, width, height, currentPaint)
-            canvas.drawRect(0f, 0f, totalWidth, height, totalPaint)
+        // Draw background (budget bar)
+        canvas.drawRect(0f, 0f, width, height, backgroundPaint)
 
-            canvas.drawText(currentText, width - currentTextWidth - margin, textY, textPaint)
-            canvas.drawText(totalText, margin, textY, textPaint)
-        } else {
-            val currentWidth = animatedProgress * (current / total.coerceAtLeast(1f)) * width
-            canvas.drawRect(0f, 0f, width, height, totalPaint)
-            canvas.drawRect(0f, 0f, currentWidth, height, currentPaint)
+        // Draw current expense bar (animated)
+        val ratio = if (total == 0f) 1f else (current / total).coerceAtMost(1f)
+        val progressWidth = animatedProgress * ratio * width
+        canvas.drawRect(0f, 0f, progressWidth, height, progressPaint)
 
-            canvas.drawText(currentText, margin, textY, textPaint)
-            canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
-        }
+        // Draw texts
+        canvas.drawText(currentText, margin, textY, textPaint)
+        canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
     }
+
 
     override fun setAlpha(alpha: Int) {}
     override fun setColorFilter(colorFilter: ColorFilter?) {}

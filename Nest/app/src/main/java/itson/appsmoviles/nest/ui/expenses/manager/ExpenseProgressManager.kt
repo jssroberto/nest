@@ -46,18 +46,21 @@ class ExpenseProgressManager(private val context: Context) {
                 "OTHERS" -> context.getString(R.string.other)
                 else -> categoryKey
             }
-
             val label = TextView(context).apply {
                 text = displayName
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        if (isZeroExpense) R.color.txt_hint else R.color.txt_color
-                    )
-                )
+
+                val isOverBudget = total > target
+                val labelColor = when {
+                    isZeroExpense -> R.color.txt_hint
+                    isOverBudget -> R.color.dark_orange
+                    else -> R.color.txt_color
+                }
+
+                setTextColor(ContextCompat.getColor(context, labelColor))
                 setPadding(0, 24, 0, 8)
             }
+
 
             val bar = View(context).apply {
                 layoutParams = LinearLayout.LayoutParams(

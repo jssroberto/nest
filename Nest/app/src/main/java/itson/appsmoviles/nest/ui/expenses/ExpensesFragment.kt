@@ -110,39 +110,6 @@ class ExpensesFragment : Fragment() {
             progressManager = expenseProgressManager
         )
 
-        startDateButton.setOnClickListener {
-            showDatePicker(
-                context = requireContext(),
-                initialTimestamp = filterManager.startTimestamp ?: System.currentTimeMillis(),
-                maxTimestamp = System.currentTimeMillis()
-            ) { selectedMillis ->
-                filterManager.startTimestamp = selectedMillis
-                startDateButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-                startDateButton.text = formatDateShortForm(selectedMillis)
-                filterManager.validateDatesAndToggleButton(
-                    filterManager.startTimestamp,
-                    filterManager.endTimestamp,
-                    filterButton
-                )
-            }
-        }
-
-        endDateButton.setOnClickListener {
-            showDatePicker(
-                context = requireContext(),
-                initialTimestamp = filterManager.endTimestamp ?: System.currentTimeMillis(),
-                maxTimestamp = System.currentTimeMillis()
-            ) { selectedMillis ->
-                filterManager.endTimestamp = selectedMillis
-                endDateButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color))
-                endDateButton.text = formatDateShortForm(selectedMillis)
-                filterManager.validateDatesAndToggleButton(
-                    filterManager.startTimestamp,
-                    filterManager.endTimestamp,
-                    filterButton
-                )
-            }
-        }
 
         filterButton.setOnClickListener {
             expensesController.filterAndLoadExpenses()
