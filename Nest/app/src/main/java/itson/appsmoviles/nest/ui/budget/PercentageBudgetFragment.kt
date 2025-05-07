@@ -118,10 +118,16 @@ class PercentageBudgetFragment : Fragment() {
                         field.setText(formatted)
                         field.setSelection(field.text.length - 1)
                     }
-                    viewModel.setCategoryBudget(category.name, newAmount)
+
+                    // Aquí pasamos también los valores de alarmThreshold y alarmEnabled
+                    val alarmThreshold = viewModel.alarmThresholdMap[category] ?: 0f
+                    val alarmEnabled = viewModel.alarmEnabledMap[category] ?: false
+                    viewModel.setCategoryBudget(category, newAmount, alarmThreshold.toFloat(), alarmEnabled)
+
                     isEditing = false
                 }
             })
         }
     }
+
 }

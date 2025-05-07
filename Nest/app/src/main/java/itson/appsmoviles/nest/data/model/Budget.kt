@@ -1,6 +1,6 @@
 package itson.appsmoviles.nest.data.model
 
 data class Budget(
-    var totalBudget: Float = 0f,
-    var categoryBudgets: Map<String, Float> = emptyMap()
+    val totalBudget: Float = 0.0f,
+    val categoryBudgets: Map<String, CategoryBudget> = emptyMap()
 )

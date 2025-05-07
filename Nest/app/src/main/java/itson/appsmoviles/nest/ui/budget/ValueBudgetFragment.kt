@@ -11,10 +11,15 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.checkbox.MaterialCheckBox
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.ui.budget.CurrencyInputHelper.parseCurrency
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -34,19 +39,16 @@ class ValueBudgetFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_budget, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_budget, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val viewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
         editTextBudget = view.findViewById(R.id.monthly_budget)
         editTextBudget.setText("$0.00")
 
-
+        // Observador de presupuesto total
         viewModel.totalBudget.observe(viewLifecycleOwner) { total ->
             val formatted = currencyFormatter.format(BigDecimal(total.toString()))
             if (editTextBudget.text.toString() != formatted) {
@@ -55,7 +57,33 @@ class ValueBudgetFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.alarmThresholds.collect { thresholds ->
+                        thresholds.forEach { (category, value) ->
+                            val editText = view.findViewById<EditText>(getEditTextIdForCategoryThreshold(category))
+                            val formatted = currencyFormatter.format(value)
+                            editText.setText(formatted)
+                        }
+                    }
+                }
 
+                launch {
+                    viewModel.alarmEnabled.collect { enabledMap ->
+                        enabledMap.forEach { (category, isChecked) ->
+                            val switch = view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
+                            switch.isChecked = isChecked
+                        }
+                    }
+                }
+            }
+        }
+
+        // Llamar al cargar datos
+        viewModel.loadCategoryAlarms()
+
+        // Observador de presupuestos por categoría
         viewModel.categoryBudgets.observe(viewLifecycleOwner) { categoryMap ->
             categoryMap.forEach { (category, amount) ->
                 val editText = view.findViewById<EditText>(getEditTextIdForCategory(category))
@@ -69,7 +97,7 @@ class ValueBudgetFragment : Fragment() {
 
         setupCategoryInputs(view, viewModel)
 
-
+        // TextWatcher para el presupuesto total
         editTextBudget.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (isCurrencyFormatting) return
@@ -104,18 +132,13 @@ class ValueBudgetFragment : Fragment() {
 
         categoryFields.forEach { (category, editText) ->
             editText.setText("$0.00")
-
             editText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
                 override fun afterTextChanged(s: Editable?) {
                     if (isCurrencyFormatting) return
                     isCurrencyFormatting = true
 
                     val newValue = parseCurrency(s.toString()).toFloat()
                     val totalBudget = parseCurrency(editTextBudget.text.toString()).toFloat()
-
                     val sumOfOthers = categoryFields
                         .filter { it.key != category }
                         .map { parseCurrency(it.value.text.toString()).toFloat() }
@@ -124,10 +147,11 @@ class ValueBudgetFragment : Fragment() {
                     val maxAllowed = totalBudget - sumOfOthers
                     val finalValue = newValue.coerceAtMost(maxAllowed)
 
-                    // Guarda en el ViewModel
-                    viewModel.setCategoryBudget(category.name, finalValue)
+                    val alarmThreshold = viewModel.alarmThresholdMap[category] ?: 0f
+                    val alarmEnabled = viewModel.alarmEnabledMap[category] ?: false
 
-                    // Formatea si hubo ajuste
+                    viewModel.setCategoryBudget(category, finalValue, alarmThreshold, alarmEnabled)
+
                     val formatted = currencyFormatter.format(BigDecimal(finalValue.toString()))
                     if (editText.text.toString() != formatted) {
                         editText.setText(formatted)
@@ -136,29 +160,79 @@ class ValueBudgetFragment : Fragment() {
 
                     isCurrencyFormatting = false
                 }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
+
+            // Configuración del umbral de alarma
+            val etCategoryAlarmThreshold: EditText = view.findViewById(getEditTextIdForCategoryThreshold(category))
+            val switchCategoryAlarm: MaterialCheckBox = view.findViewById(getSwitchIdForCategory(category))
+
+            etCategoryAlarmThreshold.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    val raw = parseCurrency(etCategoryAlarmThreshold.text.toString())
+                    etCategoryAlarmThreshold.setText(raw.toPlainString())
+                    etCategoryAlarmThreshold.setSelection(etCategoryAlarmThreshold.text.length)
+                } else {
+                    val raw = parseCurrency(etCategoryAlarmThreshold.text.toString())
+                    val formatted = currencyFormatter.format(raw)
+                    etCategoryAlarmThreshold.setText(formatted)
+                    val isChecked = switchCategoryAlarm.isChecked
+                    viewModel.setAlarmThreshold(category, raw.toFloat())
+                    viewModel.persistAlarmThreshold(category, raw.toDouble(), isChecked)
+                }
+            }
+
+            switchCategoryAlarm.setOnCheckedChangeListener { _, isChecked ->
+                val raw = parseCurrencyRaw(etCategoryAlarmThreshold.text.toString())
+                viewModel.setAlarmEnabled(category, isChecked)
+                viewModel.persistAlarmThreshold(category, raw.toDouble(), isChecked)
+            }
         }
     }
 
     private fun parseCurrency(input: String): BigDecimal {
         return try {
-
             BigDecimal(input.replace("[^\\d]".toRegex(), "")).movePointLeft(2)
         } catch (e: Exception) {
             BigDecimal.ZERO
         }
     }
 
-
-    private fun getEditTextIdForCategory(category: CategoryType): Int {
-        return when (category) {
-            CategoryType.FOOD -> R.id.et_food
-            CategoryType.LIVING -> R.id.et_home
-            CategoryType.HEALTH -> R.id.et_health
-            CategoryType.RECREATION -> R.id.et_recreation
-            CategoryType.TRANSPORT -> R.id.et_transport
-            CategoryType.OTHER -> R.id.et_others
+    private fun parseCurrencyRaw(input: String): BigDecimal {
+        return try {
+            val clean = input.replace("[^\\d]".toRegex(), "")
+            if (clean.isEmpty()) BigDecimal.ZERO else BigDecimal(clean).movePointLeft(2)
+        } catch (e: Exception) {
+            BigDecimal.ZERO
         }
     }
 
+    private fun getEditTextIdForCategory(category: CategoryType) = when (category) {
+        CategoryType.FOOD -> R.id.et_food
+        CategoryType.LIVING -> R.id.et_home
+        CategoryType.HEALTH -> R.id.et_health
+        CategoryType.RECREATION -> R.id.et_recreation
+        CategoryType.TRANSPORT -> R.id.et_transport
+        CategoryType.OTHER -> R.id.et_others
+    }
+
+    private fun getEditTextIdForCategoryThreshold(category: CategoryType) = when (category) {
+        CategoryType.FOOD -> R.id.editTextAlarmFood
+        CategoryType.LIVING -> R.id.editTextAlarmHome
+        CategoryType.HEALTH -> R.id.editTextAlarmHealth
+        CategoryType.RECREATION -> R.id.editTextAlarmRecreation
+        CategoryType.TRANSPORT -> R.id.editTextAlarmTransport
+        CategoryType.OTHER -> R.id.editTextAlarmOthers
+    }
+
+    private fun getSwitchIdForCategory(category: CategoryType) = when (category) {
+        CategoryType.FOOD -> R.id.checkBoxAlarmFood
+        CategoryType.LIVING -> R.id.checkBoxAlarmHome
+        CategoryType.HEALTH -> R.id.checkBoxAlarmHealth
+        CategoryType.RECREATION -> R.id.checkBoxAlarmRecreation
+        CategoryType.TRANSPORT -> R.id.checkBoxAlarmTransport
+        CategoryType.OTHER -> R.id.checkBoxAlarmOthers
+    }
 }
