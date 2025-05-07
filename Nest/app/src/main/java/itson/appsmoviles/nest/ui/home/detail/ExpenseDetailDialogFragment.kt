@@ -1,5 +1,6 @@
 package itson.appsmoviles.nest.ui.home.detail
 
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
@@ -24,13 +28,15 @@ import itson.appsmoviles.nest.ui.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ExpenseDetailDialogFragment : DialogFragment() {
 
     private lateinit var etDescription: EditText
     private lateinit var etAmount: EditText
-    private lateinit var etDate: EditText
+    private lateinit var btnDate: Button
+    private lateinit var txtPaymentMethod: TextView
     private lateinit var categoryImageView: ImageView
     private lateinit var btnSave: Button
     private var selectedTimestamp: Long? = null
@@ -70,7 +76,8 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
         etDescription = view.findViewById(R.id.et_description)
         etAmount = view.findViewById(R.id.et_amount)
-        etDate = view.findViewById(R.id.et_date)
+        btnDate = view.findViewById(R.id.btn_date)
+        txtPaymentMethod = view.findViewById(R.id.txt_payment_method)
         categoryImageView = view.findViewById(R.id.iv_icon)
         btnSave = view.findViewById(R.id.btn_save)
 
@@ -98,8 +105,19 @@ class ExpenseDetailDialogFragment : DialogFragment() {
         selectedTimestamp = expense.date
 
         etDescription.setText(expense.description)
-        etAmount.setText(expense.amount.toString())
-        etDate.setText(formatDateLongForm(expense.date)) // Display the initial date
+        etAmount.setText(String.format(Locale.getDefault(), "$%.2f", expense.amount))
+        btnDate.text = formatDateLongForm(expense.date)
+        if (expense.paymentMethod.name == "CASH")
+        {
+            txtPaymentMethod.text = ContextCompat.getString(requireContext(), R.string.cash)
+        }
+        else{
+            txtPaymentMethod.setTextColor(ContextCompat.getColor(requireContext(), R.color.txt_color_radio_card))
+            val tintColor = ContextCompat.getColor(requireContext(), R.color.background_color_radio_card)
+            ViewCompat.setBackgroundTintList(txtPaymentMethod, ColorStateList.valueOf(tintColor))
+            txtPaymentMethod.text = ContextCompat.getString(requireContext(), R.string.card)
+        }
+
 
         val iconResId = when (expense.category) {
             CategoryType.LIVING -> R.drawable.icon_category_living
@@ -114,13 +132,13 @@ class ExpenseDetailDialogFragment : DialogFragment() {
 
         btnSave.setOnClickListener { saveExpense() }
 
-        etDate.setOnClickListener {
+        btnDate.setOnClickListener {
             showDatePicker(
                 context = requireContext(),
                 initialTimestamp = expense.date,
                 onDateSelected = { timestampMillis ->
                     selectedTimestamp = timestampMillis
-                    etDate.setText(formatDateLongForm(selectedTimestamp!!))
+                    btnDate.text = formatDateLongForm(selectedTimestamp!!)
                 }
             )
         }
