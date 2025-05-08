@@ -142,7 +142,6 @@ class HomeFragment : Fragment() {
             when (state) {
                 is UiState.Loading -> {
                 }
-
                 is UiState.Success -> {
                     val overview = state.data
                     txtWelcome.text = "Hi ${overview.userName}\nhere's your monthly overview"
@@ -152,10 +151,12 @@ class HomeFragment : Fragment() {
                     if (balance < 0) {
                         txtNetBalance.text = "-$${kotlin.math.abs(balance)}"
                     } else {
-                        txtNetBalance.text = "$$${balance}"
+                        txtNetBalance.text = "$${balance}"
                     }
-                    txtBudget.text = "$${overview.budget.toInt()}"
-
+                    fun formatBudget(budget: Int): String {
+                        return budget.toString().reversed().chunked(3).joinToString(",").reversed()
+                    }
+                    txtBudget.text = "$${formatBudget(overview.budget.toInt())}"
                     val painterNeedsInitialization = !::expensesBarPainter.isInitialized
 
                     if (painterNeedsInitialization) {
@@ -209,6 +210,10 @@ class HomeFragment : Fragment() {
 
         sharedMovementsViewModel.movementDataChanged.observe(viewLifecycleOwner) {
             viewModel.refreshAllData()
+        }
+
+        sharedMovementsViewModel.userNameUpdated.observe(viewLifecycleOwner) {
+            viewModel.fetchOverviewData()
         }
     }
 

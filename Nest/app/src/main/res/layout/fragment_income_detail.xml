@@ -10,25 +10,16 @@
             android:orientation="vertical"
             android:layout_margin="15dp">
 
-        <ImageView
-                android:id="@+id/iv_icon_expense_detail"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:padding="10dp"
-                android:src="@drawable/icon_category_food"
-                app:tint="@color/primary_color" />
-
         <TextView
                 android:id="@+id/tv_description_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
                 android:text="@string/description"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="7dp" />
 
         <EditText
-                android:id="@+id/et_description_expense_detail"
+                android:id="@+id/et_description_income_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -62,7 +53,7 @@
                         android:layout_gravity="start" />
 
                 <EditText
-                        android:id="@+id/et_amount_expense_detail"
+                        android:id="@+id/et_amount_income_detail"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_rounded"
@@ -90,7 +81,7 @@
                         android:layout_gravity="start" />
 
                 <Button
-                        android:id="@+id/btn_date_expense_detail"
+                        android:id="@+id/btn_date_income_detail"
                         style="@style/Nest.Selectable"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
@@ -104,48 +95,6 @@
 
         </LinearLayout>
 
-        <TextView
-                android:layout_marginTop="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:text="@string/payment_method"
-                android:layout_marginStart="7dp" />
-
-        <RadioGroup
-                android:id="@+id/radio_payment_method_detail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="7dp">
-
-            <RadioButton
-                    android:id="@+id/radio_cash_expense_detail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/button"
-                    android:backgroundTint="@color/background_color_radio_cash"
-                    android:text="@string/cash"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/txt_color_radio_cash"
-                    android:gravity="start|center"
-                    android:buttonTint="@color/txt_color_radio_cash" />
-
-            <RadioButton
-                    android:id="@+id/radio_card_expense_detail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="5dp"
-                    android:background="@drawable/button"
-                    android:backgroundTint="@color/background_color_radio_card"
-                    android:text="@string/card"
-                    android:textColor="@color/txt_color_radio_card"
-                    android:gravity="start|center"
-                    android:buttonTint="@color/txt_color_radio_card" />
-
-        </RadioGroup>
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -154,7 +103,7 @@
                 android:orientation="horizontal">
 
             <ImageButton
-                    android:id="@+id/btn_delete_expense_detail"
+                    android:id="@+id/btn_delete_income_detail"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/delete"
@@ -167,7 +116,7 @@
                     android:layout_weight="1" />
 
             <Button
-                    android:id="@+id/btn_save_expense_detail"
+                    android:id="@+id/btn_save_income_detail"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

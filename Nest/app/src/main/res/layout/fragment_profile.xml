@@ -65,26 +65,6 @@
             android:text="@string/settings_change_pass"
             android:layout_marginTop="26dp" />
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="@string/old_password"
-
-            android:gravity="start"
-            android:layout_marginTop="10dp"
-            android:paddingStart="7dp"
-            android:paddingEnd="0dp" />
-
-    <EditText
-            android:id="@+id/editTextOldPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_rounded"
-            android:drawableEnd="@drawable/eye"
-            android:inputType="textPassword"
-            android:autofillHints="password"
-            android:layout_marginTop="5dp" />
 
     <TextView
             android:layout_width="match_parent"
@@ -98,6 +78,48 @@
 
     <EditText
             android:id="@+id/editTextNewPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_rounded"
+            android:drawableEnd="@drawable/eye"
+            android:inputType="textPassword"
+            android:autofillHints="password"
+            android:layout_marginTop="5dp" />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/confirmPassword"
+            android:gravity="start"
+            android:layout_marginTop="10dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="0dp" />
+
+    <EditText
+            android:id="@+id/editTextConfirmPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_rounded"
+            android:drawableEnd="@drawable/eye"
+            android:inputType="textPassword"
+            android:autofillHints="password"
+            android:layout_marginTop="5dp" />
+
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="Current Password"
+
+            android:gravity="start"
+            android:layout_marginTop="50dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="0dp" />
+
+    <EditText
+            android:id="@+id/editTextOldPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_rounded"

@@ -67,7 +67,7 @@ class HomeViewModel(
         fetchMovementsInternal()
     }
 
-    private fun fetchOverviewData() {
+    fun fetchOverviewData() {
         viewModelScope.launch {
             _overviewState.value = UiState.Loading
             val overviewData = movementRepository.getOverviewData()

@@ -12,8 +12,8 @@ import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.data.model.Movement
-import itson.appsmoviles.nest.ui.home.detail.ExpenseDetailDialogFragment
-import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
+import itson.appsmoviles.nest.ui.home.detail.ExpenseDetailFragment
+import itson.appsmoviles.nest.ui.home.detail.IncomeDetailFragment
 import itson.appsmoviles.nest.ui.util.showToast
 import java.time.Instant
 import java.time.ZoneId
@@ -57,51 +57,24 @@ class MovementAdapter(
                 holder.icon.setImageResource(iconResId)
 
                 holder.itemView.setOnClickListener {
-                    val bundle = Bundle().apply {
-                        putString("movementType", "Expense")
-                        putString("id", movement.id)
-                        putString("description", movement.description)
-                        putDouble("amount", movement.amount)
-                        putLong("date", movement.date)
-                        putString("category", movement.category.name)
-                        putString("paymentMethod", movement.paymentMethod.name)
-                    }
-                    val dialog = ExpenseDetailDialogFragment() // Use your existing dialog
-                    dialog.arguments = bundle
+                    val dialog = ExpenseDetailFragment.newInstance(movement)
                     (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
-                        dialog.show(fm, "ExpenseDetailDialogFragment")
+                        dialog.show(fm, "ExpenseDetailFragment")
                     }
                 }
             }
 
             is Income -> {
-                holder.amount.text = String.format(Locale.getDefault(), "+$%d", movement.amount.toInt())
+                holder.amount.text = String.format(Locale.getDefault(), "+$%d", movement.amount.toInt()) // Using %.2f for currency
                 holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_income))
-                holder.icon.setImageResource(R.drawable.icon_category_income) // Use a specific income icon resource
+                holder.icon.setImageResource(R.drawable.icon_category_income)
 
-                // Handle click listener for Income
-                // Option 1: Disable click or show a simple message
-                holder.itemView.setOnClickListener{
-                    showToast(holder.itemView.context, "Income item clicked: ${movement.description}")
-                }
-
-                // Show a different dialog for Income
-                /*
                 holder.itemView.setOnClickListener {
-                    val bundle = Bundle().apply {
-                        putString("movementType", "Income") // Add type identifier
-                        putString("id", movement.id)
-                        putString("description", movement.description)
-                        putDouble("amount", movement.amount)
-                        putLong("date", movement.date)
+                    val dialog = IncomeDetailFragment.newInstance(movement)
+                    (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
+                        dialog.show(fm, "IncomeDetailFragment")
                     }
-                    // val dialog = IncomeDetailDialogFragment() // If you create this
-                    // dialog.arguments = bundle
-                    // (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
-                    //     dialog.show(fm, "IncomeDetailDialog")
-                    // }
                 }
-                */
             }
         }
     }
@@ -113,6 +86,6 @@ class MovementAdapter(
     fun updateData(newItems: List<Movement>) {
         items.clear()
         items.addAll(newItems)
-        notifyDataSetChanged() // Consider using DiffUtil for better performance
+        notifyDataSetChanged()
     }
 }
