@@ -13,6 +13,7 @@ import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.model.Income
 import itson.appsmoviles.nest.data.model.Movement
 import itson.appsmoviles.nest.ui.home.detail.ExpenseDetailDialogFragment
+import itson.appsmoviles.nest.ui.home.filter.FilterMovementsFragment
 import itson.appsmoviles.nest.ui.util.showToast
 import java.time.Instant
 import java.time.ZoneId
@@ -68,7 +69,7 @@ class MovementAdapter(
                     val dialog = ExpenseDetailDialogFragment() // Use your existing dialog
                     dialog.arguments = bundle
                     (holder.itemView.context as? AppCompatActivity)?.supportFragmentManager?.let { fm ->
-                        dialog.show(fm, "ExpenseDetailDialog")
+                        dialog.show(fm, "ExpenseDetailDialogFragment")
                     }
                 }
             }

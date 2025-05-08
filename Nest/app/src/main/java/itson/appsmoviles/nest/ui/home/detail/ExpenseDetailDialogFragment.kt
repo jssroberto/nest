@@ -61,9 +61,10 @@ class ExpenseDetailDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     override fun onCreateView(
@@ -74,7 +75,7 @@ class ExpenseDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        etDescription = view.findViewById(R.id.et_description)
+        etDescription = view.findViewById(R.id.et_description_detail)
         etAmount = view.findViewById(R.id.et_amount)
         btnDate = view.findViewById(R.id.btn_date)
         txtPaymentMethod = view.findViewById(R.id.txt_payment_method)
