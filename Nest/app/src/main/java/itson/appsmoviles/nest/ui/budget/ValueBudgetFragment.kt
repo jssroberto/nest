@@ -6,13 +6,17 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,6 +24,10 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.ui.budget.CurrencyInputHelper.parseCurrency
+import itson.appsmoviles.nest.ui.common.UiState
+import itson.appsmoviles.nest.ui.home.HomeViewModel
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
+import itson.appsmoviles.nest.ui.util.showToast
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -27,8 +35,28 @@ import java.text.DecimalFormat
 
 class ValueBudgetFragment : Fragment() {
 
+    private val homeViewModel: HomeViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                    return HomeViewModel(sharedMovementsViewModel) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
+    }
+
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+
     private val categoryBudgetLocalMap = mutableMapOf<CategoryType, Float>()
+
+    private lateinit var textViewNetBalance: TextView
+    private lateinit var textViewIncome: TextView
+    private lateinit var textViewExpense: TextView
+
     private lateinit var editTextBudget: EditText
+
     private val currencyFormatter = DecimalFormat("#,##0.##").apply {
         roundingMode = RoundingMode.DOWN
         isGroupingUsed = true
@@ -50,6 +78,10 @@ class ValueBudgetFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
+        textViewNetBalance = view.findViewById(R.id.txt_budget_balance)
+        textViewIncome = view.findViewById(R.id.txt_budget_income)
+        textViewExpense = view.findViewById(R.id.txt_budget_expense)
+
         editTextBudget = view.findViewById(R.id.monthly_budget)
         editTextBudget.setText("")
 
@@ -58,7 +90,8 @@ class ValueBudgetFragment : Fragment() {
                 if (isCurrencyFormatting || !hasLoadedData) return
                 isCurrencyFormatting = true
 
-                val parsedValue = parseCurrency(s.toString()).setScale(2, RoundingMode.DOWN).toFloat()
+                val parsedValue =
+                    parseCurrency(s.toString()).setScale(2, RoundingMode.DOWN).toFloat()
                 viewModel.setTotalBudget(parsedValue)
 
                 val formatted = "$" + currencyFormatter.format(BigDecimal(parsedValue.toString()))
@@ -105,7 +138,9 @@ class ValueBudgetFragment : Fragment() {
                     viewModel.alarmThresholds.collect { thresholds ->
                         isDataLoading = true
                         thresholds.forEach { (category, value) ->
-                            val etThreshold = view.findViewById<EditText>(getEditTextIdForCategoryThreshold(category))
+                            val etThreshold = view.findViewById<EditText>(
+                                getEditTextIdForCategoryThreshold(category)
+                            )
                             val formatted = "$" + currencyFormatter.format(value)
                             if (etThreshold.text.toString() != formatted) {
                                 etThreshold.setText(formatted)
@@ -117,7 +152,8 @@ class ValueBudgetFragment : Fragment() {
                 launch {
                     viewModel.alarmEnabled.collect { enabledMap ->
                         enabledMap.forEach { (category, isChecked) ->
-                            val switch = view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
+                            val switch =
+                                view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
                             switch.isChecked = isChecked
                         }
                     }
@@ -143,6 +179,31 @@ class ValueBudgetFragment : Fragment() {
         }
 
         setupCategoryInputs(view, viewModel)
+        observeViewModels()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun observeViewModels() {
+        homeViewModel.overviewState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UiState.Loading -> {
+
+                }
+
+                is UiState.Success -> {
+                    val overview = state.data
+                    textViewIncome.text = "$${overview.totalIncome.toInt()}"
+                    textViewExpense.text = "$${overview.totalExpenses.toInt()}"
+                    textViewNetBalance.text = "$${overview.netBalance.toInt()}"
+
+                }
+
+                is UiState.Error -> {
+                    Log.e("BudgetFragment", "Error loading budget: ${state.message}")
+                    showToast(requireContext(), "Error loading budget: ${state.message}")
+                }
+            }
+        }
     }
 
     private fun setupCategoryInputs(view: View, viewModel: BudgetViewModel) {
@@ -339,10 +400,18 @@ class ValueBudgetFragment : Fragment() {
 
 
     private fun parseCurrency(input: String): BigDecimal =
-        try { BigDecimal(input.replace(",", "").replace("$", "")) } catch (e: Exception) { BigDecimal.ZERO }
+        try {
+            BigDecimal(input.replace(",", "").replace("$", ""))
+        } catch (e: Exception) {
+            BigDecimal.ZERO
+        }
 
     private fun parseCurrencyRaw(input: String): BigDecimal =
-        try { BigDecimal(input.replace(",", "")) } catch (e: Exception) { BigDecimal.ZERO }
+        try {
+            BigDecimal(input.replace(",", ""))
+        } catch (e: Exception) {
+            BigDecimal.ZERO
+        }
 
     private fun getEditTextIdForCategory(category: CategoryType) = when (category) {
         CategoryType.FOOD -> R.id.et_food
