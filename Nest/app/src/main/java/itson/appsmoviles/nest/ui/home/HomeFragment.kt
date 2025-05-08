@@ -40,13 +40,11 @@ import itson.appsmoviles.nest.ui.util.showToast
 class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by activityViewModels {
-        Log.d("VM_FACTORY_CALL", "HomeVM Factory CALLED for HomeFragment. Current HomeFrag.SharedVM hash for injection: ${System.identityHashCode(sharedMovementsViewModel)}")
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                Log.d("VM_FACTORY_CREATE", "HomeVM Factory create(): Injecting SharedVM: ${System.identityHashCode(sharedMovementsViewModel)} into new HomeViewModel for HomeFragment")
                 if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-                    return HomeViewModel(sharedMovementsViewModel) as T // Pass the correct instance
+                    return HomeViewModel(sharedMovementsViewModel) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
