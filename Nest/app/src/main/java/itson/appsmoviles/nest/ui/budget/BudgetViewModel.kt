@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,6 +41,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _alarmEnabled = MutableStateFlow<Map<CategoryType, Boolean>>(emptyMap())
     val alarmEnabled: StateFlow<Map<CategoryType, Boolean>> = _alarmEnabled
+    private val _categoryPercentages = MutableLiveData<Map<CategoryType, Float>>()
+    val categoryPercentages: LiveData<Map<CategoryType, Float>> = _categoryPercentages
 
 
     init {
@@ -47,6 +50,26 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         observeAlarmThresholds()
         observeAlarmEnabled()
     }
+
+
+    fun setCategoryBudget(category: CategoryType, amount: Float, alarmThreshold: Float, alarmEnabled: Boolean) {
+        val updatedMap = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
+        updatedMap[category] = amount
+        categoryBudgets.value = updatedMap
+
+        // También actualizar porcentajes
+        val total = totalBudget.value ?: 0f
+        if (total > 0f) {
+            val percentageMap = updatedMap.mapValues { it.value * 100f / total }
+            _categoryPercentages.value = percentageMap
+        } else {
+            _categoryPercentages.value = updatedMap.mapValues { 0f }
+        }
+
+        alarmThresholdMap[category] = alarmThreshold
+        alarmEnabledMap[category] = alarmEnabled
+    }
+
 
     // Método para observar los Flows de umbrales de alarma
     private fun observeAlarmThresholds() {
