@@ -1,18 +1,33 @@
 package itson.appsmoviles.nest.ui.budget
 
+import android.annotation.SuppressLint
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Budget
 import itson.appsmoviles.nest.data.model.CategoryBudget
 import itson.appsmoviles.nest.data.repository.BudgetRepository
+import itson.appsmoviles.nest.ui.main.MainActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class BudgetViewModel : ViewModel() {
+class BudgetViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val context get() = getApplication<Application>().applicationContext
 
     private val repository = BudgetRepository()
     val totalBudget = MutableLiveData<Float>()
@@ -152,17 +167,6 @@ class BudgetViewModel : ViewModel() {
         return result
     }
 
-    // Método para verificar si el umbral de la categoría se ha superado
-    fun checkAndNotifyIfThresholdExceeded(category: CategoryType, newExpense: Float): Boolean {
-        val threshold = alarmThresholdMap[category] ?: return false
-        val isAlarmEnabled = alarmEnabledMap[category] ?: false
-        if (!isAlarmEnabled) return false
-
-        val currentSpent = categoryBudgets.value?.get(category) ?: 0f
-        val newTotal = currentSpent + newExpense
-        return newTotal > threshold
-    }
-
     fun persistAlarmThreshold(category: CategoryType, threshold: Double, isEnabled: Boolean) {
         viewModelScope.launch {
             repository.getCategoryBudget(category) { categoryBudget ->
@@ -177,6 +181,7 @@ class BudgetViewModel : ViewModel() {
         }
     }
 
+
     fun loadCategoryAlarms() {
         repository.loadCategoryAlarmsFromFirebase { alarmData ->
             val thresholdMap = alarmData.mapValues { it.value.first }
@@ -187,6 +192,68 @@ class BudgetViewModel : ViewModel() {
         }
     }
 
+    fun checkAndNotifyIfThresholdExceeded(category: CategoryType, newExpense: Float): Boolean {
+        val threshold = alarmThresholdMap[category] ?: return false
+        val isAlarmEnabled = alarmEnabledMap[category] ?: false
+        Log.d("BudgetViewModel", "Checking category: $category, Threshold: $threshold, New Expense: $newExpense")
+
+        if (!isAlarmEnabled) {
+            Log.d("BudgetViewModel", "Alarm not enabled for category: $category")
+            return false
+        }
+
+        val currentSpent = categoryBudgets.value?.get(category) ?: 0f
+        val newTotal = currentSpent + newExpense
+        Log.d("BudgetViewModel", "Current spent: $currentSpent, New total: $newTotal")
+
+        if (newTotal > threshold) {
+            Log.d("BudgetViewModel", "Threshold exceeded for category: $category")
+            sendThresholdExceededNotification(category)
+            return true
+        }
+
+        Log.d("BudgetViewModel", "No threshold exceeded for category: $category")
+        return false
+    }
+
+
+    private fun sendThresholdExceededNotification(category: CategoryType) {
+        Log.d("BudgetViewModel", "Sending notification for category: $category")
+
+        // Mostrar un Toast para verificar que la función se ejecuta
+        Toast.makeText(context, "Notification about $category exceeded", Toast.LENGTH_SHORT).show()
+
+        val notificationId = 1
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(context, "budget_channel")
+            .setContentTitle("Budget Exceeded")
+            .setContentText("Your budget for $category has been exceeded!")
+            .setSmallIcon(R.drawable.alert_circle)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(notificationId, notification)
+
+        Log.d("BudgetViewModel", "Notification sent successfully for category: $category")
+    }
 
 
 }
+
+
+
+
+
+

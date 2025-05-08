@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.budget.PercentageBudgetFragment
 import itson.appsmoviles.nest.ui.budget.ValueBudgetFragment
@@ -25,6 +26,7 @@ class BaseBudgetFragment : Fragment() {
     private lateinit var switchFormat: SwitchCompat
     private lateinit var txtValue: TextView
     private lateinit var txtPercentage: TextView
+    private lateinit var budgetViewModel: BudgetViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class BaseBudgetFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        budgetViewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
         val view = inflater.inflate(R.layout.fragment_base_budget, container, false)
         switchFormat = view.findViewById(R.id.switchFormat)

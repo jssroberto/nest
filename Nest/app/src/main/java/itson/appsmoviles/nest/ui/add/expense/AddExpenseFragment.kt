@@ -1,5 +1,9 @@
 package itson.appsmoviles.nest.ui.add.expense
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +16,7 @@ import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,7 +25,9 @@ import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.ui.budget.BudgetViewModel
 import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
+import itson.appsmoviles.nest.ui.main.MainActivity
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
@@ -29,6 +36,7 @@ import itson.appsmoviles.nest.ui.util.showToast
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
+
     private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     private lateinit var edtAmount: EditText
@@ -41,7 +49,7 @@ class AddExpenseFragment : Fragment() {
     private var selectedTimestamp: Long? = null
 
     private lateinit var viewModel: AddExpenseViewModel
-
+    private lateinit var budgetViewModel: BudgetViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +63,7 @@ class AddExpenseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[AddExpenseViewModel::class.java]
+        budgetViewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
         edtAmount = view.findViewById(R.id.edt_amount_expense)
         edtDescription = view.findViewById(R.id.edt_description_expense)
@@ -64,20 +73,17 @@ class AddExpenseFragment : Fragment() {
         radioCard = view.findViewById(R.id.radio_card)
         btnAddExpense = view.findViewById(R.id.btn_add_expense)
 
+        // Configuración inicial
         setUpSpinner(requireContext(), spinner)
         addDollarSign(edtAmount)
-
         setUpClickListeners()
-
         setRadioColors()
 
+        // Observar gastos (debug)
         viewModel.fetchExpenses()
-
         viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
             Log.d("AddExpenseFragment", "Expenses: $expenses")
-
         }
-
     }
 
     private fun setUpClickListeners() {
@@ -86,9 +92,7 @@ class AddExpenseFragment : Fragment() {
                 context = requireContext(),
                 onDateSelected = { timestampMillis ->
                     selectedTimestamp = timestampMillis
-                    btnDate.apply {
-                        text = formatDateLongForm(timestampMillis)
-                    }
+                    btnDate.text = formatDateLongForm(timestampMillis)
                 }
             )
         }
@@ -99,9 +103,7 @@ class AddExpenseFragment : Fragment() {
     }
 
     private fun addExpense() {
-        if (!areFieldsValid()) {
-            return
-        }
+        if (!areFieldsValid()) return
 
         val expense = Expense(
             id = "",
@@ -112,33 +114,40 @@ class AddExpenseFragment : Fragment() {
             paymentMethod = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
         )
 
+        val category = expense.category
+        val newExpense = expense.amount
+
+        // Verificar si el umbral de la categoría se ha excedido
+        val thresholdExceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
+
+        if (thresholdExceeded) {
+            // Si el umbral ha sido excedido, ya se envió la notificación en el ViewModel
+            // Aquí puedes manejar otros casos si es necesario
+        }
+
+        // Añadir el gasto al ViewModel
         viewModel.addExpense(
             expense = expense,
+            context = requireContext().applicationContext,
+            alarmThreshold = (budgetViewModel.alarmThresholdMap[category] ?: 0f).toDouble(),  // Conversión a Double
             onSuccess = {
                 sharedMovementsViewModel.notifyMovementDataChanged()
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                // Realiza la navegación después de agregar el gasto
+                requireActivity().supportFragmentManager.popBackStack()
             },
             onFailure = { e ->
-                showToast(requireContext(), "Error adding expense: ${e.message}")
+                // manejar el error
             }
         )
+
     }
+
 
     private fun setRadioColors() {
         radioCash.buttonTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
         radioCard.buttonTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
-    }
-
-    private fun clearFields() {
-        edtAmount.text.clear()
-        spinner.setSelection(0)
-        edtDescription.text.clear()
-        btnDate.text = getString(R.string.select_date)
-        selectedTimestamp = null
-        radioCash.isChecked = false
-        radioCard.isChecked = false
     }
 
     private fun getAmount(): Double {
@@ -167,10 +176,39 @@ class AddExpenseFragment : Fragment() {
         }
 
         if (!radioCash.isChecked && !radioCard.isChecked) {
-            Toast.makeText(context, "Please select a payment method (Cash or Card).", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please select a payment method.", Toast.LENGTH_SHORT).show()
             return false
         }
 
         return true
     }
+
+    private fun sendNotification(expenseAmount: Double, alarmThreshold: Double) {
+        val context = requireContext()
+
+        // Crear el canal de notificación (para API 26 y superior)
+        val channelId = "expense_alarm_channel"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Expense Alarm"
+            val importance = NotificationManager.IMPORTANCE_HIGH  // Importancia alta para mostrar notificación
+            val channel = NotificationChannel(channelId, name, importance)
+            val notificationManager = context.getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+        }
+
+        val notificationTitle = "Alerta de Gasto"
+        val notificationText = "El gasto de $expenseAmount ha excedido el umbral de $alarmThreshold."
+
+        // Crear la notificación
+        val builder = Notification.Builder(context, channelId)
+            .setContentTitle(notificationTitle)
+            .setContentText(notificationText)
+            .setSmallIcon(R.drawable.alert_circle)
+            .setPriority(Notification.PRIORITY_HIGH) // Usamos la nueva constante
+
+        // Mostrar la notificación
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(1, builder.build())
+    }
+
 }
