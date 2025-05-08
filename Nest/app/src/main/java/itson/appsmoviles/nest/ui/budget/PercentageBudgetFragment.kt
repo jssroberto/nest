@@ -27,35 +27,65 @@ import java.util.Locale
 class PercentageBudgetFragment : Fragment() {
 
     private lateinit var editTextBudget: EditText
-    private val currencyFormatter = DecimalFormat("$#,##0.00").apply {
-        roundingMode = RoundingMode.DOWN
-        isGroupingUsed = true
-        maximumIntegerDigits = 7
-        maximumFractionDigits = 2
-        minimumFractionDigits = 2
-    }
-    private var isCurrencyFormatting = false
+    private var isFormatting = false
+    private var isThresholdChanged = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_budget, container, false)
-
-    // ... mismo import y declaración de clase
+    ): View = inflater.inflate(R.layout.fragment_budget, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
         editTextBudget = view.findViewById(R.id.monthly_budget)
-        editTextBudget.setText("$0.00")
+        editTextBudget.setText("0")
 
-        // Observador del presupuesto total
+        setupObservers(view, viewModel)
+        setupCategoryInputs(view, viewModel)
+
+        editTextBudget.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                isThresholdChanged = true
+                if (isFormatting) return
+                isFormatting = true
+
+                val parsedValue = parseCurrency(s.toString()).toFloat()
+                viewModel.setTotalBudget(parsedValue)
+
+                val formatted = formatCurrencyInput(parsedValue)
+                if (editTextBudget.text.toString() != formatted) {
+                    editTextBudget.setText(formatted)
+                    editTextBudget.setSelection(formatted.length)
+                }
+
+                isFormatting = false
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    private fun setupObservers(view: View, viewModel: BudgetViewModel) {
         viewModel.totalBudget.observe(viewLifecycleOwner) { total ->
-            val formatted = currencyFormatter.format(BigDecimal(total.toString()))
+            val formatted = formatCurrencyInput(total)
             if (editTextBudget.text.toString() != formatted) {
                 editTextBudget.setText(formatted)
                 editTextBudget.setSelection(formatted.length)
+            }
+        }
+
+        viewModel.categoryPercentages.observe(viewLifecycleOwner) { categoryMap ->
+            categoryMap.forEach { (category, percent) ->
+                val editText = view.findViewById<EditText>(getEditTextIdForCategory(category))
+                val formatted = formatPercentage(percent)
+                if (editText.text.toString() != formatted) {
+                    editText.setText(formatted)
+                    editText.setSelection(formatted.length)
+                }
             }
         }
 
@@ -65,12 +95,15 @@ class PercentageBudgetFragment : Fragment() {
                     viewModel.alarmThresholds.collect { thresholds ->
                         thresholds.forEach { (category, value) ->
                             val editText = view.findViewById<EditText>(getEditTextIdForCategoryThreshold(category))
-                            val formatted = currencyFormatter.format(value)
-                            editText.setText(formatted)
+                            val formatted = formatCurrencyInput(value)
+                            if (editText.text.toString() != formatted) {
+                                editText.setText(formatted)
+                            }
                         }
-                    }
-                }
 
+
+                }
+                }
                 launch {
                     viewModel.alarmEnabled.collect { enabledMap ->
                         enabledMap.forEach { (category, isChecked) ->
@@ -82,142 +115,78 @@ class PercentageBudgetFragment : Fragment() {
             }
         }
 
-        // Llama al cargar datos
         viewModel.loadCategoryAlarms()
-
-        // Observador de porcentajes por categoría (modificado)
-        viewModel.categoryPercentages.observe(viewLifecycleOwner) { categoryMap ->
-            val percentFormatter = DecimalFormat("##0.##'%'")
-            categoryMap.forEach { (category, percent) ->
-                val editText = view.findViewById<EditText>(getEditTextIdForCategory(category))
-                val formatted = percentFormatter.format(percent)
-                if (editText.text.toString() != formatted) {
-                    editText.setText(formatted)
-                    editText.setSelection(formatted.length)
-                }
-            }
-        }
-
-        setupCategoryInputs(view, viewModel)
-
-        // TextWatcher del presupuesto total
-        editTextBudget.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (isCurrencyFormatting) return
-                isCurrencyFormatting = true
-
-                val parsedValue = parseCurrency(s.toString()).toFloat()
-                viewModel.setTotalBudget(parsedValue)
-
-                val formatted = currencyFormatter.format(BigDecimal(parsedValue.toString()))
-                if (editTextBudget.text.toString() != formatted) {
-                    editTextBudget.setText(formatted)
-                    editTextBudget.setSelection(formatted.length)
-                }
-
-                isCurrencyFormatting = false
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
     }
 
-
     private fun setupCategoryInputs(view: View, viewModel: BudgetViewModel) {
-        val categoryFields: Map<CategoryType, EditText> = mapOf(
-            CategoryType.FOOD to view.findViewById(R.id.et_food),
-            CategoryType.LIVING to view.findViewById(R.id.et_home),
-            CategoryType.HEALTH to view.findViewById(R.id.et_health),
-            CategoryType.RECREATION to view.findViewById(R.id.et_recreation),
-            CategoryType.TRANSPORT to view.findViewById(R.id.et_transport),
-            CategoryType.OTHER to view.findViewById(R.id.et_others)
-        )
-
-        val percentFormatter = DecimalFormat("##0.##'%'")
-
+        val categoryFields = CategoryType.values().associateWith { category ->
+            view.findViewById<EditText>(getEditTextIdForCategory(category))
+        }
 
         categoryFields.forEach { (category, editText) ->
-            editText.setText("0%")
+            editText.setText("0")
 
             editText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (isCurrencyFormatting) return
-                    isCurrencyFormatting = true
+                    if (isFormatting) return
+                    isFormatting = true
 
                     val inputPercent = parsePercentage(s.toString())
                     val totalBudget = parseCurrency(editTextBudget.text.toString()).toFloat()
 
-                    // Calcular suma de los demás porcentajes
-                    val sumOfOthers = categoryFields
-                        .filter { it.key != category }
-                        .map { parsePercentage(it.value.text.toString()) }
-                        .sum()
+                    val sumOthers = categoryFields.filterKeys { it != category }
+                        .values.sumOf { parsePercentage(it.text.toString()).toDouble() }.toFloat()
 
-                    val maxAllowed = (100f - sumOfOthers).coerceAtLeast(0f)
+                    val maxAllowed = (100f - sumOthers).coerceAtLeast(0f)
                     val finalPercent = inputPercent.coerceAtMost(maxAllowed)
-                    val amount = (totalBudget * finalPercent / 100f)
+                    val amount = totalBudget * finalPercent / 100f
 
                     val alarmThreshold = viewModel.alarmThresholdMap[category] ?: 0f
                     val alarmEnabled = viewModel.alarmEnabledMap[category] ?: false
 
                     viewModel.setCategoryBudget(category, amount, alarmThreshold, alarmEnabled)
 
-                    val formatted = percentFormatter.format(BigDecimal(finalPercent.toDouble()))
+                    val formatted = formatPercentage(finalPercent)
                     if (editText.text.toString() != formatted) {
                         editText.setText(formatted)
                         editText.setSelection(formatted.length)
                     }
 
-                    isCurrencyFormatting = false
+                    isFormatting = false
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
 
-            // Configuración del umbral de alarma (igual que antes)
-            val etCategoryAlarmThreshold: EditText = view.findViewById(getEditTextIdForCategoryThreshold(category))
-            val switchCategoryAlarm: MaterialCheckBox = view.findViewById(getSwitchIdForCategory(category))
+            val etAlarm = view.findViewById<EditText>(getEditTextIdForCategoryThreshold(category))
+            val switch = view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
 
-            etCategoryAlarmThreshold.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    val raw = parseCurrency(etCategoryAlarmThreshold.text.toString())
-                    etCategoryAlarmThreshold.setText(raw.toPlainString())
-                    etCategoryAlarmThreshold.setSelection(etCategoryAlarmThreshold.text.length)
-                } else {
-                    val raw = parseCurrency(etCategoryAlarmThreshold.text.toString())
-                    val formatted = currencyFormatter.format(raw)
-                    etCategoryAlarmThreshold.setText(formatted)
-                    val isChecked = switchCategoryAlarm.isChecked
-                    viewModel.setAlarmThreshold(category, raw.toFloat())
+            etAlarm.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    val raw = parseCurrencyRaw(etAlarm.text.toString())
+                    val floatValue = raw.toFloat()
+                    val isChecked = switch.isChecked
+
+                    etAlarm.setText(formatCurrencyInput(floatValue))
+                    viewModel.setAlarmThreshold(category, floatValue)
                     viewModel.persistAlarmThreshold(category, raw.toDouble(), isChecked)
                 }
             }
 
-            switchCategoryAlarm.setOnCheckedChangeListener { _, isChecked ->
-                val raw = parseCurrencyRaw(etCategoryAlarmThreshold.text.toString())
+
+
+            switch.setOnCheckedChangeListener { _, isChecked ->
+                val raw = parseCurrencyRaw(etAlarm.text.toString())
                 viewModel.setAlarmEnabled(category, isChecked)
                 viewModel.persistAlarmThreshold(category, raw.toDouble(), isChecked)
             }
         }
     }
 
-    private fun parsePercentage(input: String): Float {
-        return try {
-            input.replace("%", "")
-                .replace(",", ".")
-                .trim()
-                .toFloat()
-        } catch (e: Exception) {
-            0f
-        }
-    }
-
-
     private fun parseCurrency(input: String): BigDecimal {
         return try {
-            BigDecimal(input.replace("[^\\d]".toRegex(), "")).movePointLeft(2)
+            BigDecimal(input.replace("[^\\d]".toRegex(), ""))
         } catch (e: Exception) {
             BigDecimal.ZERO
         }
@@ -226,11 +195,23 @@ class PercentageBudgetFragment : Fragment() {
     private fun parseCurrencyRaw(input: String): BigDecimal {
         return try {
             val clean = input.replace("[^\\d]".toRegex(), "")
-            if (clean.isEmpty()) BigDecimal.ZERO else BigDecimal(clean).movePointLeft(2)
+            if (clean.isEmpty()) BigDecimal.ZERO else BigDecimal(clean)
         } catch (e: Exception) {
             BigDecimal.ZERO
         }
     }
+
+    private fun parsePercentage(input: String): Float {
+        return try {
+            input.replace("%", "").replace(",", ".").trim().toFloat()
+        } catch (e: Exception) {
+            0f
+        }
+    }
+
+    private fun formatCurrencyInput(value: Float): String = value.toString().removeSuffix(".0")
+
+    private fun formatPercentage(value: Float): String = value.toString().removeSuffix(".0")
 
     private fun getEditTextIdForCategory(category: CategoryType) = when (category) {
         CategoryType.FOOD -> R.id.et_food

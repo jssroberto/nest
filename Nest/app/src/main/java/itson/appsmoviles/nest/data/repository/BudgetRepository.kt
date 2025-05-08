@@ -1,6 +1,8 @@
 package itson.appsmoviles.nest.data.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -20,14 +22,36 @@ class BudgetRepository {
     private val dbRef: DatabaseReference = FirebaseDatabase.getInstance()
         .getReference("users")
         .child(userId ?: "unknown")
+    private val _budgetLiveData = MutableLiveData<Budget?>()
+    val budgetLiveData: MutableLiveData<Budget?> get() = _budgetLiveData
 
-    // Flows para manejar las alarmas y umbrales
-    private val alarmThresholdMapFlow = MutableStateFlow<Map<CategoryType, Float>>(emptyMap())
-    private val alarmEnabledMapFlow = MutableStateFlow<Map<CategoryType, Boolean>>(emptyMap())
+    // Método para obtener el presupuesto de Firebase
+    suspend fun getBudgetDataSuspend(): Budget? = suspendCoroutine { continuation ->
+        dbRef.child("budget").get()
+            .addOnSuccessListener { snapshot ->
+                val budget = snapshot.getValue(Budget::class.java)
+                _budgetLiveData.postValue(budget) // Actualiza el LiveData
+                continuation.resume(budget)
+            }
+            .addOnFailureListener { exception ->
+                continuation.resumeWithException(exception)
+            }
+    }
 
-    // Métodos para obtener los Flows de alarmas
-    fun getAlarmThresholds(): StateFlow<Map<CategoryType, Float>> = alarmThresholdMapFlow
-    fun getAlarmEnabled(): StateFlow<Map<CategoryType, Boolean>> = alarmEnabledMapFlow
+    // Método para actualizar el presupuesto en Firebase
+    suspend fun updateBudget(budget: Budget) {
+        try {
+            dbRef.child("budget").setValue(budget)
+                .addOnSuccessListener {
+                    _budgetLiveData.postValue(budget) // Refresca el LiveData
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("BudgetRepository", "Failed to update budget: ${exception.message}")
+                }
+        } catch (e: Exception) {
+            Log.e("BudgetRepository", "Error updating budget", e)
+        }
+    }
 
     fun updateCategoryBudgetAmount(
         category: CategoryType,
@@ -48,14 +72,14 @@ class BudgetRepository {
             .child("categoryBudgets")
             .child(category.name)
 
-        // Crear el objeto CategoryBudget con los datos de la categoría y alarmas
+
         val categoryData = CategoryBudget(
             categoryBudget = categoryBudget,
             alarmThreshold = alarmThreshold,
             alarmEnabled = alarmEnabled
         )
 
-        // Actualizar los datos de la categoría en Firebase
+
         categoryRef.setValue(categoryData)
             .addOnSuccessListener {
                 Log.d("BudgetRepository", "Category budget updated for $category")
@@ -65,7 +89,7 @@ class BudgetRepository {
             }
     }
 
-    // Método para actualizar el umbral de la alarma y habilitar la alarma en Firebase
+
     fun updateCategoryAlarmThreshold(
         category: CategoryType,
         categoryBudget: Float,
@@ -78,22 +102,21 @@ class BudgetRepository {
             return
         }
 
-        // Obtener la referencia a la categoría
+
         val categoryRef = FirebaseDatabase.getInstance()
             .getReference("users")
             .child(userId)
             .child("budget")
             .child("categoryBudgets")
-            .child(category.name) // Asumiendo que `CategoryType` tiene un atributo `name`
+            .child(category.name)
 
-        // Crear el objeto CategoryBudget con los valores de la categoría y alarmas
+
         val categoryData = CategoryBudget(
             categoryBudget = categoryBudget,
             alarmThreshold = alarmThreshold,
             alarmEnabled = alarmEnabled
         )
 
-        // Actualizar los datos de la categoría en Firebase
         categoryRef.setValue(categoryData)
             .addOnSuccessListener {
                 Log.d("BudgetRepository", "Category alarm configuration updated for $category")
@@ -126,43 +149,6 @@ class BudgetRepository {
             }
     }
 
-    suspend fun getBudgetDataSuspend(): Budget? = suspendCoroutine { continuation ->
-        dbRef.child("budget").get()
-            .addOnSuccessListener { snapshot ->
-                val budget = snapshot.getValue(Budget::class.java)
-                continuation.resume(budget)
-            }
-            .addOnFailureListener { exception ->
-                continuation.resumeWithException(exception)
-            }
-    }
-
-    fun getTotalBudget(onDataReceived: (Float) -> Unit) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId == null) {
-            Log.e("BudgetRepository", "User not authenticated. Please log in.")
-            return
-        }
-
-        val userBudgetRef = FirebaseDatabase.getInstance()
-            .getReference("users")
-            .child(userId)
-            .child("budget")
-
-        userBudgetRef.get().addOnSuccessListener { snapshot ->
-            val budget = snapshot.getValue(Budget::class.java)
-            if (budget != null) {
-                // Si el presupuesto total está almacenado directamente, lo obtenemos
-                val totalBudget = budget.totalBudget
-                onDataReceived(totalBudget)
-                Log.d("BudgetRepository", "Total budget loaded successfully.")
-            } else {
-                Log.e("BudgetRepository", "No budget data found")
-            }
-        }.addOnFailureListener { e ->
-            Log.e("BudgetRepository", "Failed to load total budget data", e)
-        }
-    }
 
     fun getCategoryBudget(category: CategoryType, onDataReceived: (CategoryBudget?) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -216,53 +202,10 @@ class BudgetRepository {
                 }
             }
 
-            // Llamamos al callback para pasar los datos obtenidos
             callback(alarmData)
         }.addOnFailureListener { e ->
             Log.e("BudgetRepository", "Failed to load category alarms", e)
         }
     }
-
-    fun persistAlarmThreshold(
-        category: CategoryType,
-        threshold: Double,
-        isEnabled: Boolean
-    ) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId == null) {
-            Log.e("BudgetRepository", "User not authenticated")
-            return
-        }
-
-        val categoryRef = FirebaseDatabase.getInstance()
-            .getReference("users")
-            .child(userId)
-            .child("budget")
-            .child("categoryBudgets")
-            .child(category.name)
-
-        // Primero obtenemos el presupuesto actual para no sobrescribirlo
-        categoryRef.get().addOnSuccessListener { snapshot ->
-            val currentData = snapshot.getValue(CategoryBudget::class.java)
-            val categoryBudget = currentData?.categoryBudget ?: 0f
-
-            val updatedData = CategoryBudget(
-                categoryBudget = categoryBudget,
-                alarmThreshold = threshold,
-                alarmEnabled = isEnabled
-            )
-
-            categoryRef.setValue(updatedData)
-                .addOnSuccessListener {
-                    Log.d("BudgetRepository", "Alarm threshold persisted for $category")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("BudgetRepository", "Failed to persist alarm threshold", e)
-                }
-        }.addOnFailureListener { e ->
-            Log.e("BudgetRepository", "Failed to fetch current category budget", e)
-        }
-    }
-
 
 }

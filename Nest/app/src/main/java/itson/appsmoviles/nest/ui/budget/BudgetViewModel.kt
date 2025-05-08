@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,33 +42,70 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
 
     private val _alarmEnabled = MutableStateFlow<Map<CategoryType, Boolean>>(emptyMap())
     val alarmEnabled: StateFlow<Map<CategoryType, Boolean>> = _alarmEnabled
-    private val _categoryPercentages = MutableLiveData<Map<CategoryType, Float>>()
+    private val _categoryPercentages = MediatorLiveData<Map<CategoryType, Float>>()
     val categoryPercentages: LiveData<Map<CategoryType, Float>> = _categoryPercentages
 
+    private val _categoryAmounts = MutableLiveData<Map<CategoryType, Float>>(emptyMap())
+    val categoryAmounts: LiveData<Map<CategoryType, Float>> = _categoryAmounts
 
     init {
         loadBudgetData()
+
         observeAlarmThresholds()
         observeAlarmEnabled()
+        observeBudgetChanges()
     }
 
 
-    fun setCategoryBudget(category: CategoryType, amount: Float, alarmThreshold: Float, alarmEnabled: Boolean) {
+    private fun observeBudgetChanges() {
+        _categoryPercentages.addSource(totalBudget) { recalculatePercentages() }
+        _categoryPercentages.addSource(categoryBudgets) { recalculatePercentages() }
+    }
+
+    private fun recalculatePercentages() {
+        val total = totalBudget.value ?: 0f
+        val categories = categoryBudgets.value ?: emptyMap()
+        _categoryPercentages.value = if (total > 0f) {
+            categories.mapValues { it.value * 100f / total }
+        } else {
+            categories.mapValues { 0f }
+        }
+    }
+
+
+    fun setCategoryBudget(
+        category: CategoryType,
+        amount: Float,
+        alarmThreshold: Float? = null,
+        alarmEnabled: Boolean? = null
+    ) {
+        // Actualiza el presupuesto localmente
         val updatedMap = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
         updatedMap[category] = amount
         categoryBudgets.value = updatedMap
 
-        // También actualizar porcentajes
+        // Recalcular porcentajes
         val total = totalBudget.value ?: 0f
-        if (total > 0f) {
-            val percentageMap = updatedMap.mapValues { it.value * 100f / total }
-            _categoryPercentages.value = percentageMap
+        _categoryPercentages.value = if (total > 0f) {
+            updatedMap.mapValues { it.value * 100f / total }
         } else {
-            _categoryPercentages.value = updatedMap.mapValues { 0f }
+            updatedMap.mapValues { 0f }
         }
 
-        alarmThresholdMap[category] = alarmThreshold
-        alarmEnabledMap[category] = alarmEnabled
+        // Mantener los valores anteriores si no se pasa un nuevo umbral o estado
+        val threshold = alarmThreshold ?: alarmThresholdMap[category]
+        val enabled = alarmEnabled ?: alarmEnabledMap[category] ?: false
+
+        if (threshold != null) alarmThresholdMap[category] = threshold
+        alarmEnabledMap[category] = enabled
+
+        // Persistir en base de datos
+        repository.updateCategoryBudgetAmount(
+            category,
+            amount,
+            threshold?.toDouble(),
+            enabled
+        )
     }
 
 
@@ -123,22 +161,6 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
                 alarmEnabledMap.putAll(alarmEnabledMapLocal)
             }
         }
-    }
-
-    // Método para actualizar el presupuesto de una categoría
-    fun setCategoryBudget(
-        category: CategoryType,
-        amount: Float,
-        alarmThreshold: Float? = null,
-        alarmEnabled: Boolean = false
-    ) {
-        // Actualizamos el presupuesto de la categoría en el LiveData
-        categoryBudgets.value = categoryBudgets.value?.toMutableMap()?.apply {
-            put(category, amount)
-        }
-
-        // Llamada al repositorio para actualizar el presupuesto y las configuraciones de alarma
-        repository.updateCategoryBudgetAmount(category, amount, alarmThreshold?.toDouble(), alarmEnabled)
     }
 
     // Método para actualizar el umbral de la alarma de una categoría
