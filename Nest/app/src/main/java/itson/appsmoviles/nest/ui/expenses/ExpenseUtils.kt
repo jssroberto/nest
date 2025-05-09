@@ -13,13 +13,13 @@ import itson.appsmoviles.nest.ui.expenses.manager.CategorySelectionManager
 
 
 fun calculateCategorySums(expenses: List<Expense>): Map<String, Float> {
-        return expenses.groupBy { it.category.displayName }
-            .mapValues { entry -> entry.value.sumOf { it.amount }.toFloat() }
-    }
+    return expenses.groupBy { it.category.displayName }
+        .mapValues { entry -> entry.value.sumOf { it.amount }.toFloat() }
+}
 
-    fun calculateTotal(expenses: List<Expense>): Float {
-        return expenses.sumOf { it.amount }.toFloat()
-    }
+fun calculateTotal(expenses: List<Expense>): Float {
+    return expenses.sumOf { it.amount }.toFloat()
+}
 
 
 @SuppressLint("ClickableViewAccessibility")

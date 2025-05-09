@@ -18,7 +18,7 @@ class ExpenseProgressManager(private val context: Context) {
         "Transport" to R.color.category_transport,
         "Health" to R.color.category_health,
         "Others" to R.color.category_other,
-        "Home" to R.color.category_living,
+        "Living" to R.color.category_living,
         "Recreation" to R.color.category_recreation
     )
 
@@ -41,7 +41,7 @@ class ExpenseProgressManager(private val context: Context) {
                 "FOOD" -> context.getString(R.string.food)
                 "TRANSPORT" -> context.getString(R.string.transport)
                 "HEALTH" -> context.getString(R.string.health)
-                "HOME" -> context.getString(R.string.home)
+                "LIVING" -> context.getString(R.string.living)
                 "RECREATION" -> context.getString(R.string.recreation)
                 "OTHERS" -> context.getString(R.string.other)
                 else -> categoryKey
@@ -83,7 +83,6 @@ class ExpenseProgressManager(private val context: Context) {
             container.addView(bar)
         }
     }
-
 
 
 }

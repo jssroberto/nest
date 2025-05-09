@@ -10,7 +10,7 @@ import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
 import itson.appsmoviles.nest.data.repository.MovementRepository
 
-class FilteredExpensesViewModel: ViewModel() {
+class FilteredExpensesViewModel : ViewModel() {
     private val expenseRepository: ExpenseRepository = ExpenseRepository()
 
     @RequiresApi(Build.VERSION_CODES.O)

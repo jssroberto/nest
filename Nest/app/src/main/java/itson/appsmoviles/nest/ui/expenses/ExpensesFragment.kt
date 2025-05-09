@@ -85,7 +85,8 @@ class ExpensesFragment : Fragment() {
             requireContext(), view, categories
         ) { selectedName ->
             expensesController.selectedCategoryName = selectedName
-            pieChartDrawable.selectedCategory = categories.find { it.type.displayName == selectedName }
+            pieChartDrawable.selectedCategory =
+                categories.find { it.type.displayName == selectedName }
             view.findViewById<View>(R.id.graph).invalidate()
         }
 

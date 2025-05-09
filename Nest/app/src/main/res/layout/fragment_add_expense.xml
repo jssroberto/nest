@@ -76,7 +76,7 @@
         android:background="@drawable/edittext_rounded"
         android:gravity="start"
         android:maxLength="50"
-        android:hint="@string/description_hint"
+        android:hint="@string/description_hint_expense"
         android:inputType="textMultiLine"
         android:minHeight="90dp"
             />

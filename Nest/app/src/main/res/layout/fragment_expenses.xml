@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.expenses.ExpensesFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.expenses.ExpensesFragment">
 
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <!-- Título -->
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/expensesTitle"
-                android:textSize="25sp"
-                android:layout_marginHorizontal="@dimen/horizontalMargin" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/horizontalMargin"
+            android:text="@string/expensesTitle"
+            android:textSize="25sp" />
 
 
         <Spinner
@@ -34,18 +34,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="7dp">
+            android:layout_marginTop="7dp"
+            android:orientation="horizontal">
 
 
             <Button
                 android:id="@+id/btn_date_income"
                 style="@style/Nest.Selectable"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginEnd="5dp"
+                android:layout_weight="1"
                 android:drawableEnd="@drawable/calendar"
                 android:gravity="fill_vertical"
                 android:hint="@string/start_date"
@@ -53,36 +53,35 @@
 
             <Button
                 android:id="@+id/btn_end_date"
+                style="@style/Nest.Selectable"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginStart="5dp"
+                android:layout_weight="1"
                 android:drawableEnd="@drawable/calendar"
                 android:gravity="fill_vertical"
                 android:hint="@string/end_date"
-                android:paddingHorizontal="14dp"
-                android:layout_gravity="center"
-                style="@style/Nest.Selectable" />
+                android:paddingHorizontal="14dp" />
 
         </LinearLayout>
-
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btn_delete_filters"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/button"
                 android:contentDescription="@string/clear_filters"
-                android:src="@drawable/btn_clear_filter"
-                android:layout_gravity="center" />
+                android:src="@drawable/btn_clear_filter" />
 
             <View
                 android:layout_width="0dp"
@@ -93,17 +92,17 @@
                 android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/filter"
-                android:textAllCaps="true"
+                android:layout_gravity="center"
                 android:background="@drawable/button"
-                android:layout_gravity="center" />
+                android:text="@string/filter"
+                android:textAllCaps="true" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/graph"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center_horizontal" />
+            android:id="@+id/graph"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="64dp"
@@ -276,8 +275,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginTop="22dp">
 
             <View
                 android:layout_width="10dp"
@@ -285,43 +284,46 @@
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/circle"
                 android:backgroundTint="@color/primary_color" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/estimated_budget"
-                android:gravity="center_vertical"
-                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:paddingEnd="15dp"/>
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:paddingEnd="15dp"
+                android:text="@string/estimated_budget" />
 
 
             <View
                 android:layout_width="10dp"
                 android:layout_height="10dp"
+                android:layout_gravity="center_vertical"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/txt_income"
-                android:layout_gravity="center_vertical" />
+                android:backgroundTint="@color/txt_income" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actual expenses"
-                android:gravity="center_vertical"
+                android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginStart="8dp"/>
+                android:gravity="center_vertical"
+                android:text="Actual expenses" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/progressContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:orientation="vertical"
             android:paddingHorizontal="16dp" />
 
         <View
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/black" />
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/black" />
     </LinearLayout>
 
 

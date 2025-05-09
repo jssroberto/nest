@@ -64,7 +64,8 @@
     <string name="amount_hint">$0.00</string>
     <string name="category">Category</string>
     <string name="description">Description</string>
-    <string name="description_hint">Add a description for your expense</string>
+    <string name="description_hint_expense">Add a description for your expense</string>
+    <string name="description_hint_income">Add a description for your income</string>
     <string name="add_income">Add Income</string>
     <string name="cash">Cash</string>
     <string name="card">Card</string>

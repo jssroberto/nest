@@ -49,7 +49,7 @@
             android:id="@+id/edt_description_income"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/description_hint"
+            android:hint="@string/description_hint_income"
             android:background="@drawable/edittext_rounded"
             android:gravity="start"
             android:minHeight="90dp"
