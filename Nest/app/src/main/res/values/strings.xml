@@ -74,5 +74,6 @@
     <string name="clear_filters">Clear filters</string>
     <string name="budget_hint_decimal">$0.0</string>
     <string name="budget_hint">$0</string>
+    <string name="budget_hint_percentage">0%</string>
 
 </resources>
