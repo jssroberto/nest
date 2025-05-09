@@ -1,11 +1,8 @@
 package itson.appsmoviles.nest.ui.add.expense
 
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LiveData
@@ -13,10 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import itson.appsmoviles.nest.R
-import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.data.repository.ExpenseRepository
-import itson.appsmoviles.nest.ui.main.MainActivity
 import kotlinx.coroutines.launch
 
 class AddExpenseViewModel : ViewModel() {
@@ -30,6 +25,7 @@ class AddExpenseViewModel : ViewModel() {
             _expenses.value = repository.getAllExpenses()
         }
     }
+
     fun addExpense(
         expense: Expense,
         context: Context,
@@ -49,7 +45,11 @@ class AddExpenseViewModel : ViewModel() {
         }
     }
 
-    private fun checkAndNotifyIfOverThreshold(context: Context, amountAdded: Double, alarmThreshold: Double) {
+    private fun checkAndNotifyIfOverThreshold(
+        context: Context,
+        amountAdded: Double,
+        alarmThreshold: Double
+    ) {
         val totalSpent = _expenses.value?.sumOf { it.amount } ?: 0.0
         val newTotal = totalSpent + amountAdded
 
@@ -61,18 +61,19 @@ class AddExpenseViewModel : ViewModel() {
     private fun showNotification(context: Context, totalSpent: Double, threshold: Double) {
         createNotificationChannel(context)
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val notification = NotificationCompat.Builder(context, "budget_channel")
             .setSmallIcon(R.drawable.alert_circle) // asegúrate de tener un ícono válido
             .setContentTitle("¡Alerta de presupuesto!")
-            .setContentText("Has gastado $totalSpent de tu límite de $threshold.")
+            .setContentText("Has gastado $${totalSpent.toInt()} de tu límite de $${threshold.toInt()}.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         notificationManager.notify(1, notification)
     }
-
 
 
     fun createNotificationChannel(context: Context) {
