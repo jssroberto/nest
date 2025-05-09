@@ -286,107 +286,84 @@ class PercentageBudgetFragment : Fragment() {
 
     private fun setupCategoryPercentageInputs() {
         categoryPercentageEditTexts.forEach { (category, editText) ->
-            val watcherTag =
-                R.id.percentage_watcher_tag_prefix + category.ordinal // Unique tag per category
+            val watcherTag = R.id.percentage_watcher_tag_prefix + category.ordinal
             val watcher = object : TextWatcher {
                 private var currentText = ""
+                private var isSelfUpdate = false
 
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
                 override fun afterTextChanged(s: Editable?) {
-                    // Guards against internal formatting/observer updates/initial load
-                    if (s.toString() == currentText || isPercentageFormatting || isObserverUpdating || !hasLoadedInitialData) {
+                    if (isSelfUpdate || s.toString() == currentText || isPercentageFormatting || isObserverUpdating || !hasLoadedInitialData) {
                         return
                     }
 
-                    isPercentageFormatting = true // Lock for this EditText's formatting
+                    isPercentageFormatting = true
                     editText.removeTextChangedListener(this)
 
                     val userInput = s.toString()
-                    val enteredPercentage =
-                        parsePercentageInput(userInput) // Parses "25.5%" to 25.5f
 
-                    val totalBudget = budgetViewModel.totalBudget.value ?: 0f
+                    // Solo procesar si no estamos borrando el último carácter (el %)
+                    if (!userInput.endsWith("%") || userInput.length > 1) {
+                        val cleanInput = userInput.replace("%", "")
+                        val enteredPercentage = if (cleanInput.isEmpty()) 0f else parsePercentageInput(cleanInput)
 
-                    // Clamp percentage based on 100% total
-                    val otherPercentagesSum = budgetViewModel.categoryPercentages.value
-                        ?.filterKeys { it != category }
-                        ?.values?.sum() ?: 0f
+                        // Resto de tu lógica existente...
+                        val totalBudget = budgetViewModel.totalBudget.value ?: 0f
+                        val otherPercentagesSum = budgetViewModel.categoryPercentages.value
+                            ?.filterKeys { it != category }
+                            ?.values?.sum() ?: 0f
 
-                    val maxAllowedPercentage = (100f - otherPercentagesSum).coerceAtLeast(0f)
-                    var finalValidPercentage = enteredPercentage.coerceAtMost(maxAllowedPercentage)
-                    // Round the clamped percentage to match the formatter's precision (1 decimal)
-                    finalValidPercentage = finalValidPercentage.toBigDecimal()
-                        .setScale(percentageFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
-                        .toFloat()
-
-
-                    // Calculate the actual amount based on the clamped percentage
-                    val actualAmount = if (totalBudget > 0f) {
-                        (totalBudget * finalValidPercentage / 100f)
-                            .toBigDecimal()
-                            .setScale(currencyFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
+                        val maxAllowedPercentage = (100f - otherPercentagesSum).coerceAtLeast(0f)
+                        var finalValidPercentage = enteredPercentage.coerceAtMost(maxAllowedPercentage)
+                        finalValidPercentage = finalValidPercentage.toBigDecimal()
+                            .setScale(percentageFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
                             .toFloat()
-                    } else {
-                        0f
+
+                        val actualAmount = if (totalBudget > 0f) {
+                            (totalBudget * finalValidPercentage / 100f)
+                                .toBigDecimal()
+                                .setScale(currencyFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
+                                .toFloat()
+                        } else {
+                            0f
+                        }
+
+                        budgetViewModel.setCategoryBudget(
+                            category, actualAmount,
+                            budgetViewModel.alarmThresholdMap[category] ?: 0f,
+                            budgetViewModel.alarmEnabledMap[category] ?: false
+                        )
+
+                        val displayString = formatPercentage(finalValidPercentage)
+                        currentText = displayString
+
+                        isSelfUpdate = true
+                        editText.setText(displayString)
+                        editText.setSelection(displayString.length - 1) // Posiciona el cursor antes del %
+                        isSelfUpdate = false
                     }
-
-                    // Format the clamped percentage for display *immediately*
-                    val displayStringToSet = formatPercentage(finalValidPercentage)
-
-                    // Update EditText visually
-                    currentText = displayStringToSet
-                    editText.setText(displayStringToSet)
-                    // Set selection to the end after formatting
-                    editText.setSelection(editText.text.length.coerceAtMost(displayStringToSet.length))
 
                     editText.addTextChangedListener(this)
-                    isPercentageFormatting = false // Release the lock
-
-                    // Update ViewModel with the calculated amount
-                    // This will trigger the observer, but the observer is guarded by isPercentageFormatting
-                    budgetViewModel.setCategoryBudget(
-                        category, actualAmount,
-                        budgetViewModel.alarmThresholdMap[category] ?: 0f,
-                        budgetViewModel.alarmEnabledMap[category] ?: false
-                    )
-
-                    // Provide feedback if clamping occurred
-                    if (enteredPercentage > finalValidPercentage && totalBudget > 0f && Math.abs(
-                            enteredPercentage - finalValidPercentage
-                        ) > 0.05f
-                    ) {
-                        showToast(
-                            requireContext(),
-                            "Percentage for ${category.name} adjusted to fit 100% total."
-                        )
-                    } else if (totalBudget <= 0f && enteredPercentage > 0f) {
-                        // Optional: Toast if user enters % with 0 budget
-                        // showToast(requireContext(), "Total budget is zero. Category amount is 0.")
-                    }
+                    isPercentageFormatting = false
                 }
             }
+
             editText.addTextChangedListener(watcher)
             editText.setTag(watcherTag, watcher)
 
+            // Mantener el mismo OnFocusChangeListener que ya tienes
             editText.setOnFocusChangeListener { _, hasFocus ->
                 if (isObserverUpdating || isPercentageFormatting || !hasLoadedInitialData) return@setOnFocusChangeListener
 
                 val currentWatcher = editText.getTag(watcherTag) as? TextWatcher
                 val currentValue = parsePercentageInput(editText.text.toString())
 
-                if (!hasFocus) { // Lost focus - format to "X.Y%"
-                    isPercentageFormatting = true // Lock for formatting
-                    val vmPercent = budgetViewModel.categoryPercentages.value?.get(category)
-                        ?: currentValue // Use VM value if available
-                    val formattedText = formatPercentage(vmPercent)
+                if (!hasFocus) {
+                    isPercentageFormatting = true
+                    val formattedText = formatPercentage(currentValue)
                     safeSetEditText(
                         editText,
                         formattedText,
@@ -394,28 +371,9 @@ class PercentageBudgetFragment : Fragment() {
                         true,
                         isPercentageFormatting
                     ) { isPercentageFormatting = it }
-                    isPercentageFormatting = false // Release lock
-
-                } else { // Gained focus - format to raw number "X.Y" (remove %)
-                    isPercentageFormatting = true // Lock for formatting
-                    // Get current value, remove '%' if present for editing
-                    val rawString = if (currentValue > 0) {
-                        DecimalFormat(
-                            "#0.0#",
-                            DecimalFormatSymbols.getInstance(Locale.getDefault())
-                        ).format(currentValue)
-                    } else {
-                        ""
-                    }
-                    // Format without '%', try to keep cursor position relative to the number part
-                    safeSetEditText(
-                        editText,
-                        rawString,
-                        currentWatcher,
-                        false,
-                        isPercentageFormatting
-                    ) { isPercentageFormatting = it }
-                    isPercentageFormatting = false // Release lock
+                } else {
+                    // Al ganar foco, posiciona el cursor antes del %
+                    editText.setSelection(editText.text.length - 1)
                 }
             }
         }
@@ -835,17 +793,15 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-    // Modified safeSetEditText to manage cursor position based on the flag
     private fun safeSetEditText(
         editText: EditText,
         text: String,
         watcher: TextWatcher?,
         setCursorAtEnd: Boolean,
-        formattingFlag: Boolean, // Pass the relevant formatting flag
-        setFormattingFlag: (Boolean) -> Unit // Pass a lambda to set the flag
+        formattingFlag: Boolean,
+        setFormattingFlag: (Boolean) -> Unit
     ) {
-        val oldSelectionStart = editText.selectionStart
-        setFormattingFlag(true) // Set the flag to indicate formatting is happening
+        setFormattingFlag(true)
         watcher?.let { editText.removeTextChangedListener(it) }
 
         if (editText.text.toString() != text) {
@@ -854,16 +810,14 @@ class PercentageBudgetFragment : Fragment() {
 
         watcher?.let { editText.addTextChangedListener(it) }
 
-        if (setCursorAtEnd) {
-            editText.setSelection(text.length.coerceAtMost(editText.text.length))
-        } else {
-            // Try to restore original cursor position or set to where user was typing
-            // Adjust position if text length changed significantly
-            val newSelection =
-                oldSelectionStart.coerceIn(0, text.length.coerceAtMost(editText.text.length))
-            editText.setSelection(newSelection)
+        // Mejor manejo de selección
+        when {
+            setCursorAtEnd -> editText.setSelection(text.length)
+            editText.hasFocus() -> editText.selectAll() // Seleccionar todo si tiene foco
+            else -> editText.setSelection(text.length)
         }
-        setFormattingFlag(false) // Reset the flag
+
+        setFormattingFlag(false)
     }
 
     private fun parseCurrency(input: String): BigDecimal {

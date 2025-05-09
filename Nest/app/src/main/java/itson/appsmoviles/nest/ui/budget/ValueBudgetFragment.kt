@@ -28,6 +28,8 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 class ValueBudgetFragment : Fragment() {
 
@@ -55,12 +57,13 @@ class ValueBudgetFragment : Fragment() {
     private lateinit var textViewExpense: TextView
     private lateinit var editTextBudget: EditText
 
-    private val currencyFormatter = DecimalFormat("#,##0.##").apply {
+    private val currencyFormatter = DecimalFormat("$#,##0", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
         roundingMode = RoundingMode.DOWN
         isGroupingUsed = true
-        maximumIntegerDigits = 7
-        maximumFractionDigits = 2
         minimumFractionDigits = 0
+        maximumFractionDigits = 2  // Sin decimales
+        negativePrefix = "-$"     // Formato: -$50
+        negativeSuffix = ""       // Eliminar sufijos
     }
     private var isCurrencyFormatting = false
     private var isDataLoading = true // Initialize as true, indicates initial data population
@@ -253,9 +256,9 @@ class ValueBudgetFragment : Fragment() {
                 is UiState.Loading -> { /* Handle loading state if needed */ }
                 is UiState.Success -> {
                     val overview = state.data
-                    textViewIncome.text = "$${overview.totalIncome.toInt()}" // Consider formatting like other currency
-                    textViewExpense.text = "$${overview.totalExpenses.toInt()}"
-                    textViewNetBalance.text = "$${overview.netBalance.toInt()}"
+                    textViewIncome.text = formatCurrency(overview.totalIncome.toFloat())
+                    textViewExpense.text = formatCurrency(overview.totalExpenses.toFloat())
+                    textViewNetBalance.text = formatCurrency(overview.netBalance.toFloat())
                 }
                 is UiState.Error -> {
                     Log.e("ValueBudgetFragment", "Error loading budget: ${state.message}")
@@ -507,9 +510,8 @@ class ValueBudgetFragment : Fragment() {
 
 
     private fun formatCurrency(value: Float): String {
-        // Ensure we are formatting a non-negative value unless negatives are explicitly allowed
-        val valueToFormat = if (value.isNaN()) 0f else value//value.coerceAtLeast(0f)
-        return "$" + currencyFormatter.format(BigDecimal(valueToFormat.toString()))
+        val valueToFormat = if (value.isNaN()) 0f else value
+        return currencyFormatter.format(BigDecimal(valueToFormat.toString()))
     }
 
 

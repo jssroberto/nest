@@ -3,84 +3,73 @@ package itson.appsmoviles.nest.ui.budget
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DecimalFormat
 
 fun processAndFormatCurrencyInput(
     userInput: String,
     formatter: DecimalFormat,
-    previousParsedValueForFallback: BigDecimal = BigDecimal.ZERO // Optional: for fallback like in totalBudgetWatcher
+    previousParsedValueForFallback: BigDecimal = BigDecimal.ZERO
 ): ProcessedCurrencyInput {
     val localDecimalSeparator = formatter.decimalFormatSymbols.decimalSeparator.toString()
     val localGroupingSeparator = formatter.decimalFormatSymbols.groupingSeparator.toString()
 
-    // 1. Clean the input string (copied from totalBudgetWatcher)
-    var cleanString = userInput.replace("$", "")
-    // It's safer to remove grouping separators that are NOT the decimal separator first.
-    // However, the original totalBudgetWatcher logic handles this by specific replacements.
-    // We'll stick to its tested logic for cleaning based on identified separators.
+    var cleanString = userInput.replace(formatter.currency.symbol, "") // Remove currency symbol
     cleanString = cleanString.replace(localGroupingSeparator, "") // Remove grouping separator
 
-    // Standardize decimal separator to '.' for BigDecimal
-    if (localDecimalSeparator == ",") {
-        // If user typed "1.234,56", cleanString is "1.234,56" after removing groupSep (if groupSep != '.')
-        // If groupSep was '.', cleanString is "1234,56"
-        // This part ensures that '.' are removed if they are not the decimal sep, and ',' is turned to '.' if it is.
-        cleanString = cleanString.replace(".", "") // Remove thousand separators if they were '.'
-        cleanString = cleanString.replaceFirst(',', '.') // Convert decimal comma to dot
-    } else { // localDecimalSeparator is likely "."
-        // If user typed "1,234.56", cleanString is "1,234.56" (if groupSep != ',')
-        // This removes thousand separators if they were ','
-        cleanString = cleanString.replace(",", "") // Remove thousand separators if they were ','
+    // Standardize decimal separator to '.' for BigDecimal parsing
+    if (localDecimalSeparator != ".") {
+        cleanString = cleanString.replace(localDecimalSeparator, ".")
     }
 
-
-    // Ensure only one actual decimal point for parsing & limit fraction digits
+    // Handle potential multiple decimal points - keep only the last one
     val firstDecimalIndex = cleanString.indexOf('.')
     if (firstDecimalIndex != -1) {
         val beforeDecimal = cleanString.substring(0, firstDecimalIndex + 1)
         var afterDecimal = cleanString.substring(firstDecimalIndex + 1).replace(".", "")
-        if (afterDecimal.length > formatter.maximumFractionDigits) {
-            afterDecimal = afterDecimal.substring(0, formatter.maximumFractionDigits)
-        }
+        // Limit fraction digits if needed, though BigDecimal parsing handles this
         cleanString = beforeDecimal + afterDecimal
     }
 
+
     val numberToParse = when {
-        cleanString == "." -> "0."
-        cleanString.isEmpty() -> "0"
+        cleanString == "." -> "0." // Handle case where user types just a decimal point
+        cleanString.isEmpty() -> "0" // Handle empty string as 0
         else -> cleanString
     }
 
-    // 2. Parse the cleaned string
     val parsedBigDecimal = try {
-        BigDecimal(numberToParse)
+        BigDecimal(numberToParse).setScale(formatter.maximumFractionDigits, RoundingMode.DOWN)
     } catch (e: NumberFormatException) {
-        previousParsedValueForFallback // Use provided fallback
+        previousParsedValueForFallback // Fallback on parse error
     }
 
-    // 4. Format for display
-    var formattedDisplayString = "$" + formatter.format(parsedBigDecimal)
+    // Format for display using the formatter's locale rules
+    var formattedDisplayString = formatter.format(parsedBigDecimal)
 
-    // 5. Preserve user-typed decimal point if necessary
-    val userTypedDecimalAtEnd = (userInput.endsWith(localDecimalSeparator) || (userInput.endsWith(".") && localDecimalSeparator != "."))
-    val formattedStringLostDecimal = !formattedDisplayString.contains(localDecimalSeparator) && (localDecimalSeparator == "." && !formattedDisplayString.contains(".")) || (localDecimalSeparator == "," && !formattedDisplayString.contains(","))
+    // Preserve user-typed decimal point if necessary for a more natural input feel
+    val userTypedDecimalAtEnd = userInput.endsWith(localDecimalSeparator)
+    val formattedStringLostDecimal =
+        !formattedDisplayString.contains(localDecimalSeparator) && (localDecimalSeparator == "." && !formattedDisplayString.contains(
+            "."
+        )) || (localDecimalSeparator == "," && !formattedDisplayString.contains(","))
 
     val isWholeNumberBasically = parsedBigDecimal.stripTrailingZeros().scale() <= 0
 
 
     if (userTypedDecimalAtEnd && formattedStringLostDecimal && isWholeNumberBasically) {
-        // If cleanString ended with a decimal point and it's a whole number, append it
-        if (numberToParse.endsWith(".")) { // check numberToParse as it's the direct precursor to BigDecimal
+        // If the clean string ended with a decimal point and the formatted string didn't keep it, add it back
+        if (numberToParse.endsWith(".")) {
             formattedDisplayString += localDecimalSeparator
         }
-    } else if (numberToParse == "0." && (formattedDisplayString == "$0" || formattedDisplayString == "$0${localGroupingSeparator}00")) { // Handle "0." specifically. Formatter might add .00 then strip.
-        formattedDisplayString = "$0$localDecimalSeparator"
+    } else if (numberToParse == "0." && !formattedDisplayString.contains(localDecimalSeparator)) {
+        // Specific case for "0." input if formatter formats it as "$0" or similar without decimal
+        formattedDisplayString = formatter.currency.symbol + "0" + localDecimalSeparator
     }
 
 
     return ProcessedCurrencyInput(formattedDisplayString, parsedBigDecimal, numberToParse)
 }
-
 
 fun getEditTextIdForCategory(category: CategoryType) = when (category) {
     CategoryType.FOOD -> R.id.et_food
