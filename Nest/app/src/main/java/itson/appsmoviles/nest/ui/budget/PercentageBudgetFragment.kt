@@ -1,21 +1,30 @@
 package itson.appsmoviles.nest.ui.budget
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.checkbox.MaterialCheckBox
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.ui.common.UiState
+import itson.appsmoviles.nest.ui.home.HomeViewModel
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
+import itson.appsmoviles.nest.ui.util.showToast
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -26,9 +35,27 @@ import java.util.Locale
 
 class PercentageBudgetFragment : Fragment() {
 
+    private val homeViewModel: HomeViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                    return HomeViewModel(sharedMovementsViewModel) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
+    }
+
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+
     private lateinit var editTextBudget: EditText
     private var isFormatting = false
     private var isThresholdChanged = false
+
+    private lateinit var textViewNetBalance: TextView
+    private lateinit var textViewIncome: TextView
+    private lateinit var textViewExpense: TextView
 
 
     override fun onCreateView(
@@ -40,11 +67,16 @@ class PercentageBudgetFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val viewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
 
+        textViewNetBalance = view.findViewById(R.id.txt_budget_balance)
+        textViewIncome = view.findViewById(R.id.txt_budget_income)
+        textViewExpense = view.findViewById(R.id.txt_budget_expense)
+
         editTextBudget = view.findViewById(R.id.monthly_budget)
         editTextBudget.setText("0")
 
         setupObservers(view, viewModel)
         setupCategoryInputs(view, viewModel)
+        observeViewModels()
 
         editTextBudget.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -67,6 +99,30 @@ class PercentageBudgetFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun observeViewModels() {
+        homeViewModel.overviewState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is UiState.Loading -> {
+
+                }
+
+                is UiState.Success -> {
+                    val overview = state.data
+                    textViewIncome.text = "$${overview.totalIncome.toInt()}"
+                    textViewExpense.text = "$${overview.totalExpenses.toInt()}"
+                    textViewNetBalance.text = "$${overview.netBalance.toInt()}"
+
+                }
+
+                is UiState.Error -> {
+                    Log.e("BudgetFragment", "Error loading budget: ${state.message}")
+                    showToast(requireContext(), "Error loading budget: ${state.message}")
+                }
+            }
+        }
     }
 
     private fun setupObservers(view: View, viewModel: BudgetViewModel) {
@@ -94,7 +150,9 @@ class PercentageBudgetFragment : Fragment() {
                 launch {
                     viewModel.alarmThresholds.collect { thresholds ->
                         thresholds.forEach { (category, value) ->
-                            val editText = view.findViewById<EditText>(getEditTextIdForCategoryThreshold(category))
+                            val editText = view.findViewById<EditText>(
+                                getEditTextIdForCategoryThreshold(category)
+                            )
                             val formatted = formatCurrencyInput(value)
                             if (editText.text.toString() != formatted) {
                                 editText.setText(formatted)
@@ -102,12 +160,13 @@ class PercentageBudgetFragment : Fragment() {
                         }
 
 
-                }
+                    }
                 }
                 launch {
                     viewModel.alarmEnabled.collect { enabledMap ->
                         enabledMap.forEach { (category, isChecked) ->
-                            val switch = view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
+                            val switch =
+                                view.findViewById<MaterialCheckBox>(getSwitchIdForCategory(category))
                             switch.isChecked = isChecked
                         }
                     }
@@ -155,7 +214,14 @@ class PercentageBudgetFragment : Fragment() {
                     isFormatting = false
                 }
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
 
