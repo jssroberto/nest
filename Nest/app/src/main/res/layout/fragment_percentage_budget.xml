@@ -24,7 +24,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:background="@drawable/layout_rounded_bg"
             android:backgroundTint="@color/edt_text"
             android:orientation="vertical">
@@ -57,13 +56,7 @@
                     android:maxLength="15"
                     android:textColorHint="@color/txt_color"
                     android:textSize="@dimen/text_size_xx_large" />
-
-
-
             </LinearLayout>
-
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -168,7 +161,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
                         android:gravity="top"
-
                         android:text="@string/budget_hint"
                         android:textSize="@dimen/text_size_x_large" />
                 </LinearLayout>
@@ -224,17 +216,11 @@
                         android:text="@string/food"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmFood"
@@ -248,9 +234,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
-
-
                         <EditText
                             android:id="@+id/editTextAlarmFood"
                             android:layout_width="80dp"
@@ -258,19 +241,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
-
-
                 </LinearLayout>
-
-
-
-
 
                 <EditText
                     android:id="@+id/et_food"
@@ -287,9 +262,6 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
-
-
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -297,17 +269,11 @@
                 android:background="@drawable/layout_rounded_bg"
                 android:backgroundTint="@color/edt_text" />
 
-
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingVertical="5dp">
-
-
-
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -331,17 +297,11 @@
                         android:text="@string/living"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmHome"
@@ -355,10 +315,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
-
-
-
                         <EditText
                             android:id="@+id/editTextAlarmHome"
                             android:layout_width="80dp"
@@ -366,19 +322,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
-
-
-
                 </LinearLayout>
-
-
-
 
                 <EditText
                     android:id="@+id/et_home"
@@ -395,9 +343,6 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
-
-
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -405,17 +350,11 @@
                 android:background="@drawable/layout_rounded_bg"
                 android:backgroundTint="@color/edt_text" />
 
-
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingVertical="5dp">
-
-
-
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -425,9 +364,6 @@
                     android:paddingTop="5dp"
                     android:src="@drawable/circle"
                     app:tint="@color/blue" />
-
-
-
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -442,17 +378,11 @@
                         android:text="@string/health"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmHealth"
@@ -466,9 +396,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
-
-
                         <EditText
                             android:id="@+id/editTextAlarmHealth"
                             android:layout_width="80dp"
@@ -476,21 +403,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
-
-
-
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
-
-
-
                 </LinearLayout>
-
-
 
                 <EditText
                     android:id="@+id/et_health"
@@ -507,8 +424,6 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
-
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -516,16 +431,11 @@
                 android:background="@drawable/layout_rounded_bg"
                 android:backgroundTint="@color/edt_text" />
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingVertical="5dp">
-
-
-
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -536,11 +446,7 @@
                     android:src="@drawable/circle"
                     app:tint="@color/blue" />
 
-
-
-
                 <LinearLayout
-
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -553,17 +459,11 @@
                         android:text="@string/recreation"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmRecreation"
@@ -577,10 +477,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
-
-
-
                         <EditText
                             android:id="@+id/editTextAlarmRecreation"
                             android:layout_width="80dp"
@@ -588,18 +484,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
-
-
-
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
                 </LinearLayout>
-
-
 
                 <EditText
                     android:id="@+id/et_recreation"
@@ -616,8 +505,6 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
-
-
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
@@ -625,15 +512,11 @@
                 android:background="@drawable/layout_rounded_bg"
                 android:backgroundTint="@color/edt_text" />
 
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingVertical="5dp">
-
-
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -657,16 +540,11 @@
                         android:text="@string/transport"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmTransport"
@@ -680,7 +558,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmTransport"
                             android:layout_width="80dp"
@@ -688,18 +565,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
-
-
-
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
                 </LinearLayout>
-
-
 
                 <EditText
                     android:id="@+id/et_transport"
@@ -715,8 +585,6 @@
                     android:text="@string/budget_hint_percentage"
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
-
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -746,9 +614,6 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-
-
-
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -756,17 +621,11 @@
                         android:text="@string/other"
                         android:textSize="@dimen/text_size_medium_large" />
 
-
-
-
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:orientation="horizontal">
-
-
-
 
                         <CheckBox
                             android:id="@+id/checkBoxAlarmOthers"
@@ -780,7 +639,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmOthers"
                             android:layout_width="80dp"
@@ -788,18 +646,11 @@
                             android:layout_gravity="center"
                             android:background="@drawable/edittext_rounded"
                             android:gravity="center"
-                            android:text="@string/budget_hint"
                             android:inputType="number"
-                            android:paddingVertical="2dp" />
-
-
-
+                            android:paddingVertical="2dp"
+                            android:text="@string/budget_hint" />
                     </LinearLayout>
-
-
                 </LinearLayout>
-
-
 
                 <EditText
                     android:id="@+id/et_others"
@@ -814,14 +665,7 @@
                     android:maxLength="10"
                     android:text="@string/budget_hint_percentage"
                     android:textSize="@dimen/text_size_large" />
-
-
             </LinearLayout>
-
-
         </LinearLayout>
-
-
     </LinearLayout>
-
 </androidx.core.widget.NestedScrollView>
