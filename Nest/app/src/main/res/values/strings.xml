@@ -63,6 +63,10 @@
     <string name="amount">Amount</string>
     <string name="amount_hint">$0.00</string>
     <string name="category">Category</string>
+    <string name="by_category">By Category</string>
+    <string name="by_date">By Date</string>
+    <string name="by_type">By Type</string>
+    <string name="filter_movements">Filter Movements</string>
     <string name="description">Description</string>
     <string name="description_hint_expense">Add a description for your expense</string>
     <string name="description_hint_income">Add a description for your income</string>
@@ -75,5 +79,6 @@
     <string name="budget_hint_decimal">$0.0</string>
     <string name="budget_hint">$0</string>
     <string name="budget_hint_percentage">0%</string>
+    <string name="save">Save</string>
 
 </resources>

@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/dialog_background"
-        tools:context=".ui.home.filter.FilterMovementsFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    tools:context=".ui.home.filter.FilterMovementsFragment">
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="15dp">
+            android:layout_gravity="center"
+            android:text="@string/filter_movements"
+            android:textSize="@dimen/text_size_medium_large" />
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Filter Movements"
-                android:textSize="@dimen/text_size_medium_large"
-                android:layout_gravity="center" />
-
-        <TextView
-                android:id="@+id/tv_by_type_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:text="By Type"
-                android:layout_marginTop="15dp" />
+            android:id="@+id/tv_by_type_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="15dp"
+            android:text="By Type" />
 
         <Spinner
-                android:id="@+id/spinner_types_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:background="@drawable/edittext_rounded"
-                android:backgroundTint="@color/edt_text"
-                android:paddingVertical="3dp" />
+            android:id="@+id/spinner_types_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/edittext_rounded"
+            android:backgroundTint="@color/edt_text"
+            android:paddingVertical="3dp" />
 
 
         <TextView
-                android:id="@+id/tv_by_date_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:text="By Date"
-                android:layout_marginTop="15dp" />
+            android:id="@+id/tv_by_date_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/by_date" />
 
         <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="7dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:orientation="horizontal">
 
 
             <Button
@@ -65,65 +65,65 @@
                 android:paddingHorizontal="14dp" />
 
             <Button
-                    android:id="@+id/btn_end_date_filter"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:drawableEnd="@drawable/calendar"
-                    android:gravity="fill_vertical"
-                    android:hint="@string/end_date"
-                    android:paddingHorizontal="14dp"
-                    android:layout_gravity="center"
-                    style="@style/Nest.Selectable" />
+                android:id="@+id/btn_end_date_filter"
+                style="@style/Nest.Selectable"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:drawableEnd="@drawable/calendar"
+                android:gravity="fill_vertical"
+                android:hint="@string/end_date"
+                android:paddingHorizontal="14dp" />
 
         </LinearLayout>
 
         <TextView
-                android:id="@+id/tv_by_category_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:text="By Category"
-                android:layout_marginTop="15dp" />
+            android:id="@+id/tv_by_category_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/by_category" />
 
         <Spinner
-                android:id="@+id/spinner_categories_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="7dp"
-                android:background="@drawable/edittext_rounded"
-                android:backgroundTint="@color/edt_text"
-                android:paddingVertical="3dp" />
+            android:id="@+id/spinner_categories_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/edittext_rounded"
+            android:backgroundTint="@color/edt_text"
+            android:paddingVertical="3dp" />
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="40dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
 
             <ImageButton
-                    android:id="@+id/btn_clear_filters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:background="@drawable/button"
-                    android:contentDescription="@string/clear_filters"
-                    android:src="@drawable/btn_clear_filter"
-                    android:layout_gravity="center" />
+                android:id="@+id/btn_clear_filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/button"
+                android:contentDescription="@string/clear_filters"
+                android:src="@drawable/btn_clear_filter" />
 
             <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <Button
-                    android:id="@+id/btn_apply_filters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/apply_filters"
-                    android:textAllCaps="true"
-                    android:background="@drawable/button"
-                    android:layout_gravity="center" />
+                android:id="@+id/btn_apply_filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/button"
+                android:text="@string/apply_filters"
+                android:textAllCaps="true" />
         </LinearLayout>
 
     </LinearLayout>
