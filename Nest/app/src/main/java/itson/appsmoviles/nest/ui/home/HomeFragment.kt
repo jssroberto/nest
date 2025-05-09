@@ -215,6 +215,11 @@ class HomeFragment : Fragment() {
         sharedMovementsViewModel.userNameUpdated.observe(viewLifecycleOwner) {
             viewModel.fetchOverviewData()
         }
+
+        sharedMovementsViewModel.budgetDataChanged.observe(viewLifecycleOwner) {
+            // When budget data changes, typically only the overview (which contains budget) needs refreshing.
+            viewModel.fetchOverviewData()
+        }
     }
 
     private fun applyBtnAddMargin() {

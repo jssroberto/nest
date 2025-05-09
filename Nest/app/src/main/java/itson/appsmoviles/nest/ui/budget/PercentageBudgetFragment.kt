@@ -37,7 +37,20 @@ import java.util.Locale
 
 class PercentageBudgetFragment : Fragment() {
 
-    private val budgetViewModel: BudgetViewModel by activityViewModels()
+    private val budgetViewModel: BudgetViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
+                    // This fragment also needs access to sharedMovementsViewModel
+                    val sharedVM = ViewModelProvider(requireActivity())[SharedMovementsViewModel::class.java]
+                    return BudgetViewModel(requireActivity().application, sharedVM) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
+    }
+
     private val homeViewModel: HomeViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")

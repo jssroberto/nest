@@ -1,13 +1,10 @@
 package itson.appsmoviles.nest.ui.budget
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -15,19 +12,22 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Budget
 import itson.appsmoviles.nest.data.model.CategoryBudget
 import itson.appsmoviles.nest.data.repository.BudgetRepository
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
 import itson.appsmoviles.nest.ui.main.MainActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class BudgetViewModel(application: Application) : AndroidViewModel(application) {
+class BudgetViewModel(
+    application: Application,
+    private val sharedMovementsViewModel: SharedMovementsViewModel
+) : AndroidViewModel(application) {
 
     private val context get() = getApplication<Application>().applicationContext
 
@@ -106,6 +106,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             threshold?.toDouble(),
             enabled
         )
+
+        sharedMovementsViewModel.notifyBudgetDataChanged()
     }
 
 
@@ -160,7 +162,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
                 // If no budget data is found (e.g., first sign-up),
                 // explicitly set LiveData values to their initial state.
                 totalBudget.value = 0f
-                categoryBudgets.value = CategoryType.values().associateWith { 0f } // Initialize with all categories at 0f
+                categoryBudgets.value = CategoryType.values()
+                    .associateWith { 0f } // Initialize with all categories at 0f
                 _alarmThresholds.value = CategoryType.values().associateWith { 0f }
                 _alarmEnabled.value = CategoryType.values().associateWith { false }
             }
@@ -206,9 +209,11 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             )
             repository.saveBudget(updatedBudget) {
                 Log.d("BudgetViewModel", "Total budget saved successfully.")
+                sharedMovementsViewModel.notifyBudgetDataChanged()
             }
         }
     }
+
     private fun buildSimpleCategoryBudgets(): Map<String, CategoryBudget> {
         val result = mutableMapOf<String, CategoryBudget>()
         categoryBudgets.value?.forEach { (category, amount) ->
@@ -264,7 +269,10 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     fun checkAndNotifyIfThresholdExceeded(category: CategoryType, newExpense: Float): Boolean {
         val threshold = alarmThresholdMap[category] ?: return false
         val isAlarmEnabled = alarmEnabledMap[category] ?: false
-        Log.d("BudgetViewModel", "Checking category: $category, Threshold: $threshold, New Expense: $newExpense")
+        Log.d(
+            "BudgetViewModel",
+            "Checking category: $category, Threshold: $threshold, New Expense: $newExpense"
+        )
 
         if (!isAlarmEnabled) {
             Log.d("BudgetViewModel", "Alarm not enabled for category: $category")
@@ -293,7 +301,8 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         Toast.makeText(context, "Notification about $category exceeded", Toast.LENGTH_SHORT).show()
 
         val notificationId = 1
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

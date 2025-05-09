@@ -10,10 +10,14 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.ui.budget.PercentageBudgetFragment
 import itson.appsmoviles.nest.ui.budget.ValueBudgetFragment
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
+import kotlin.getValue
 
 class BaseBudgetFragment : Fragment() {
 
@@ -25,6 +29,8 @@ class BaseBudgetFragment : Fragment() {
     private var valueBudgetFragmentInstance: ValueBudgetFragment? = null
     private var percentageBudgetFragmentInstance: PercentageBudgetFragment? = null
 
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+
     companion object {
         private const val VALUE_FRAGMENT_TAG = "VALUE_FRAGMENT_TAG"
         private const val PERCENTAGE_FRAGMENT_TAG = "PERCENTAGE_FRAGMENT_TAG"
@@ -34,7 +40,7 @@ class BaseBudgetFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        budgetViewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
+
         val view = inflater.inflate(R.layout.fragment_base_budget, container, false)
 
         switchFormat = view.findViewById(R.id.switchFormat)
@@ -46,6 +52,16 @@ class BaseBudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        budgetViewModel = ViewModelProvider(requireActivity(), object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
+                    // Pass the application and the sharedMovementsViewModel instance
+                    return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        })[BudgetViewModel::class.java]
 
         // Attempt to find existing fragments if BaseBudgetFragment is recreated (e.g., config change)
         if (savedInstanceState != null) {

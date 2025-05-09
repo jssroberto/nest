@@ -74,8 +74,16 @@ class ValueBudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        budgetViewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
-
+        budgetViewModel = ViewModelProvider(requireActivity(), object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
+                    // Pass the application and the sharedMovementsViewModel instance
+                    return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        })[BudgetViewModel::class.java]
         initializeViews(view)
         setupTotalBudgetInput()
         observeTotalBudget()
