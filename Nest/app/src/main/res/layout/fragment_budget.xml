@@ -27,7 +27,6 @@
             android:text="@string/monthly_budget"
             android:textSize="@dimen/text_size_medium_large" />
 
-
         <EditText
             android:id="@+id/monthly_budget"
             android:layout_width="match_parent"
@@ -43,7 +42,6 @@
             android:padding="7dp"
             android:textSize="@dimen/text_size_xx_large" />
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,12 +55,10 @@
                 android:orientation="vertical"
                 android:paddingVertical="10dp">
 
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
 
                     <TextView
                         android:layout_width="70dp"
@@ -72,14 +68,12 @@
                         android:textColor="@color/blue"
                         android:textSize="@dimen/text_size_medium" />
 
-
                     <TextView
                         android:layout_width="15dp"
                         android:layout_height="wrap_content"
                         android:text="+"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/text_size_large" />
-
 
                     <TextView
                         android:id="@+id/txt_budget_income"
@@ -88,10 +82,7 @@
                         android:text="$520"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/text_size_large" />
-
-
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -120,10 +111,7 @@
                         android:text="$250"
                         android:textColor="@color/txt_expenses"
                         android:textSize="@dimen/text_size_large" />
-
                 </LinearLayout>
-
-
             </LinearLayout>
 
             <LinearLayout
@@ -145,8 +133,6 @@
                         android:layout_marginHorizontal="15dp"
                         android:text="@string/net_balance"
                         android:textSize="@dimen/text_size_medium" />
-
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -164,12 +150,8 @@
 
                         android:text="$270"
                         android:textSize="@dimen/text_size_x_large" />
-
-
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
 
         <ImageView
@@ -238,7 +220,6 @@
                             android:text="@string/alarm"
                             android:textColor="@color/dateButtonLetters" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmFood"
                             android:layout_width="80dp"
@@ -249,12 +230,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_food"
@@ -270,7 +247,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -325,7 +301,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmHome"
                             android:layout_width="80dp"
@@ -336,13 +311,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_home"
@@ -358,7 +328,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -413,7 +382,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmHealth"
                             android:layout_width="80dp"
@@ -424,13 +392,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_health"
@@ -446,7 +409,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -501,7 +463,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmRecreation"
                             android:layout_width="80dp"
@@ -512,13 +473,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_recreation"
@@ -534,7 +490,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -589,7 +544,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmTransport"
                             android:layout_width="80dp"
@@ -600,13 +554,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_transport"
@@ -622,7 +571,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
 
             <ImageView
                 android:layout_width="match_parent"
@@ -677,7 +625,6 @@
                             android:textColor="@color/dateButtonLetters"
                             android:textSize="@dimen/text_size_medium" />
 
-
                         <EditText
                             android:id="@+id/editTextAlarmOthers"
                             android:layout_width="80dp"
@@ -688,13 +635,8 @@
                             android:hint="@string/budget_hint"
                             android:inputType="numberDecimal"
                             android:paddingVertical="2dp" />
-
-
                     </LinearLayout>
-
-
                 </LinearLayout>
-
 
                 <EditText
                     android:id="@+id/et_others"
@@ -710,13 +652,6 @@
                     android:maxLength="10"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
-
-
         </LinearLayout>
-
-        
-
     </LinearLayout>
-
-
 </androidx.core.widget.NestedScrollView>
