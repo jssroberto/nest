@@ -40,7 +40,6 @@
                 android:hint="$0.00"
                 android:inputType="numberDecimal"
                 android:maxLength="15"
-                android:textColorHint="@color/txt_color"
                 android:textSize="@dimen/text_size_xx_large" />
 
 
@@ -261,7 +260,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
@@ -347,7 +346,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
@@ -433,7 +432,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
@@ -519,7 +518,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
@@ -605,7 +604,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
@@ -691,7 +690,7 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:text="100%"
+                        android:hint="0"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 

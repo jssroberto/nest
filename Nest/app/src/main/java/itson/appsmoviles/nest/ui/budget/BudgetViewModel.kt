@@ -136,7 +136,6 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             budget?.let {
                 totalBudget.value = it.totalBudget
 
-                // Mapear los presupuestos de las categorías desde CategoryBudget
                 val categoryMap = mutableMapOf<CategoryType, Float>()
                 val alarmThresholdsMap = mutableMapOf<CategoryType, Float>()
                 val alarmEnabledMapLocal = mutableMapOf<CategoryType, Boolean>()
@@ -155,13 +154,19 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
                 }
 
                 categoryBudgets.value = categoryMap
-                alarmThresholdMap.clear()
-                alarmThresholdMap.putAll(alarmThresholdsMap)
-                alarmEnabledMap.clear()
-                alarmEnabledMap.putAll(alarmEnabledMapLocal)
+                _alarmThresholds.value = alarmThresholdsMap // Use StateFlow direct update
+                _alarmEnabled.value = alarmEnabledMapLocal // Use StateFlow direct update
+            } ?: run {
+                // If no budget data is found (e.g., first sign-up),
+                // explicitly set LiveData values to their initial state.
+                totalBudget.value = 0f
+                categoryBudgets.value = CategoryType.values().associateWith { 0f } // Initialize with all categories at 0f
+                _alarmThresholds.value = CategoryType.values().associateWith { 0f }
+                _alarmEnabled.value = CategoryType.values().associateWith { false }
             }
         }
     }
+
 
     // Método para actualizar el umbral de la alarma de una categoría
     fun setAlarmThreshold(category: CategoryType, threshold: Float) {

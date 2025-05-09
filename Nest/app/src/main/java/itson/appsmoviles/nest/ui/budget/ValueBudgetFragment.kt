@@ -129,15 +129,29 @@ class ValueBudgetFragment : Fragment() {
 
     private fun observeTotalBudget() {
         budgetViewModel.totalBudget.observe(viewLifecycleOwner) { total ->
-            if (!hasLoadedInitialData && total == 0f && editTextBudget.text.toString().isBlank()) {
-                // Avoid race condition on initial load if field is empty and no budget is set.
-                // If a budget (even 0f) IS set, we proceed to set hasLoadedInitialData.
-                if (budgetViewModel.totalBudget.value == null) return@observe // Stricter check if 0f is a valid initial "unset" state
+            // OLD LOGIC:
+            // if (!hasLoadedInitialData && total == 0f && editTextBudget.text.toString().isBlank()) {
+            //     if (budgetViewModel.totalBudget.value == null) return@observe
+            // }
+            // hasLoadedInitialData = true
+
+            // NEW/IMPROVED LOGIC:
+            // Set hasLoadedInitialData to true if a non-null value has been observed,
+            // regardless of its specific value (0f is a valid initial state).
+            if (budgetViewModel.totalBudget.value != null) {
+                hasLoadedInitialData = true
             }
-            hasLoadedInitialData = true
+
+            // Guards to prevent loops/unnecessary updates during formatting or before data is loaded
+            if (isCurrencyFormatting || !hasLoadedInitialData) {
+                return@observe // Exit early if still formatting or data isn't "loaded" yet
+            }
 
             val currentEditTextValue = parseCurrency(editTextBudget.text.toString()).toFloat()
-            if (currentEditTextValue != total || !editTextBudget.text.toString().startsWith("$") || (total == 0f && editTextBudget.text.toString().isNotBlank() && editTextBudget.text.toString() != "$0")) {
+            if (currentEditTextValue != total || !editTextBudget.text.toString()
+                    .startsWith("$") || (total == 0f && editTextBudget.text.toString()
+                    .isNotBlank() && editTextBudget.text.toString() != "$0")
+            ) {
                 val watcher = editTextBudget.getTag(R.id.monthly_budget_watcher_tag) as? TextWatcher
                 formatAndSetEditText(editTextBudget, total, watcher)
             }

@@ -414,33 +414,48 @@ class PercentageBudgetFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     budgetViewModel.alarmThresholds.collect { thresholds ->
-                        // Guard against formatting/observer loops
+                        // Guard against internal formatting/observer loops
                         if (isCurrencyFormatting || isObserverUpdating) return@collect
-                        isObserverUpdating = true
-                        thresholds.forEach { (category, value) ->
-                            categoryAlarmThresholdEditTexts[category]?.let { etThreshold ->
-                                val formattedValue = formatCurrency(value.toFloat())
-                                // Only update EditText if the text content doesn't match
-                                if (etThreshold.text.toString() != formattedValue) {
-                                    val watcher =
-                                        etThreshold.getTag(R.id.alarm_threshold_watcher_tag_prefix + category.ordinal) as? TextWatcher
-                                    safeSetEditText(
-                                        etThreshold,
-                                        formattedValue,
-                                        watcher,
-                                        true,
-                                        isCurrencyFormatting
-                                    ) { isCurrencyFormatting = it }
-                                }
+
+                        isObserverUpdating = true // Indicate that update is from observer
+
+                        // Iterate over all CategoryTypes to ensure all associated EditTexts are initialized.
+                        // This handles cases where the 'thresholds' map is empty (first launch).
+                        CategoryType.values().forEach { category ->
+                            val etThreshold = categoryAlarmThresholdEditTexts[category]
+                            if (etThreshold == null) return@forEach // Ensure EditText exists for the category
+
+                            // Get the threshold value from the ViewModel's map for this category,
+                            // or default to 0f if not found (for new/empty data).
+                            val value = thresholds[category] ?: 0f
+
+                            val formattedValue = formatCurrency(value)
+                            val watcher =
+                                etThreshold.getTag(R.id.alarm_threshold_watcher_tag_prefix + category.ordinal) as? TextWatcher
+
+                            // Only update the EditText if its current text does not match the formatted value.
+                            // This will ensure initial setup to "$0" or "$0.00" if it's currently blank or incorrect.
+                            if (etThreshold.text.toString() != formattedValue) {
+                                safeSetEditText(
+                                    etThreshold,
+                                    formattedValue,
+                                    watcher,
+                                    true, // Set cursor at end, suitable for initial display
+                                    isCurrencyFormatting
+                                ) { isCurrencyFormatting = it }
                             }
                         }
+
+                        // 'hasLoadedInitialData' should now be reliably set by observeTotalBudget after the previous fix.
+                        // This specific line might become less critical here, but doesn't hurt.
                         if (thresholds.isNotEmpty()) hasLoadedInitialData = true
-                        isObserverUpdating = false
+
+                        isObserverUpdating = false // Release the lock
                     }
                 }
+                // The launch block for alarmEnabled remains the same:
                 launch {
                     budgetViewModel.alarmEnabled.collect { enabledMap ->
-                        // Guard against observer loops
                         if (isObserverUpdating) return@collect
                         isObserverUpdating = true
                         enabledMap.forEach { (category, isChecked) ->
@@ -454,7 +469,6 @@ class PercentageBudgetFragment : Fragment() {
             }
         }
     }
-
     private fun setupCategoryAlarmInputsAndSwitches() {
         CategoryType.values().forEach { category ->
             val etThreshold = categoryAlarmThresholdEditTexts[category] ?: return@forEach
@@ -795,8 +809,9 @@ class PercentageBudgetFragment : Fragment() {
     }
 
     private fun formatCurrency(value: Float): String {
-        // Ensure we are formatting a non-negative value unless negatives are explicitly allowed
-        val valueToFormat = if (value.isNaN()) 0f else value.coerceAtLeast(0f)
+        // Allow negative values for net balance if necessary.
+        // Remove .coerceAtLeast(0f)
+        val valueToFormat = if (value.isNaN()) 0f else value
         return currencyFormatter.format(BigDecimal(valueToFormat.toString()))
     }
 
