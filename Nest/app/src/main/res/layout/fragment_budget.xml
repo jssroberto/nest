@@ -27,6 +27,8 @@
                 android:text="@string/monthly_budget"
                 android:textSize="@dimen/text_size_medium_large" />
 
+
+
         <EditText
                 android:id="@+id/monthly_budget"
                 android:layout_width="match_parent"
@@ -37,10 +39,12 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:padding="7dp"
-                android:hint="$0.00"
+            android:hint="@string/amount_hint"
                 android:inputType="numberDecimal"
                 android:maxLength="15"
                 android:textSize="@dimen/text_size_xx_large" />
+
+
 
 
         <LinearLayout
@@ -56,10 +60,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="10dp">
 
+
                 <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
 
                     <TextView
                             android:layout_width="70dp"
@@ -69,12 +75,14 @@
                             android:textColor="@color/blue"
                             android:textSize="@dimen/text_size_medium" />
 
+
                     <TextView
                             android:layout_width="15dp"
                             android:layout_height="wrap_content"
                             android:text="+"
                             android:textColor="@color/blue"
                             android:textSize="@dimen/text_size_large" />
+
 
                     <TextView
                             android:id="@+id/txt_budget_income"
@@ -84,7 +92,9 @@
                             android:textColor="@color/blue"
                             android:textSize="@dimen/text_size_large" />
 
+
                 </LinearLayout>
+
 
                 <LinearLayout
                         android:layout_width="wrap_content"
@@ -233,6 +243,8 @@
                                 />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmFood"
                                 android:layout_width="80dp"
@@ -240,15 +252,19 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                                android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
+
+
 
 
                     </LinearLayout>
 
                 </LinearLayout>
-                
+
+
+
                 <EditText
                         android:id="@+id/et_food"
                         android:layout_width="120dp"
@@ -260,9 +276,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                    android:hint="@string/amount_hint"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
             <ImageView
                     android:layout_width="match_parent"
@@ -318,6 +336,8 @@
                                 android:textSize="@dimen/text_size_medium" />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmHome"
                                 android:layout_width="80dp"
@@ -325,15 +345,19 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                            android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
+
+
 
 
                     </LinearLayout>
 
 
                 </LinearLayout>
+
+
 
                 <EditText
                         android:id="@+id/et_home"
@@ -346,9 +370,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                    android:hint="@string/amount_hint"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
             <ImageView
                     android:layout_width="match_parent"
@@ -404,6 +430,8 @@
                                 android:textSize="@dimen/text_size_medium" />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmHealth"
                                 android:layout_width="80dp"
@@ -411,7 +439,7 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                            android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
@@ -419,7 +447,11 @@
                     </LinearLayout>
 
 
+
+
                 </LinearLayout>
+
+
 
                 <EditText
                         android:id="@+id/et_health"
@@ -432,9 +464,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                    android:hint="@string/amount_hint"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
             <ImageView
                     android:layout_width="match_parent"
@@ -490,6 +524,8 @@
                                 android:textSize="@dimen/text_size_medium" />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmRecreation"
                                 android:layout_width="80dp"
@@ -497,7 +533,7 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                            android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
@@ -505,7 +541,11 @@
                     </LinearLayout>
 
 
+
+
                 </LinearLayout>
+
+
 
                 <EditText
                         android:id="@+id/et_recreation"
@@ -518,9 +558,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                    android:hint="@string/amount_hint"
                     android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
             <ImageView
                     android:layout_width="match_parent"
@@ -576,6 +618,8 @@
                                 android:textSize="@dimen/text_size_medium" />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmTransport"
                                 android:layout_width="80dp"
@@ -583,7 +627,7 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                            android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
@@ -591,7 +635,11 @@
                     </LinearLayout>
 
 
+
+
                 </LinearLayout>
+
+
 
                 <EditText
                         android:id="@+id/et_transport"
@@ -604,9 +652,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                    android:hint="@string/amount_hint"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
             <ImageView
                     android:layout_width="match_parent"
@@ -662,6 +712,8 @@
                                 android:textSize="@dimen/text_size_medium" />
 
 
+
+
                         <EditText
                                 android:id="@+id/editTextAlarmOthers"
                                 android:layout_width="80dp"
@@ -669,7 +721,7 @@
                                 android:layout_gravity="center"
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
-                                android:hint="$0.0"
+                            android:hint="@string/budget_hint"
                                 android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
@@ -677,7 +729,11 @@
                     </LinearLayout>
 
 
+
+
                 </LinearLayout>
+
+
 
                 <EditText
                         android:id="@+id/et_others"
@@ -690,9 +746,11 @@
                         android:importantForAccessibility="yes"
                         android:inputType="numberDecimal"
                         android:maxLength="10"
-                        android:hint="0"
+                        android:hint="@string/amount_hint"
                         android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
+
+
 
         </LinearLayout>
 

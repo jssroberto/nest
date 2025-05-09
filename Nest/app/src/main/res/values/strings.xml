@@ -72,5 +72,7 @@
     <string name="payment_method">Payment Method</string>
     <string name="log_out">Log out</string>
     <string name="clear_filters">Clear filters</string>
+    <string name="budget_hint_decimal">$0.0</string>
+    <string name="budget_hint">$0</string>
 
 </resources>
