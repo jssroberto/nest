@@ -6,11 +6,21 @@ import android.view.View
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import itson.appsmoviles.nest.R
+import itson.appsmoviles.nest.data.enum.CategoryType
+import itson.appsmoviles.nest.data.model.Budget
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.data.repository.BudgetRepository
+import itson.appsmoviles.nest.ui.budget.BudgetViewModel
 import itson.appsmoviles.nest.ui.expenses.FilteredExpensesViewModel
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@RequiresApi(Build.VERSION_CODES.O)
 class ExpensesController(
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
@@ -19,9 +29,23 @@ class ExpensesController(
     private val categoryManager: CategoryManager,
     private val filterManager: FilterManager,
     private val pieChartDrawable: PieChartDrawable,
-    private val progressManager: ExpenseProgressManager
+    private val progressManager: ExpenseProgressManager,
+    private val budgetViewModel: BudgetViewModel // Añade esta dependencia
 ) {
     var selectedCategoryName: String? = null
+    private val budgetRepository = BudgetRepository()
+
+    init {
+        setupBudgetObserver()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupBudgetObserver() {
+        budgetViewModel.categoryBudgets.observe(lifecycleOwner) { budgets ->
+            // Cuando cambian los presupuestos, actualizamos los progresos
+            loadExpenses() // O puedes llamar directamente a updateProgressBars si tienes los expenses
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun filterAndLoadExpenses() {
@@ -47,7 +71,6 @@ class ExpensesController(
             updateProgressBars(expenses)
         }
     }
-
     private fun updateChartWithExpenses(expenses: List<Expense>) {
         categoryManager.updateWithExpenses(expenses)
         pieChartDrawable.invalidateSelf()
@@ -57,19 +80,43 @@ class ExpensesController(
     private fun updateTotal() {
         rootView.findViewById<TextView>(R.id.totalExpenses).text = "$${categoryManager.calculateTotal()}"
     }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateProgressBars(expenses: List<Expense>) {
-        val expenseSums = categoryManager.calculateCategorySums(expenses)
+        // 1) Calculas los gastos por clave String
+        val expenseSums: Map<String, Float> = categoryManager.calculateCategorySums(expenses)
 
-        val targets = mapOf(
-            "Food" to 75f,
-            "Transport" to 1f,
-            "Health" to 50f,
-            "Others" to 50f,
-            "Home" to 41f,
-            "Recreation" to 20f
-        )
+        lifecycleOwner.lifecycleScope.launch{
+            // 2) Obtienes el Budget completo
+            val budgetData = withContext(Dispatchers.IO) {
+                budgetRepository.getBudgetDataSuspend()
+            }
 
-        progressManager.updateProgressBars(rootView, expenseSums, targets)
+            // 3) Conviertes tus mapas String→Float a CategoryType→Float
+            val expenseSumsByCategory: Map<CategoryType, Float> =
+                expenseSums.mapKeys { (key, _) ->
+                    CategoryType.fromName(key)
+                }
+
+            val targets: Map<CategoryType, Float> = CategoryType.values().associateWith { category ->
+                budgetData
+                    ?.categoryBudgets
+                    ?.get(category.name)
+                    ?.categoryBudget
+                    ?.toFloat()
+                    ?: 0f
+            }
+
+            // 4) Llamas a progressManager con los dos Map<CategoryType, Float>
+            progressManager.updateProgressBars(
+                rootView,
+                expenseSumsByCategory,
+                targets
+            )
+        }
+
     }
+
+
+
+
 }

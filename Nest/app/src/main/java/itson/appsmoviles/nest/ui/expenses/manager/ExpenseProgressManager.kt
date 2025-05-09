@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import itson.appsmoviles.nest.data.enum.CategoryType
 
 class ExpenseProgressManager(private val context: Context) {
 
@@ -24,28 +25,23 @@ class ExpenseProgressManager(private val context: Context) {
 
     fun updateProgressBars(
         rootView: View,
-        expenseSums: Map<String, Float>,
-        targets: Map<String, Float>
+        expenseSums: Map<CategoryType, Float>,
+        targets: Map<CategoryType, Float>
     ) {
         val container = rootView.findViewById<LinearLayout>(R.id.progressContainer)
         container.removeAllViews()
 
-        val sortedCategories = colorMapping.keys.sortedByDescending { (expenseSums[it] ?: 0f) > 0f }
+        val sortedCategories = targets.keys
+            .sortedByDescending { expenseSums[it] ?: 0f }
 
-        for (categoryKey in sortedCategories) {
-            val total = expenseSums[categoryKey] ?: 0f
-            val target = targets[categoryKey] ?: 1f
-            val isZeroExpense = total <= 0f
 
-            val displayName = when (categoryKey.uppercase()) {
-                "FOOD" -> context.getString(R.string.food)
-                "TRANSPORT" -> context.getString(R.string.transport)
-                "HEALTH" -> context.getString(R.string.health)
-                "LIVING" -> context.getString(R.string.living)
-                "RECREATION" -> context.getString(R.string.recreation)
-                "OTHERS" -> context.getString(R.string.other)
-                else -> categoryKey
-            }
+
+        for (category in sortedCategories) {
+                val total = expenseSums[category] ?: 0f
+                val target = targets[category] ?: 1f
+                val isZeroExpense = total <= 0f
+
+            val displayName = category.displayName
             val label = TextView(context).apply {
                 text = displayName
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)

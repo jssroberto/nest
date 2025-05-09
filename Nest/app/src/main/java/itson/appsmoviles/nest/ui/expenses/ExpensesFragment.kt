@@ -1,6 +1,7 @@
 package itson.appsmoviles.nest.ui.expenses
 
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +11,25 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.model.Category
+import itson.appsmoviles.nest.ui.budget.BudgetViewModel
 import itson.appsmoviles.nest.ui.expenses.manager.CategoryManager
 import itson.appsmoviles.nest.ui.expenses.manager.ExpenseProgressManager
 import itson.appsmoviles.nest.ui.expenses.manager.CategorySelectionManager
 import itson.appsmoviles.nest.ui.expenses.manager.FilterManager
 import itson.appsmoviles.nest.ui.expenses.drawable.PieChartDrawable
 import itson.appsmoviles.nest.ui.expenses.manager.ExpensesController
+import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
 import itson.appsmoviles.nest.ui.util.formatDateShortForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
@@ -46,6 +52,18 @@ class ExpensesFragment : Fragment() {
     private lateinit var expensesController: ExpensesController
     private lateinit var expenseProgressManager: ExpenseProgressManager
 
+    // Usa activityViewModels() si el ViewModel es compartido entre fragments
+    private val budgetViewModel: BudgetViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                // Necesitas pasar también el SharedMovementsViewModel aquí
+                val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+                return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
+            }
+        }
+    }
+
     private val viewModel: FilteredExpensesViewModel by viewModels {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -55,6 +73,13 @@ class ExpensesFragment : Fragment() {
         }
     }
 
+    // Dentro de tu Fragment o donde vistas tu gráfica:
+
+
+// Si tu vista de gráfica maneja touch, añade este listener:
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,9 +88,19 @@ class ExpensesFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_expenses, container, false)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val scrollView = requireView().findViewById<NestedScrollView>(R.id.scrollView)
+        val graph =  requireView().findViewById<ConstraintLayout>(R.id.graph)
+
+
+        graph.setOnTouchListener { v, event ->
+            // Dejamos que el NestedScrollView maneje el scroll vertical
+            scrollView.requestDisallowInterceptTouchEvent(false)
+            false // devolvemos false para que el evento siga su curso
+        }
 
         val startDateButton = view.findViewById<Button>(R.id.btn_date_income)
         val endDateButton = view.findViewById<Button>(R.id.btn_end_date)
@@ -108,7 +143,8 @@ class ExpensesFragment : Fragment() {
             categoryManager = categoryManager,
             filterManager = filterManager,
             pieChartDrawable = pieChartDrawable,
-            progressManager = expenseProgressManager
+            progressManager = expenseProgressManager,
+            budgetViewModel = budgetViewModel
         )
 
 
@@ -124,4 +160,6 @@ class ExpensesFragment : Fragment() {
 
         expensesController.loadExpenses()
     }
+
+
 }

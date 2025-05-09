@@ -328,4 +328,21 @@ class BudgetViewModel(
     }
 
 
+    fun getCategoryBudget(category: CategoryType) {
+        viewModelScope.launch {
+            repository.getCategoryBudget(category) { categoryBudget ->
+                if (categoryBudget != null) {
+                    // Actualiza el LiveData con el presupuesto de la categoría
+                    val updatedCategoryBudgets = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
+                    updatedCategoryBudgets[category] = categoryBudget.categoryBudget
+                    categoryBudgets.value = updatedCategoryBudgets
+                } else {
+                    // Maneja el caso en que no se encontró presupuesto
+                    Log.e("BudgetViewModel", "No se pudo obtener el presupuesto para la categoría: $category")
+                }
+            }
+        }
+    }
+
+
 }
