@@ -50,7 +50,6 @@ class BudgetViewModel(
 
     init {
         loadBudgetData()
-
         observeAlarmThresholds()
         observeAlarmEnabled()
         observeBudgetChanges()
@@ -58,8 +57,12 @@ class BudgetViewModel(
 
 
     private fun observeBudgetChanges() {
-        _categoryPercentages.addSource(totalBudget) { recalculatePercentages() }
-        _categoryPercentages.addSource(categoryBudgets) { recalculatePercentages() }
+        _categoryPercentages.addSource(totalBudget) {
+            recalculatePercentages()
+        }
+        _categoryPercentages.addSource(categoryBudgets) {
+            recalculatePercentages()
+        }
     }
 
     private fun recalculatePercentages() {

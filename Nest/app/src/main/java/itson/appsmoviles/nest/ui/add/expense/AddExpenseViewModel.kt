@@ -37,6 +37,7 @@ class AddExpenseViewModel : ViewModel() {
             try {
                 repository.addExpense(expense, {
                     checkAndNotifyIfOverThreshold(context, expense.amount, alarmThreshold)
+
                     onSuccess()
                 }, onFailure)
             } catch (e: Exception) {

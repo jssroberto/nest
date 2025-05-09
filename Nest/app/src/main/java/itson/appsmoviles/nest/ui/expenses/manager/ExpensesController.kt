@@ -37,6 +37,7 @@ class ExpensesController(
 
     init {
         setupBudgetObserver()
+        setupExpensesObserver()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -46,6 +47,24 @@ class ExpensesController(
             loadExpenses() // O puedes llamar directamente a updateProgressBars si tienes los expenses
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupExpensesObserver() {
+        viewModel.getFilteredExpenses(
+            filterManager.startTimestamp,
+            filterManager.endTimestamp,
+            selectedCategoryName
+        ).observe(lifecycleOwner) { expenses ->
+            updateUIWithExpenses(expenses)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateUIWithExpenses(expenses: List<Expense>) {
+        updateChartWithExpenses(expenses)
+        updateProgressBars(expenses)
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun filterAndLoadExpenses() {

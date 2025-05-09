@@ -51,6 +51,7 @@ class ExpensesFragment : Fragment() {
     private lateinit var pieChartDrawable: PieChartDrawable
     private lateinit var expensesController: ExpensesController
     private lateinit var expenseProgressManager: ExpenseProgressManager
+    private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
     // Usa activityViewModels() si el ViewModel es compartido entre fragments
     private val budgetViewModel: BudgetViewModel by activityViewModels {
@@ -73,11 +74,6 @@ class ExpensesFragment : Fragment() {
         }
     }
 
-    // Dentro de tu Fragment o donde vistas tu gráfica:
-
-
-// Si tu vista de gráfica maneja touch, añade este listener:
-
 
 
     override fun onCreateView(
@@ -97,9 +93,9 @@ class ExpensesFragment : Fragment() {
 
 
         graph.setOnTouchListener { v, event ->
-            // Dejamos que el NestedScrollView maneje el scroll vertical
+
             scrollView.requestDisallowInterceptTouchEvent(false)
-            false // devolvemos false para que el evento siga su curso
+            false
         }
 
         val startDateButton = view.findViewById<Button>(R.id.btn_date_income)
@@ -155,6 +151,10 @@ class ExpensesFragment : Fragment() {
         clearFiltersButton.setOnClickListener {
             filterManager.clearFilters()
             expensesController.filterAndLoadExpenses()
+        }
+
+        sharedMovementsViewModel.movementDataChanged.observe(viewLifecycleOwner) {
+            expensesController.loadExpenses()
         }
 
 

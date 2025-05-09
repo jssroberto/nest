@@ -132,7 +132,6 @@ class AddExpenseFragment : Fragment() {
             alarmThreshold = (budgetViewModel.alarmThresholdMap[category] ?: 0f).toDouble(),  // Conversión a Double
             onSuccess = {
                 sharedMovementsViewModel.notifyMovementDataChanged()
-                // Realiza la navegación después de agregar el gasto
                 requireActivity().supportFragmentManager.popBackStack()
             },
             onFailure = { e ->
