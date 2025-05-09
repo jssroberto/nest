@@ -165,24 +165,30 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
 
     // Método para actualizar el umbral de la alarma de una categoría
     fun setAlarmThreshold(category: CategoryType, threshold: Float) {
+        // Update the StateFlow
+        val updatedThresholdMap = _alarmThresholds.value.toMutableMap()
+        updatedThresholdMap[category] = threshold
+        _alarmThresholds.value = updatedThresholdMap
+
+        // Update the local mutable map (if still used for synchronous reads elsewhere)
         alarmThresholdMap[category] = threshold
-        repository.updateCategoryAlarmThreshold(
-            category,
-            categoryBudgets.value?.get(category) ?: 0f,
-            threshold.toDouble(),
-            alarmEnabledMap[category] ?: false
-        )
+
+        // The fragment will typically call persistAlarmThreshold separately to save to DB.
+        // Or, you could trigger persistence from here if this is the sole point of change.
     }
 
-    // Método para habilitar/deshabilitar la alarma de una categoría
+    // For Alarm Enabled state
     fun setAlarmEnabled(category: CategoryType, enabled: Boolean) {
+        // Update the StateFlow
+        val updatedEnabledMap = _alarmEnabled.value.toMutableMap()
+        updatedEnabledMap[category] = enabled
+        _alarmEnabled.value = updatedEnabledMap
+
+        // Update the local mutable map
         alarmEnabledMap[category] = enabled
-        repository.updateCategoryAlarmThreshold(
-            category,
-            categoryBudgets.value?.get(category) ?: 0f,
-            alarmThresholdMap[category]?.toDouble(),
-            enabled
-        )
+
+        // The fragment will typically call persistAlarmThreshold (which includes enabled state)
+        // or a specific persistence method for the enabled state.
     }
 
     // Método para actualizar el presupuesto total
@@ -222,6 +228,9 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
                     alarmThreshold = threshold,
                     alarmEnabled = isEnabled
                 )
+                // Optional: If repository.updateCategoryAlarmThreshold has a callback for success/failure,
+                // you could use it to trigger a fresh loadCategoryAlarms() on failure to revert optimistic update,
+                // or just rely on the next scheduled loadCategoryAlarms().
             }
         }
     }
@@ -232,8 +241,18 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             val thresholdMap = alarmData.mapValues { it.value.first }
             val enabledMap = alarmData.mapValues { it.value.second }
 
-            _alarmThresholds.value = thresholdMap
-            _alarmEnabled.value = enabledMap
+            // Check if the new maps are actually different before assigning to avoid unnecessary emissions
+            if (_alarmThresholds.value != thresholdMap) {
+                _alarmThresholds.value = thresholdMap
+            }
+            if (_alarmEnabled.value != enabledMap) {
+                _alarmEnabled.value = enabledMap
+            }
+            // Also update local mutable maps if they are meant to be strict copies
+            alarmThresholdMap.clear()
+            alarmThresholdMap.putAll(thresholdMap)
+            alarmEnabledMap.clear()
+            alarmEnabledMap.putAll(enabledMap)
         }
     }
 
@@ -296,9 +315,3 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
 
 
 }
-
-
-
-
-
-

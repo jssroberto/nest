@@ -38,7 +38,7 @@
                 android:gravity="center"
                 android:padding="7dp"
                 android:hint="$0.00"
-                android:inputType="numberDecimal|textNoSuggestions"
+                android:inputType="numberDecimal"
                 android:maxLength="15"
                 android:textColorHint="@color/txt_color"
                 android:textSize="@dimen/text_size_xx_large" />
@@ -65,7 +65,7 @@
                     <TextView
                             android:layout_width="70dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
+                            android:layout_marginHorizontal="7dp"
                             android:text="@string/income"
                             android:textColor="@color/blue"
                             android:textSize="@dimen/text_size_medium" />
@@ -95,7 +95,7 @@
                     <TextView
                             android:layout_width="70dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="15dp"
+                            android:layout_marginHorizontal="7dp"
                             android:text="@string/expense"
                             android:textColor="@color/txt_expenses" />
 
@@ -231,7 +231,7 @@
                                 android:checked="false"
                                 android:text="@string/alarm"
                                 android:textColor="@color/dateButtonLetters"
-                                android:textSize="@dimen/text_size_medium" />
+                                />
 
 
                         <EditText
@@ -242,20 +242,18 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
                     </LinearLayout>
 
-
                 </LinearLayout>
-
-
+                
                 <EditText
                         android:id="@+id/et_food"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -264,7 +262,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
             <ImageView
@@ -329,7 +327,7 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
@@ -340,8 +338,8 @@
 
                 <EditText
                         android:id="@+id/et_home"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -350,7 +348,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
             <ImageView
@@ -415,7 +413,7 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
@@ -426,8 +424,8 @@
 
                 <EditText
                         android:id="@+id/et_health"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -436,7 +434,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
             <ImageView
@@ -501,7 +499,7 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
@@ -512,8 +510,8 @@
 
                 <EditText
                         android:id="@+id/et_recreation"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -522,7 +520,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                    android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
             <ImageView
@@ -587,7 +585,7 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
@@ -598,8 +596,8 @@
 
                 <EditText
                         android:id="@+id/et_transport"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -608,7 +606,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
             <ImageView
@@ -673,7 +671,7 @@
                                 android:background="@drawable/edittext_rounded"
                                 android:gravity="center"
                                 android:hint="$0.0"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:paddingVertical="2dp" />
 
 
@@ -684,8 +682,8 @@
 
                 <EditText
                         android:id="@+id/et_others"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="45dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/edittext_rounded"
                         android:backgroundTint="@color/edt_text"
@@ -694,7 +692,7 @@
                         android:inputType="numberDecimal"
                         android:maxLength="10"
                         android:text="100%"
-                        android:textSize="@dimen/text_size_large" />
+                        android:textSize="@dimen/text_size_medium_large" />
             </LinearLayout>
 
         </LinearLayout>

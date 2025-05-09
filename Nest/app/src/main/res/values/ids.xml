@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="monthly_budget_watcher_tag" />
+    <item type="id" name="alarm_threshold_watcher_tag_prefix" />
+    <item type="id" name="percentage_watcher_tag_prefix" />
+
+</resources>

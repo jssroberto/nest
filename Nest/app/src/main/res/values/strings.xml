@@ -51,7 +51,7 @@
     <string name="net_balance">Net Balance</string>
     <string name="monthly_budget">Monthly Budget</string>
     <string name="edit_budget">Edit your budget</string>
-    <string name="alarm">Set Alarm At: </string>
+    <string name="alarm">Alarm At: </string>
     <string name="health">Health</string>
     <string name="other">Other</string>
     <string name="living">Living</string>
