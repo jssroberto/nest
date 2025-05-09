@@ -1,108 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_frame_home"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_frame_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.home.HomeFragment">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.home.HomeFragment">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
             <TextView
-                android:id="@+id/txt_welcome_home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/welcome_example"
-                android:textSize="@dimen/text_size_medium_large" />
+                    android:id="@+id/txt_welcome_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_example"
+                    android:textSize="@dimen/text_size_medium_large" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:baselineAligned="false"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/income"
-                        android:textColor="@color/txt_income" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/income"
+                            android:textColor="@color/txt_income" />
 
                     <TextView
-                        android:id="@+id/txt_income_home"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/budget_hint"
-                        android:textColor="@color/txt_income"
-                        android:textSize="@dimen/text_size_large" />
+                            android:id="@+id/txt_income_home"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/budget_hint"
+                            android:textColor="@color/txt_income"
+                            android:textSize="@dimen/text_size_large" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/expenses"
-                        android:textColor="@color/txt_expenses" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/expenses"
+                            android:textColor="@color/txt_expenses" />
 
                     <TextView
-                        android:id="@+id/txt_expenses_home"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/budget_hint"
-                        android:textColor="@color/txt_expenses"
-                        android:textSize="@dimen/text_size_large" />
+                            android:id="@+id/txt_expenses_home"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/budget_hint"
+                            android:textColor="@color/txt_expenses"
+                            android:textSize="@dimen/text_size_large" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/net_balance" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/net_balance" />
 
                     <TextView
-                        android:id="@+id/txt_net_balance_home"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/budget_hint"
-                        android:textSize="@dimen/text_size_large" />
+                            android:id="@+id/txt_net_balance_home"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/budget_hint"
+                            android:textSize="@dimen/text_size_large" />
 
                 </LinearLayout>
 
@@ -111,234 +111,239 @@
 
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="0dp"
-                android:layout_marginTop="25dp"
-                android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="0dp"
+                    android:layout_marginTop="25dp"
+                    android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/this_months_budget" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/this_months_budget" />
 
 
                 <TextView
-                    android:id="@+id/txt_budget_home"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/lexend_medium"
-                    android:gravity="end"
-                    android:text="@string/budget_example"
-                    android:textSize="@dimen/text_size_x_large" />
+                        android:id="@+id/txt_budget_home"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/lexend_medium"
+                        android:gravity="end"
+                        android:text="@string/budget_example"
+                        android:textSize="@dimen/text_size_x_large" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/expenses_bar"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/progress_bar"
-                android:orientation="horizontal" />
+                    android:id="@+id/expenses_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/progress_bar"
+                    android:orientation="horizontal" />
 
             <GridLayout
-                android:id="@+id/categories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="10dp"
-                android:columnCount="2"
-                android:rowCount="3">
-
-                <LinearLayout
+                    android:id="@+id/categories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="10dp"
+                    android:columnCount="2"
+                    android:rowCount="3">
 
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_living" />
-
-                    <TextView
+                <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/living" />
+                        android:layout_gravity="start"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_living" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/living" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="30dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_recreation" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/recreation" />
+                        android:layout_gravity="start"
+                        android:layout_marginStart="30dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_recreation" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/recreation" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_transport" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/transport" />
+                        android:layout_gravity="start"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_transport" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/transport" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="30dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_food" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/food" />
+                        android:layout_gravity="start"
+                        android:layout_marginStart="30dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_food" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/food" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_health" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/health" />
+                        android:layout_gravity="start"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_health" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/health" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="30dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/category_other" />
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/other" />
+                        android:layout_gravity="start"
+                        android:layout_marginStart="30dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                    <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/circle"
+                            android:backgroundTint="@color/category_other" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/other" />
 
                 </LinearLayout>
 
             </GridLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:fontFamily="@font/lexend_medium"
-                android:text="@string/movements_history"
-                android:textSize="@dimen/text_size_medium_large" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/lexend_medium"
+                    android:text="@string/movements_history"
+                    android:textSize="@dimen/text_size_medium_large" />
 
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
 
                 <EditText
-                    android:id="@+id/edt_search_home"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight=".85"
-                    android:autofillHints=""
-                    android:background="@drawable/edittext_rounded"
-                    android:drawableStart="@drawable/icon_search"
-                    android:drawablePadding="7dp"
-                    android:hint="@string/search_for_an_movement"
-                    android:inputType="text" />
+                        android:id="@+id/edt_search_home"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight=".85"
+                        android:autofillHints=""
+                        android:background="@drawable/edittext_rounded"
+                        android:drawableStart="@drawable/icon_search"
+                        android:drawablePadding="7dp"
+                        android:hint="@string/search_for_an_movement"
+                        android:inputType="text" />
 
                 <ImageButton
-                    android:id="@+id/btn_filter_home"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/btn_filter" />
+                        android:id="@+id/btn_filter_home"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_filter" />
 
 
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                    android:id="@+id/home_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
+            <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="100dp"
+                    android:backgroundTint="@color/black" />
+
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/fragment_filter_container_home"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent" />
+                    android:id="@+id/fragment_filter_container_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent" />
 
 
         </LinearLayout>
@@ -346,10 +351,11 @@
     </androidx.core.widget.NestedScrollView>
 
     <ImageButton
-        android:id="@+id/btn_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:background="@drawable/btn_add" />
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/btn_add" />
+
 
 </FrameLayout>
