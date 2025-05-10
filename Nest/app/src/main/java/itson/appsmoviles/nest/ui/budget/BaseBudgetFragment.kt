@@ -57,7 +57,10 @@ class BaseBudgetFragment : Fragment() {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
 
-                    return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
+                    return BudgetViewModel(
+                        requireActivity().application,
+                        sharedMovementsViewModel
+                    ) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
@@ -65,15 +68,19 @@ class BaseBudgetFragment : Fragment() {
 
 
         if (savedInstanceState != null) {
-            valueBudgetFragmentInstance = childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
-            percentageBudgetFragmentInstance = childFragmentManager.findFragmentByTag(PERCENTAGE_FRAGMENT_TAG) as? PercentageBudgetFragment
+            valueBudgetFragmentInstance =
+                childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
+            percentageBudgetFragmentInstance =
+                childFragmentManager.findFragmentByTag(PERCENTAGE_FRAGMENT_TAG) as? PercentageBudgetFragment
         }
 
         if (valueBudgetFragmentInstance == null) {
-            valueBudgetFragmentInstance = childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
+            valueBudgetFragmentInstance =
+                childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
         }
         if (percentageBudgetFragmentInstance == null) {
-            percentageBudgetFragmentInstance = childFragmentManager.findFragmentByTag(PERCENTAGE_FRAGMENT_TAG) as? PercentageBudgetFragment
+            percentageBudgetFragmentInstance =
+                childFragmentManager.findFragmentByTag(PERCENTAGE_FRAGMENT_TAG) as? PercentageBudgetFragment
         }
 
 
@@ -85,7 +92,10 @@ class BaseBudgetFragment : Fragment() {
         }
     }
 
-    private fun updateFragmentVisibilityAndColors(showPercentage: Boolean, isInitialSetup: Boolean = false) {
+    private fun updateFragmentVisibilityAndColors(
+        showPercentage: Boolean,
+        isInitialSetup: Boolean = false
+    ) {
         val transaction = childFragmentManager.beginTransaction()
 
         if (showPercentage) {
@@ -98,7 +108,11 @@ class BaseBudgetFragment : Fragment() {
 
             if (percentageBudgetFragmentInstance == null) {
                 percentageBudgetFragmentInstance = PercentageBudgetFragment()
-                transaction.add(R.id.fragmentBudgetContainer, percentageBudgetFragmentInstance!!, PERCENTAGE_FRAGMENT_TAG)
+                transaction.add(
+                    R.id.fragmentBudgetContainer,
+                    percentageBudgetFragmentInstance!!,
+                    PERCENTAGE_FRAGMENT_TAG
+                )
             } else {
                 transaction.show(percentageBudgetFragmentInstance!!)
             }
@@ -119,7 +133,11 @@ class BaseBudgetFragment : Fragment() {
 
             if (valueBudgetFragmentInstance == null) {
                 valueBudgetFragmentInstance = ValueBudgetFragment()
-                transaction.add(R.id.fragmentBudgetContainer, valueBudgetFragmentInstance!!, VALUE_FRAGMENT_TAG)
+                transaction.add(
+                    R.id.fragmentBudgetContainer,
+                    valueBudgetFragmentInstance!!,
+                    VALUE_FRAGMENT_TAG
+                )
             } else {
                 transaction.show(valueBudgetFragmentInstance!!)
             }

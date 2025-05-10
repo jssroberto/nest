@@ -42,7 +42,8 @@ class PercentageBudgetFragment : Fragment() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
-                    val sharedVM = ViewModelProvider(requireActivity())[SharedMovementsViewModel::class.java]
+                    val sharedVM =
+                        ViewModelProvider(requireActivity())[SharedMovementsViewModel::class.java]
                     return BudgetViewModel(requireActivity().application, sharedVM) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
@@ -142,7 +143,7 @@ class PercentageBudgetFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == currentText || isCurrencyFormatting || isObserverUpdating || !hasLoadedInitialData) {
-                     return
+                    return
                 }
 
                 isCurrencyFormatting = true
@@ -244,7 +245,6 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-
     private fun observeCategoryPercentages() {
         budgetViewModel.categoryPercentages.observe(viewLifecycleOwner) { percentagesMap ->
 
@@ -283,7 +283,13 @@ class PercentageBudgetFragment : Fragment() {
                 private var currentText = ""
                 private var isSelfUpdate = false
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -300,7 +306,8 @@ class PercentageBudgetFragment : Fragment() {
 
                     if (!userInput.endsWith("%") || userInput.length > 1) {
                         val cleanInput = userInput.replace("%", "")
-                        val enteredPercentage = if (cleanInput.isEmpty()) 0f else parsePercentageInput(cleanInput)
+                        val enteredPercentage =
+                            if (cleanInput.isEmpty()) 0f else parsePercentageInput(cleanInput)
 
 
                         val totalBudget = budgetViewModel.totalBudget.value ?: 0f
@@ -309,15 +316,22 @@ class PercentageBudgetFragment : Fragment() {
                             ?.values?.sum() ?: 0f
 
                         val maxAllowedPercentage = (100f - otherPercentagesSum).coerceAtLeast(0f)
-                        var finalValidPercentage = enteredPercentage.coerceAtMost(maxAllowedPercentage)
+                        var finalValidPercentage =
+                            enteredPercentage.coerceAtMost(maxAllowedPercentage)
                         finalValidPercentage = finalValidPercentage.toBigDecimal()
-                            .setScale(percentageFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
+                            .setScale(
+                                percentageFormatter.maximumFractionDigits,
+                                RoundingMode.HALF_UP
+                            )
                             .toFloat()
 
                         val actualAmount = if (totalBudget > 0f) {
                             (totalBudget * finalValidPercentage / 100f)
                                 .toBigDecimal()
-                                .setScale(currencyFormatter.maximumFractionDigits, RoundingMode.HALF_UP)
+                                .setScale(
+                                    currencyFormatter.maximumFractionDigits,
+                                    RoundingMode.HALF_UP
+                                )
                                 .toFloat()
                         } else {
                             0f
@@ -425,6 +439,7 @@ class PercentageBudgetFragment : Fragment() {
             }
         }
     }
+
     private fun setupCategoryAlarmInputsAndSwitches() {
         CategoryType.values().forEach { category ->
             val etThreshold = categoryAlarmThresholdEditTexts[category] ?: return@forEach
@@ -648,7 +663,6 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-
     private fun processAndFormatCurrencyInput(
         userInput: String,
         formatter: DecimalFormat,
@@ -713,7 +727,6 @@ class PercentageBudgetFragment : Fragment() {
 
         return ProcessedCurrencyInput(formattedDisplayString, parsedBigDecimal, numberToParse)
     }
-
 
 
     private fun parsePercentageInput(input: String): Float {
@@ -801,9 +814,13 @@ class PercentageBudgetFragment : Fragment() {
         if (input.isBlank()) return BigDecimal.ZERO
         return try {
 
-            val cleanString = input.replace("$", "").replace(currencyFormatter.decimalFormatSymbols.groupingSeparator.toString(), "")
+            val cleanString = input.replace("$", "")
+                .replace(currencyFormatter.decimalFormatSymbols.groupingSeparator.toString(), "")
 
-            val parsableString = cleanString.replace(currencyFormatter.decimalFormatSymbols.decimalSeparator.toString(), ".")
+            val parsableString = cleanString.replace(
+                currencyFormatter.decimalFormatSymbols.decimalSeparator.toString(),
+                "."
+            )
             BigDecimal(parsableString)
         } catch (e: NumberFormatException) {
             BigDecimal.ZERO

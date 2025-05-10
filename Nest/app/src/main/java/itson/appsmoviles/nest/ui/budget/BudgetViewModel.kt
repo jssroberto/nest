@@ -280,7 +280,7 @@ class BudgetViewModel(
         if (!isAlarmEnabled) {
             Log.d("BudgetViewModel", "Alarm not enabled for category: $category")
             return false
-        }else {
+        } else {
 
             val currentSpent = categoryBudgets.value?.get(category) ?: 0f
             val newTotal = currentSpent + newExpense
@@ -333,12 +333,16 @@ class BudgetViewModel(
             repository.getCategoryBudget(category) { categoryBudget ->
                 if (categoryBudget != null) {
 
-                    val updatedCategoryBudgets = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
+                    val updatedCategoryBudgets =
+                        categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
                     updatedCategoryBudgets[category] = categoryBudget.categoryBudget
                     categoryBudgets.value = updatedCategoryBudgets
                 } else {
 
-                    Log.e("BudgetViewModel", "No se pudo obtener el presupuesto para la categoría: $category")
+                    Log.e(
+                        "BudgetViewModel",
+                        "No se pudo obtener el presupuesto para la categoría: $category"
+                    )
                 }
             }
         }

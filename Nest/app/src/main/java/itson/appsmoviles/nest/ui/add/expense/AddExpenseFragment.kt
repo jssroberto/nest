@@ -58,7 +58,11 @@ class AddExpenseFragment : Fragment() {
 
     private var selectedTimestamp: Long? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         return inflater.inflate(R.layout.fragment_add_expense, container, false)
     }
 
@@ -104,7 +108,10 @@ class AddExpenseFragment : Fragment() {
             )
 
             val category = expense.category
-            val exceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, expense.amount.toFloat())
+            val exceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(
+                category,
+                expense.amount.toFloat()
+            )
 
             viewModel.addExpense(
                 expense,
@@ -119,8 +126,10 @@ class AddExpenseFragment : Fragment() {
             )
         }
 
-        radioCash.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
-        radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
+        radioCash.buttonTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
+        radioCard.buttonTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
 
     private fun getAmount(): Double {
