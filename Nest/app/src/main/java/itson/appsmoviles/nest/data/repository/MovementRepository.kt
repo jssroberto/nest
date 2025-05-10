@@ -49,7 +49,6 @@ class MovementRepository {
     }
 
 
-
     private suspend fun fetchTotalForNode(userId: String, nodeName: String): Double {
         return try {
             val path = database.child("users").child(userId).child("movements").child(nodeName)

@@ -55,6 +55,7 @@ class HomeViewModel(
                     fullExpensesList = fullMovementsList.filterIsInstance<Expense>()
                     applyFilterAndSearch()
                 }
+
                 is UiState.Error -> _movementsState.value = UiState.Error(fetchedState.message)
             }
         }
@@ -84,7 +85,8 @@ class HomeViewModel(
         viewModelScope.launch {
             _movementsState.value = UiState.Loading
             try {
-                fullMovementsList = movementRepository.getAllMovements().sortedByDescending { it.date }
+                fullMovementsList =
+                    movementRepository.getAllMovements().sortedByDescending { it.date }
                 fullExpensesList = expenseRepository.getAllExpenses().sortedByDescending { it.date }
                 applyFilterAndSearch()
             } catch (e: Exception) {
@@ -128,7 +130,8 @@ class HomeViewModel(
                 val description = movement.description.lowercase(Locale.getDefault()).unaccent()
                 val amount = movement.amount.toString()
                 val categoryMatch = if (movement is Expense) {
-                    movement.category.name.lowercase(Locale.getDefault()).unaccent().contains(currentSearchQuery)
+                    movement.category.name.lowercase(Locale.getDefault()).unaccent()
+                        .contains(currentSearchQuery)
                 } else {
                     false
                 }

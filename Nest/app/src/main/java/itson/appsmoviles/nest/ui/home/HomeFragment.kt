@@ -142,6 +142,7 @@ class HomeFragment : Fragment() {
             when (state) {
                 is UiState.Loading -> {
                 }
+
                 is UiState.Success -> {
                     val overview = state.data
                     txtWelcome.text = "Hi ${overview.userName}\nhere's your monthly overview"
@@ -192,7 +193,11 @@ class HomeFragment : Fragment() {
                     } else {
                         viewModel.overviewState.value?.let { overviewState ->
                             if (overviewState is UiState.Success) {
-                                expensesBarPainter = ExpensesBarPainter(requireContext(), expensesBar, overviewState.data.budget)
+                                expensesBarPainter = ExpensesBarPainter(
+                                    requireContext(),
+                                    expensesBar,
+                                    overviewState.data.budget
+                                )
                                 expensesBarPainter.paintBudget(movementsData.categoryTotals)
                             }
                         }

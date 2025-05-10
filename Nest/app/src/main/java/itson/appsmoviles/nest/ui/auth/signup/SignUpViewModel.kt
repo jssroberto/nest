@@ -44,7 +44,12 @@ class SignUpViewModel : ViewModel() {
         )
     }
 
-    private fun isInputValid(email: String, name: String, password: String, confirmPassword: String): Boolean {
+    private fun isInputValid(
+        email: String,
+        name: String,
+        password: String,
+        confirmPassword: String
+    ): Boolean {
         if (name.isBlank()) {
             _error.value = "Name is required"
             return false
@@ -61,10 +66,10 @@ class SignUpViewModel : ViewModel() {
             _error.value = "Password is required"
             return false
         }
-         if (password.length < 6) {
-             _error.value = "Password must be at least 6 characters"
-             return false
-         }
+        if (password.length < 6) {
+            _error.value = "Password must be at least 6 characters"
+            return false
+        }
         if (confirmPassword.isBlank()) {
             _error.value = "Confirm password is required"
             return false

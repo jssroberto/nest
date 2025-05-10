@@ -24,7 +24,8 @@ class SignInViewModel : ViewModel() {
                     _error.value = null
                 } else {
                     _user.value = null
-                    _error.value = task.exception?.message ?: "Authentication failed. Please check credentials."
+                    _error.value = task.exception?.message
+                        ?: "Authentication failed. Please check credentials."
                 }
             }
     }

@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
 
         editTextOldPass.setupPasswordVisibilityToggle()
         editTextNewPass.setupPasswordVisibilityToggle()
-        editTextConfirmPass .setupPasswordVisibilityToggle()
+        editTextConfirmPass.setupPasswordVisibilityToggle()
         loadAndDisplayUserData()
 
         buttonSaveChanges.setOnClickListener {
@@ -118,18 +118,38 @@ class ProfileFragment : Fragment() {
         if (isEmailChanged || isPasswordChangeRequested) {
             if (oldPassword.isEmpty()) {
                 editTextOldPass.error = "Current password needed"
-                showToast(requireContext(), "Current password is required to change email or password.")
+                showToast(
+                    requireContext(),
+                    "Current password is required to change email or password."
+                )
                 return
             }
             editTextOldPass.error = null
 
-            if (isPasswordChangeRequested && !validatePasswordChange(oldPassword, newPassword, confirmPassword)) {
+            if (isPasswordChangeRequested && !validatePasswordChange(
+                    oldPassword,
+                    newPassword,
+                    confirmPassword
+                )
+            ) {
                 return
             }
-            reauthenticateAndUpdateUser(currentUser, oldPassword, newName, newEmail, newPassword, isNameChanged, isEmailChanged, isPasswordChangeRequested)
+            reauthenticateAndUpdateUser(
+                currentUser,
+                oldPassword,
+                newName,
+                newEmail,
+                newPassword,
+                isNameChanged,
+                isEmailChanged,
+                isPasswordChangeRequested
+            )
         } else if (isNameChanged) {
             updateUserName(currentUser, newName) { success ->
-                showToast(requireContext(), if (success) "Name updated successfully." else "Failed to update name.")
+                showToast(
+                    requireContext(),
+                    if (success) "Name updated successfully." else "Failed to update name."
+                )
             }
         }
     }
@@ -153,7 +173,11 @@ class ProfileFragment : Fragment() {
         return true
     }
 
-    private fun validatePasswordChange(oldPass: String, newPass: String, confirmPass: String): Boolean {
+    private fun validatePasswordChange(
+        oldPass: String,
+        newPass: String,
+        confirmPass: String
+    ): Boolean {
         if (newPass.isEmpty()) {
             editTextNewPass.error = "New password is required"
             return false
@@ -203,11 +227,22 @@ class ProfileFragment : Fragment() {
         user.reauthenticate(credential).addOnCompleteListener { reauthTask ->
             if (!reauthTask.isSuccessful) {
                 editTextOldPass.error = "Incorrect password"
-                showToast(requireContext(), "Re-authentication failed: ${reauthTask.exception?.message}")
+                showToast(
+                    requireContext(),
+                    "Re-authentication failed: ${reauthTask.exception?.message}"
+                )
                 return@addOnCompleteListener
             }
 
-            performUserUpdates(user, newNameVal, newEmailVal, newPasswordVal, nameChanged, emailChanged, passwordChangeRequested)
+            performUserUpdates(
+                user,
+                newNameVal,
+                newEmailVal,
+                newPasswordVal,
+                nameChanged,
+                emailChanged,
+                passwordChangeRequested
+            )
         }
     }
 
@@ -222,9 +257,27 @@ class ProfileFragment : Fragment() {
     ) {
         val operations = mutableListOf<Pair<() -> Unit, String>>()
 
-        if (isNameChanged) operations.add({ updateUserName(user, newName, getUpdateCallback("Name")) } to "Name")
-        if (isEmailChanged) operations.add({ updateUserEmail(user, newEmail, getUpdateCallback("Email")) } to "Email")
-        if (isPasswordChangeRequested) operations.add({ updateUserPassword(user, newPasswordValue, getUpdateCallback("Password")) } to "Password")
+        if (isNameChanged) operations.add({
+            updateUserName(
+                user,
+                newName,
+                getUpdateCallback("Name")
+            )
+        } to "Name")
+        if (isEmailChanged) operations.add({
+            updateUserEmail(
+                user,
+                newEmail,
+                getUpdateCallback("Email")
+            )
+        } to "Email")
+        if (isPasswordChangeRequested) operations.add({
+            updateUserPassword(
+                user,
+                newPasswordValue,
+                getUpdateCallback("Password")
+            )
+        } to "Password")
 
         if (operations.isEmpty()) {
             showToast(requireContext(), "No changes to apply after re-authentication.")
@@ -243,8 +296,16 @@ class ProfileFragment : Fragment() {
 
             if (tasksCompleted == totalTasks) {
                 when {
-                    tasksSucceeded == totalTasks -> showToast(requireContext(), "All changes saved successfully.")
-                    tasksSucceeded > 0 -> showToast(requireContext(), "Some changes saved successfully.")
+                    tasksSucceeded == totalTasks -> showToast(
+                        requireContext(),
+                        "All changes saved successfully."
+                    )
+
+                    tasksSucceeded > 0 -> showToast(
+                        requireContext(),
+                        "Some changes saved successfully."
+                    )
+
                     else -> showToast(requireContext(), "Failed to save any changes.")
                 }
                 clearPasswordFields()
@@ -268,9 +329,20 @@ class ProfileFragment : Fragment() {
             if (success) successfulTasks++
             if (pendingTasks == 0) {
                 when {
-                    successfulTasks == operations.size -> showToast(requireContext(), "All changes saved successfully.")
-                    successfulTasks > 0 -> showToast(requireContext(), "Some changes saved successfully.")
-                    else -> showToast(requireContext(), "Failed to save changes after re-authentication.")
+                    successfulTasks == operations.size -> showToast(
+                        requireContext(),
+                        "All changes saved successfully."
+                    )
+
+                    successfulTasks > 0 -> showToast(
+                        requireContext(),
+                        "Some changes saved successfully."
+                    )
+
+                    else -> showToast(
+                        requireContext(),
+                        "Failed to save changes after re-authentication."
+                    )
                 }
                 clearPasswordFields()
             }
@@ -300,7 +372,11 @@ class ProfileFragment : Fragment() {
         editTextConfirmPass.text.clear()
     }
 
-    private fun updateUserName(currentUser: FirebaseUser, newName: String, callback: (Boolean) -> Unit) {
+    private fun updateUserName(
+        currentUser: FirebaseUser,
+        newName: String,
+        callback: (Boolean) -> Unit
+    ) {
         val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(newName).build()
         currentUser.updateProfile(profileUpdates).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -308,24 +384,35 @@ class ProfileFragment : Fragment() {
                 sharedViewModel.signalUserNameUpdated() // Notify observers (like HomeFragment)
                 // showToast(requireContext(),"Name updated successfully.") // This toast can be shown by the aggregate status
             } else {
-                showToast(requireContext(),"Failed to update name: ${task.exception?.message}")
+                showToast(requireContext(), "Failed to update name: ${task.exception?.message}")
             }
             callback(task.isSuccessful)
         }
     }
 
-    private fun updateUserEmail(currentUser: FirebaseUser, newEmail: String, callback: (Boolean) -> Unit) {
+    private fun updateUserEmail(
+        currentUser: FirebaseUser,
+        newEmail: String,
+        callback: (Boolean) -> Unit
+    ) {
         currentUser.verifyBeforeUpdateEmail(newEmail).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 showToast(requireContext(), "Verification email sent to $newEmail.")
             } else {
-                showToast(requireContext(), "Failed to send verification email: ${task.exception?.message}")
+                showToast(
+                    requireContext(),
+                    "Failed to send verification email: ${task.exception?.message}"
+                )
             }
             callback(task.isSuccessful)
         }
     }
 
-    private fun updateUserPassword(currentUser: FirebaseUser, newPass: String, callback: (Boolean) -> Unit) {
+    private fun updateUserPassword(
+        currentUser: FirebaseUser,
+        newPass: String,
+        callback: (Boolean) -> Unit
+    ) {
         currentUser.updatePassword(newPass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 showToast(requireContext(), "Password updated successfully.")

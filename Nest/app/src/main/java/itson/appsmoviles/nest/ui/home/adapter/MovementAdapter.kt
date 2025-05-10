@@ -43,7 +43,8 @@ class MovementAdapter(
 
         when (movement) {
             is Expense -> {
-                holder.amount.text = String.format(Locale.getDefault(), "-$%d", movement.amount.toInt())
+                holder.amount.text =
+                    String.format(Locale.getDefault(), "-$%d", movement.amount.toInt())
                 holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_expenses))
 
                 val iconResId = when (movement.category) {
@@ -65,7 +66,11 @@ class MovementAdapter(
             }
 
             is Income -> {
-                holder.amount.text = String.format(Locale.getDefault(), "+$%d", movement.amount.toInt()) // Using %.2f for currency
+                holder.amount.text = String.format(
+                    Locale.getDefault(),
+                    "+$%d",
+                    movement.amount.toInt()
+                ) // Using %.2f for currency
                 holder.amount.setTextColor(holder.itemView.context.getColor(R.color.txt_income))
                 holder.icon.setImageResource(R.drawable.icon_category_income)
 

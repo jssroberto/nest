@@ -118,7 +118,8 @@ class AddExpenseFragment : Fragment() {
         val newExpense = expense.amount
 
         // Verificar si el umbral de la categoría se ha excedido
-        val thresholdExceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
+        val thresholdExceeded =
+            budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
 
         if (thresholdExceeded) {
             // Si el umbral ha sido excedido, ya se envió la notificación en el ViewModel
@@ -129,7 +130,8 @@ class AddExpenseFragment : Fragment() {
         viewModel.addExpense(
             expense = expense,
             context = requireContext().applicationContext,
-            alarmThreshold = (budgetViewModel.alarmThresholdMap[category] ?: 0f).toDouble(),  // Conversión a Double
+            alarmThreshold = (budgetViewModel.alarmThresholdMap[category]
+                ?: 0f).toDouble(),  // Conversión a Double
             onSuccess = {
                 sharedMovementsViewModel.notifyMovementDataChanged()
                 requireActivity().supportFragmentManager.popBackStack()
@@ -189,14 +191,16 @@ class AddExpenseFragment : Fragment() {
         val channelId = "expense_alarm_channel"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Expense Alarm"
-            val importance = NotificationManager.IMPORTANCE_HIGH  // Importancia alta para mostrar notificación
+            val importance =
+                NotificationManager.IMPORTANCE_HIGH  // Importancia alta para mostrar notificación
             val channel = NotificationChannel(channelId, name, importance)
             val notificationManager = context.getSystemService(NotificationManager::class.java)
             notificationManager?.createNotificationChannel(channel)
         }
 
         val notificationTitle = "Alerta de Gasto"
-        val notificationText = "El gasto de $expenseAmount ha excedido el umbral de $alarmThreshold."
+        val notificationText =
+            "El gasto de $expenseAmount ha excedido el umbral de $alarmThreshold."
 
         // Crear la notificación
         val builder = Notification.Builder(context, channelId)
@@ -206,7 +210,8 @@ class AddExpenseFragment : Fragment() {
             .setPriority(Notification.PRIORITY_HIGH) // Usamos la nueva constante
 
         // Mostrar la notificación
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, builder.build())
     }
 
