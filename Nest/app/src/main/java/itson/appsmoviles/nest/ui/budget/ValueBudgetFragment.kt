@@ -424,7 +424,7 @@ class ValueBudgetFragment : Fragment() {
 
                 val displayStringToSet: String
                 if (clampedFinalValue.compareTo(parsedValueFromInput) != 0) {
-                    displayStringToSet = "$" + currencyFormatter.format(clampedFinalValue)
+                    displayStringToSet =   currencyFormatter.format(clampedFinalValue)
                     if (originalInputExceededBudget) {
                         showToast(
                             requireContext(),

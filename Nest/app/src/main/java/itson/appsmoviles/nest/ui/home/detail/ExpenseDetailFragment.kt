@@ -2,6 +2,11 @@ package itson.appsmoviles.nest.ui.home.detail
 
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
+import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -51,12 +56,13 @@ class ExpenseDetailFragment : DialogFragment() {
     private lateinit var expense: Expense
 
     companion object {
+        private const val ARG_ID = "id"
         private const val ARG_DESCRIPTION = "description"
         private const val ARG_AMOUNT = "amount"
         private const val ARG_DATE = "date"
         private const val ARG_CATEGORY = "category"
-        private const val ARG_ID = "id"
         private const val ARG_PAYMENT_METHOD = "paymentMethod"
+
         const val REQUEST_KEY_UPDATE_EXPENSE = "update_expense_result"
         const val REQUEST_KEY_DELETE_EXPENSE = "delete_expense_result"
         const val BUNDLE_KEY_UPDATED = "updated"
@@ -70,10 +76,7 @@ class ExpenseDetailFragment : DialogFragment() {
                     putDouble(ARG_AMOUNT, expense.amount)
                     putLong(ARG_DATE, expense.date)
                     putString(ARG_CATEGORY, expense.category.name)
-                    putString(
-                        ARG_PAYMENT_METHOD,
-                        expense.paymentMethod.name
-                    ) // Ensure this is passed
+                    putString(ARG_PAYMENT_METHOD, expense.paymentMethod.name)
                 }
             }
         }
@@ -82,7 +85,7 @@ class ExpenseDetailFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
-            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setBackgroundDrawableResource(android.R.color.transparent)
         }
     }
@@ -97,6 +100,7 @@ class ExpenseDetailFragment : DialogFragment() {
 
         initializeViews(view)
         loadExpenseFromArguments()
+        setupAmountFormatting()
         populateUiWithExpenseData()
         setupListeners()
         setRadioColors()
@@ -114,7 +118,12 @@ class ExpenseDetailFragment : DialogFragment() {
     }
 
     private fun loadExpenseFromArguments() {
-        val args = arguments ?: return
+        val args = arguments ?: run {
+
+            showToast(requireContext(), "Error: Expense data not found.")
+            dismiss()
+            return
+        }
 
         val categoryName = args.getString(ARG_CATEGORY) ?: CategoryType.OTHER.name
         val categoryType =
@@ -139,21 +148,20 @@ class ExpenseDetailFragment : DialogFragment() {
 
     private fun populateUiWithExpenseData() {
         etDescription.setText(expense.description)
+
         val amount = expense.amount
         if (amount == amount.toLong().toDouble()) {
-            etAmount.setText(String.format(Locale.getDefault(), "$%.0f", amount))
+            etAmount.setText(String.format(Locale.US, "%.0f", amount))
         } else {
-            etAmount.setText(String.format(Locale.getDefault(), "$%.2f", amount))
+            etAmount.setText(String.format(Locale.US, "%.2f", amount))
         }
+
         btnDate.text = formatDateShortForm(expense.date)
 
         when (expense.paymentMethod) {
             PaymentMethod.CASH -> radioCash.isChecked = true
             PaymentMethod.CARD -> radioCard.isChecked = true
-            PaymentMethod.UNKNOWN -> {
-                radioCash.isChecked = false
-                radioCard.isChecked = false
-            }
+            PaymentMethod.UNKNOWN -> { }
         }
         categoryImageView.setImageResource(getCategoryIconResId(expense.category))
     }
@@ -187,7 +195,7 @@ class ExpenseDetailFragment : DialogFragment() {
     }
 
     private fun attemptSaveExpense() {
-        val (isValid, updatedDescription, updatedAmount) = validateInputs()
+        val (isValid, updatedDescription, updatedAmountValue) = validateInputs()
         if (!isValid) return
 
         val selectedPaymentMethod = when {
@@ -196,9 +204,12 @@ class ExpenseDetailFragment : DialogFragment() {
             else -> expense.paymentMethod
         }
 
+
+        val finalAmount = String.format(Locale.US, "%.2f", updatedAmountValue!!).toDouble()
+
         expense = expense.copy(
             description = updatedDescription!!,
-            amount = updatedAmount!!,
+            amount = finalAmount,
             date = selectedTimestamp!!,
             paymentMethod = selectedPaymentMethod
         )
@@ -206,17 +217,35 @@ class ExpenseDetailFragment : DialogFragment() {
     }
 
     private fun validateInputs(): Triple<Boolean, String?, Double?> {
-        val updatedDescription = etDescription.text.toString()
-        val updatedAmountStr = etAmount.text.toString().replace("$", "")
-        val updatedAmount = updatedAmountStr.toDoubleOrNull()
+        val updatedDescription = etDescription.text.toString().trim()
+        val rawAmountText = etAmount.text.toString()
+            .replace("$", "")
+            .replace(",", "")
+            .replace("[^\\d.]".toRegex(), "")
 
         if (updatedDescription.isBlank()) {
             showToast(requireContext(), "Description cannot be empty")
             return Triple(false, null, null)
         }
-        if (updatedAmount == null || updatedAmount <= 0.0) {
-            showToast(requireContext(), "Please enter a valid positive amount")
+
+        if (rawAmountText.isBlank()) {
+            showToast(requireContext(), "Please enter an amount.")
             return Triple(false, updatedDescription, null)
+        }
+
+        val updatedAmount = rawAmountText.toDoubleOrNull()
+
+        if (updatedAmount == null) {
+            showToast(requireContext(), "Invalid amount format.")
+            return Triple(false, updatedDescription, null)
+        }
+        if (updatedAmount <= 0.0) {
+            showToast(requireContext(), "Amount must be greater than zero.")
+            return Triple(false, updatedDescription, updatedAmount)
+        }
+        if (updatedAmount >= 10_000_000) { // Límite como en AddFragments
+            showToast(requireContext(), "Max amount is 9,999,999.99")
+            return Triple(false, updatedDescription, updatedAmount)
         }
         if (selectedTimestamp == null) {
             showToast(requireContext(), "Please select a date")
@@ -229,9 +258,91 @@ class ExpenseDetailFragment : DialogFragment() {
         return Triple(true, updatedDescription, updatedAmount)
     }
 
-    private fun executeUpdateExpense() {
-        val expenseRepository = ExpenseRepository()
 
+    private fun setupAmountFormatting() {
+        val maxBefore = 7
+        val maxAfter = 2
+
+        etAmount.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        etAmount.keyListener = DigitsKeyListener.getInstance("0123456789.")
+        etAmount.filters = arrayOf(InputFilter.LengthFilter(maxBefore + 1 + maxAfter))
+
+        etAmount.addTextChangedListener(object : TextWatcher {
+            private var isFormatting = false
+
+            override fun afterTextChanged(s: Editable?) {
+                if (isFormatting || !etAmount.hasFocus()) {
+                    return
+                }
+                isFormatting = true
+
+                var cleanString = s.toString().replace("[^\\d.]".toRegex(), "")
+
+                val firstDotIndex = cleanString.indexOf('.')
+                if (firstDotIndex != -1) {
+                    val beforeDot = cleanString.substring(0, firstDotIndex + 1)
+                    val afterDot = cleanString.substring(firstDotIndex + 1).replace(".", "")
+                    cleanString = beforeDot + afterDot
+                }
+
+                val parts = cleanString.split('.', limit = 2)
+                var integerPart = parts.getOrNull(0) ?: ""
+                val decimalPart = parts.getOrNull(1) ?: ""
+
+                if (integerPart.length > 1 && integerPart.startsWith('0') && !cleanString.startsWith("0.")) {
+                    integerPart = integerPart.trimStart('0')
+                    if (integerPart.isEmpty()) integerPart = "0"
+                }
+                if (integerPart.isEmpty() && cleanString.startsWith(".")) {
+                    integerPart = "0"
+                }
+
+                integerPart = integerPart.take(maxBefore)
+                val finalDecimalPart = decimalPart.take(maxAfter)
+
+                val formattedText = when {
+                    cleanString.endsWith(".") -> "$integerPart."
+                    finalDecimalPart.isNotEmpty() -> "$integerPart.$finalDecimalPart"
+                    integerPart.isNotEmpty() -> integerPart
+                    else -> ""
+                }
+
+                if (s.toString() != formattedText) {
+                    etAmount.setText(formattedText)
+                    etAmount.setSelection(formattedText.length)
+                }
+                isFormatting = false
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        etAmount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                var text = etAmount.text.toString()
+                text = text.replace("$", "").replace(",", "")
+                etAmount.setText(text)
+                if (text.isNotEmpty()) {
+                    etAmount.setSelection(text.length)
+                }
+            } else {
+                var rawText = etAmount.text.toString().replace("[^\\d.]".toRegex(), "")
+                if (rawText.endsWith(".")) {
+                    rawText = rawText.substring(0, rawText.length - 1)
+                }
+                val amount = rawText.toDoubleOrNull()
+                if (amount != null) {
+                    val formatted = String.format(Locale.US, "$%,.2f", amount)
+                    etAmount.setText(formatted)
+                } else if (etAmount.text.toString().isNotEmpty() && etAmount.text.toString() != "$") {
+                }
+            }
+        }
+    }
+
+    private fun executeUpdateExpense() {
+         val expenseRepository = ExpenseRepository()
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 expenseRepository.updateExpense(
@@ -250,10 +361,7 @@ class ExpenseDetailFragment : DialogFragment() {
                     },
                     onFailure = { exception ->
                         launch(Dispatchers.Main) {
-                            showToast(
-                                requireContext(),
-                                "Failed to update expense: ${exception.message}"
-                            )
+                            showToast(requireContext(), "Failed to update expense: ${exception.message}")
                         }
                     }
                 )
@@ -280,9 +388,7 @@ class ExpenseDetailFragment : DialogFragment() {
             showToast(requireContext(), "Cannot delete expense with invalid ID.")
             return
         }
-
         val expenseRepository = ExpenseRepository()
-
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 expenseRepository.deleteExpense(
@@ -301,10 +407,7 @@ class ExpenseDetailFragment : DialogFragment() {
                     },
                     onFailure = { exception ->
                         launch(Dispatchers.Main) {
-                            showToast(
-                                requireContext(),
-                                "Failed to delete expense: ${exception.message}"
-                            )
+                            showToast(requireContext(), "Failed to delete expense: ${exception.message}")
                         }
                     }
                 )

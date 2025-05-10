@@ -75,16 +75,16 @@ class PercentageBudgetFragment : Fragment() {
     private val categoryAlarmSwitches = mutableMapOf<CategoryType, MaterialCheckBox>()
 
     private val currencyFormatter =
-        DecimalFormat("$#,##0.00", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
+        DecimalFormat("$###0.00", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
             roundingMode = RoundingMode.DOWN
             isGroupingUsed = true
             minimumFractionDigits = 0
             maximumFractionDigits = 2
         }
     private val percentageFormatter = DecimalFormat(
-        "#,##0.0'%'",
+        "###0.0'%'",
         DecimalFormatSymbols.getInstance(Locale.getDefault())
-    ).apply { // Example: 25.5%
+    ).apply { 
         roundingMode = RoundingMode.HALF_UP
         minimumFractionDigits = 0
         maximumFractionDigits = 1
@@ -709,7 +709,7 @@ class PercentageBudgetFragment : Fragment() {
         val formattedStringLostDecimal =
             !formattedDisplayString.contains(localDecimalSeparator) && (localDecimalSeparator == "." && !formattedDisplayString.contains(
                 "."
-            )) || (localDecimalSeparator == "," && !formattedDisplayString.contains(","))
+            )) || (localDecimalSeparator == "" && !formattedDisplayString.contains(""))
 
         val isWholeNumberBasically = parsedBigDecimal.stripTrailingZeros().scale() <= 0
 

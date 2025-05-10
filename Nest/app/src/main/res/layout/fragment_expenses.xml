@@ -120,10 +120,10 @@
 
             <TextView
                 android:id="@+id/totalExpenses"
-                android:layout_width="147dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:text="$"
                 android:textSize="22sp" />
         </LinearLayout>
@@ -302,7 +302,7 @@
                 android:layout_marginEnd="8dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="15dp"
-                android:text="@string/estimated_budget" />
+                android:text="Actual expenses" />
 
 
             <View
@@ -310,7 +310,7 @@
                 android:layout_height="10dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/circle"
-                android:backgroundTint="@color/txt_income" />
+                android:backgroundTint="@color/category_food" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -318,7 +318,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="20dp"
                 android:gravity="center_vertical"
-                android:text="Actual expenses" />
+                android:text="@string/estimated_budget" />
         </LinearLayout>
 
         <LinearLayout

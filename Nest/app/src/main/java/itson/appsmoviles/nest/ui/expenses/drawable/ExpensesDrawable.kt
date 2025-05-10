@@ -23,21 +23,6 @@ class ExpensesDrawable(
     private val context: Context
 ) : Drawable() {
 
-    private var animatedProgress: Float = 0f
-
-    init {
-        val target = if (total == 0f) 0f else (current / total).coerceAtMost(1f)
-        ValueAnimator.ofFloat(0f, target).apply {
-            duration = 600L
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener {
-                animatedProgress = it.animatedValue as Float
-                invalidateSelf()
-            }
-            start()
-        }
-    }
-
     override fun draw(canvas: Canvas) {
         val width = bounds.width().toFloat()
         val height = bounds.height().toFloat()
@@ -82,19 +67,15 @@ class ExpensesDrawable(
         val currentText = "$${"%.2f".format(current)}"
         val totalTextWidth = textPaint.measureText(totalText)
 
-
         canvas.drawRect(0f, 0f, width, height, backgroundPaint)
 
-
-        val ratio = if (total == 0f) 1f else (current / total).coerceAtMost(1f)
-        val progressWidth = animatedProgress * ratio * width
+        val progressRatio = if (total == 0f) 0f else (current / total).coerceAtMost(1f)
+        val progressWidth = progressRatio * width
         canvas.drawRect(0f, 0f, progressWidth, height, progressPaint)
-
 
         canvas.drawText(currentText, margin, textY, textPaint)
         canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
     }
-
 
     override fun setAlpha(alpha: Int) {}
     override fun setColorFilter(colorFilter: ColorFilter?) {}

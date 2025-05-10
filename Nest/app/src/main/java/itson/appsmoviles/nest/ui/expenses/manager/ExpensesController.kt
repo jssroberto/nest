@@ -43,8 +43,7 @@ class ExpensesController(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setupBudgetObserver() {
         budgetViewModel.categoryBudgets.observe(lifecycleOwner) { budgets ->
-            // Cuando cambian los presupuestos, actualizamos los progresos
-            loadExpenses() // O puedes llamar directamente a updateProgressBars si tienes los expenses
+            loadExpenses()
         }
     }
 
@@ -101,16 +100,13 @@ class ExpensesController(
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateProgressBars(expenses: List<Expense>) {
-        // 1) Calculas los gastos por clave String
         val expenseSums: Map<String, Float> = categoryManager.calculateCategorySums(expenses)
 
         lifecycleOwner.lifecycleScope.launch{
-            // 2) Obtienes el Budget completo
             val budgetData = withContext(Dispatchers.IO) {
                 budgetRepository.getBudgetDataSuspend()
             }
 
-            // 3) Conviertes tus mapas String→Float a CategoryType→Float
             val expenseSumsByCategory: Map<CategoryType, Float> =
                 expenseSums.mapKeys { (key, _) ->
                     CategoryType.fromName(key)
@@ -125,7 +121,6 @@ class ExpensesController(
                     ?: 0f
             }
 
-            // 4) Llamas a progressManager con los dos Map<CategoryType, Float>
             progressManager.updateProgressBars(
                 rootView,
                 expenseSumsByCategory,

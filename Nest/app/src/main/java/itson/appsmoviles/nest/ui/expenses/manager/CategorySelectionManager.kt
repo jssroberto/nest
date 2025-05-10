@@ -58,7 +58,7 @@ class CategorySelectionManager(
                 textView.setTextColor(colorDefault)
                 textView.text = categoryName
             } else if (selectedName == categoryName) {
-                textView.setTextColor(colorSelected) // 👈 Color al estar seleccionada
+                textView.setTextColor(colorSelected)
                 textView.text = "$categoryName  ${"%.1f".format(percentage)}%"
             } else {
                 textView.setTextColor(colorHint)

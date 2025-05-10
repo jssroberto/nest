@@ -61,15 +61,16 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="70dp"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="7dp"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="8dp"
                         android:text="@string/income"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/text_size_medium" />
 
                     <TextView
-                        android:layout_width="15dp"
+                        android:layout_width="14dp"
                         android:layout_height="wrap_content"
                         android:text="+"
                         android:textColor="@color/blue"
@@ -79,7 +80,7 @@
                         android:id="@+id/txt_budget_income"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="$520"
+                        android:text="$0.00"
                         android:textColor="@color/blue"
                         android:textSize="@dimen/text_size_large" />
                 </LinearLayout>
@@ -90,14 +91,14 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="70dp"
+                        android:layout_width="68dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="7dp"
+                        android:layout_marginStart="7dp"
                         android:text="@string/expense"
                         android:textColor="@color/txt_expenses" />
 
                     <TextView
-                        android:layout_width="15dp"
+                        android:layout_width="14dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="-"
@@ -108,7 +109,7 @@
                         android:id="@+id/txt_budget_expense"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="$250"
+                        android:text="$0.00"
                         android:textColor="@color/txt_expenses"
                         android:textSize="@dimen/text_size_large" />
                 </LinearLayout>
@@ -148,7 +149,7 @@
                         android:layout_marginHorizontal="15dp"
                         android:gravity="top"
 
-                        android:text="$270"
+                        android:text="$0.00"
                         android:textSize="@dimen/text_size_x_large" />
                 </LinearLayout>
             </LinearLayout>
@@ -280,7 +281,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="6dp"
-                        android:text="@string/home"
+                        android:text="@string/living"
                         android:textSize="@dimen/text_size_medium_large" />
 
                     <LinearLayout
