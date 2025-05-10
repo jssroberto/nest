@@ -72,20 +72,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Crear canal de notificaciones con prioridad alta
-            val channel = NotificationChannel(
-                "budget_channel", // ID del canal
-                "Budget Notifications", // Nombre del canal
-                NotificationManager.IMPORTANCE_HIGH // Prioridad alta
-            ).apply {
-                description = "Notifications for budget thresholds" // Descripción del canal
-                lockscreenVisibility =
-                    Notification.VISIBILITY_PUBLIC // Hacer visible en la pantalla de bloqueo
-            }
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel) // Crear el canal
+        val channel = NotificationChannel(
+            "budget_channel",
+            "Budget Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Notifications for budget thresholds"
+            lockscreenVisibility =
+                Notification.VISIBILITY_PUBLIC
         }
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
 

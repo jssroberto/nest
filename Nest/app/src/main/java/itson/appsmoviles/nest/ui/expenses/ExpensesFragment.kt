@@ -53,7 +53,7 @@ class ExpensesFragment : Fragment() {
     private lateinit var expenseProgressManager: ExpenseProgressManager
     private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
 
-    // Usa activityViewModels() si el ViewModel es compartido entre fragments
+
     private val budgetViewModel: BudgetViewModel by activityViewModels {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -145,11 +145,17 @@ class ExpensesFragment : Fragment() {
 
 
         filterButton.setOnClickListener {
+            pieChartDrawable.selectedCategory = null
+            categorySelectionManager.clearSelections()
             expensesController.filterAndLoadExpenses()
+
+
         }
 
         clearFiltersButton.setOnClickListener {
             filterManager.clearFilters()
+            categorySelectionManager.clearSelections()
+            pieChartDrawable.selectedCategory = null
             expensesController.filterAndLoadExpenses()
         }
 

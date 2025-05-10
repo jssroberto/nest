@@ -42,7 +42,6 @@ class PercentageBudgetFragment : Fragment() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
-                    // This fragment also needs access to sharedMovementsViewModel
                     val sharedVM = ViewModelProvider(requireActivity())[SharedMovementsViewModel::class.java]
                     return BudgetViewModel(requireActivity().application, sharedVM) as T
                 }
@@ -77,7 +76,7 @@ class PercentageBudgetFragment : Fragment() {
     private val currencyFormatter =
         DecimalFormat("$#,##0.00", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
             roundingMode = RoundingMode.DOWN
-            isGroupingUsed = true // Use grouping for currency display
+            isGroupingUsed = true
             minimumFractionDigits = 0
             maximumFractionDigits = 2
         }
@@ -90,11 +89,11 @@ class PercentageBudgetFragment : Fragment() {
         maximumFractionDigits = 1
     }
 
-    private var isCurrencyFormatting = false // Used for Total Budget and Alarm Thresholds
-    private var isPercentageFormatting = false // Used for Category Percentage EditTexts
+    private var isCurrencyFormatting = false
+    private var isPercentageFormatting = false
     private var hasLoadedInitialData = false
     private var isObserverUpdating =
-        false // Flag to prevent infinite loops from ViewModel observers
+        false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,17 +107,14 @@ class PercentageBudgetFragment : Fragment() {
         setupTotalBudgetInput()
         observeTotalBudget()
 
-        // Order matters: Observe first to populate fields, then setup listeners
-        observeCategoryPercentages()
-        observeAlarmData() // Ensure alarm data is observed
 
-        setupCategoryPercentageInputs() // Adds TextWatchers and FocusListeners
-        setupCategoryAlarmInputsAndSwitches() // Adds TextWatchers, FocusListeners, and Check Listeners
+        observeCategoryPercentages()
+        observeAlarmData()
+        setupCategoryPercentageInputs()
+        setupCategoryAlarmInputsAndSwitches()
 
         observeOverviewState()
 
-        // Manually trigger initial load if needed, or rely on ViewModel init
-        // budgetViewModel.loadBudgetAndAlarms() // Assuming a method like this exists
     }
 
     private fun initializeViews(view: View) {
@@ -136,38 +132,37 @@ class PercentageBudgetFragment : Fragment() {
         }
     }
 
-    // --- Total Budget Handling ---
+
     private fun setupTotalBudgetInput() {
         val totalBudgetWatcher = object : TextWatcher {
-            private var currentText = "" // Keep track to avoid unnecessary updates
+            private var currentText = ""
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() == currentText || isCurrencyFormatting || isObserverUpdating || !hasLoadedInitialData) {
-                    // Only process if text actually changed, not formatting internally, not observer update, and initial data loaded
-                    return
+                     return
                 }
 
                 isCurrencyFormatting = true
                 editTextTotalBudget.removeTextChangedListener(this)
 
                 val userInput = s.toString()
-                // Fallback to current ViewModel value if parsing fails
+
                 val fallbackValue =
                     budgetViewModel.totalBudget.value?.let { BigDecimal(it.toString()) }
                         ?: BigDecimal.ZERO
                 val processedInput =
                     processAndFormatCurrencyInput(userInput, currencyFormatter, fallbackValue)
 
-                // Update ViewModel with the parsed value
+
                 budgetViewModel.setTotalBudget(processedInput.parsedValue.toFloat())
 
-                // Update the EditText immediately with the formatted string from processing
+
                 currentText = processedInput.displayString
                 editTextTotalBudget.setText(currentText)
-                // Set selection to the end
+
                 editTextTotalBudget.setSelection(
                     editTextTotalBudget.text.length.coerceAtMost(
                         currentText.length
@@ -179,7 +174,7 @@ class PercentageBudgetFragment : Fragment() {
             }
         }
         editTextTotalBudget.addTextChangedListener(totalBudgetWatcher)
-        // Ensure this ID is unique and defined
+
         editTextTotalBudget.setTag(R.id.monthly_budget_watcher_tag, totalBudgetWatcher)
 
         editTextTotalBudget.setOnFocusChangeListener { _, hasFocus ->
@@ -187,8 +182,8 @@ class PercentageBudgetFragment : Fragment() {
             val watcher =
                 editTextTotalBudget.getTag(R.id.monthly_budget_watcher_tag) as? TextWatcher
 
-            if (!hasFocus) { // Lost focus
-                // Format text based on the current ViewModel value
+            if (!hasFocus) {
+
                 val vmValue = budgetViewModel.totalBudget.value ?: 0f
                 safeSetEditText(
                     editTextTotalBudget,
@@ -197,12 +192,11 @@ class PercentageBudgetFragment : Fragment() {
                     true,
                     isCurrencyFormatting
                 ) { isCurrencyFormatting = it }
-            } else { // Gained focus - potentially format to raw number for easier editing
-                // Get current value from ViewModel or EditText
+            } else {
                 val currentValue = budgetViewModel.totalBudget.value ?: parseCurrency(
                     editTextTotalBudget.text.toString()
                 ).toFloat()
-                // Format without currency symbol and grouping for editing, if value > 0
+
                 val rawString = if (currentValue > 0) {
                     DecimalFormat(
                         "#0.##",
@@ -224,17 +218,15 @@ class PercentageBudgetFragment : Fragment() {
 
     private fun observeTotalBudget() {
         budgetViewModel.totalBudget.observe(viewLifecycleOwner) { total ->
-            // This observer updates the UI when the ViewModel's total budget changes,
-            // but we want to avoid interfering if the change came from the user typing
+
             if (isCurrencyFormatting || isObserverUpdating) return@observe
 
-            isObserverUpdating = true // Indicate update is from observer
+            isObserverUpdating = true
             val formattedTotal = formatCurrency(total)
-            // Only update EditText if the text content doesn't match the formatted value
             if (editTextTotalBudget.text.toString() != formattedTotal) {
                 val watcher =
                     editTextTotalBudget.getTag(R.id.monthly_budget_watcher_tag) as? TextWatcher
-                // Use safeSetEditText, setting cursor at end, managed by the formatting flag
+
                 safeSetEditText(
                     editTextTotalBudget,
                     formattedTotal,
@@ -244,7 +236,7 @@ class PercentageBudgetFragment : Fragment() {
                 ) { isCurrencyFormatting = it }
             }
 
-            // Mark data as loaded once we receive a total budget value (even 0 implies data loaded)
+
             if (budgetViewModel.totalBudget.value != null) hasLoadedInitialData = true
 
             isObserverUpdating = false
@@ -252,21 +244,21 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-    // --- Category Percentages Display & Editing ---
+
     private fun observeCategoryPercentages() {
         budgetViewModel.categoryPercentages.observe(viewLifecycleOwner) { percentagesMap ->
-            // Prevent observer from updating while user is actively typing a percentage
+
             if (isPercentageFormatting || isObserverUpdating) return@observe
 
-            isObserverUpdating = true // Indicate update is from observer
-            percentagesMap.forEach { (category, percent) -> // percent is 0-100 e.g. 25.0 for 25%
+            isObserverUpdating = true
+            percentagesMap.forEach { (category, percent) ->
                 categoryPercentageEditTexts[category]?.let { editText ->
                     val formattedPercentage = formatPercentage(percent)
-                    // Only update EditText if the text content doesn't match the formatted value
+
                     if (editText.text.toString() != formattedPercentage) {
                         val watcher =
                             editText.getTag(R.id.percentage_watcher_tag_prefix + category.ordinal) as? TextWatcher
-                        // Use safeSetEditText, setting cursor at end, managed by the formatting flag
+
                         safeSetEditText(
                             editText,
                             formattedPercentage,
@@ -277,7 +269,7 @@ class PercentageBudgetFragment : Fragment() {
                     }
                 }
             }
-            // Mark data as loaded if we receive percentage data
+
             if (percentagesMap.isNotEmpty()) hasLoadedInitialData = true
 
             isObserverUpdating = false
@@ -305,12 +297,12 @@ class PercentageBudgetFragment : Fragment() {
 
                     val userInput = s.toString()
 
-                    // Solo procesar si no estamos borrando el último carácter (el %)
+
                     if (!userInput.endsWith("%") || userInput.length > 1) {
                         val cleanInput = userInput.replace("%", "")
                         val enteredPercentage = if (cleanInput.isEmpty()) 0f else parsePercentageInput(cleanInput)
 
-                        // Resto de tu lógica existente...
+
                         val totalBudget = budgetViewModel.totalBudget.value ?: 0f
                         val otherPercentagesSum = budgetViewModel.categoryPercentages.value
                             ?.filterKeys { it != category }
@@ -342,7 +334,7 @@ class PercentageBudgetFragment : Fragment() {
 
                         isSelfUpdate = true
                         editText.setText(displayString)
-                        editText.setSelection(displayString.length - 1) // Posiciona el cursor antes del %
+                        editText.setSelection(displayString.length - 1)
                         isSelfUpdate = false
                     }
 
@@ -354,7 +346,7 @@ class PercentageBudgetFragment : Fragment() {
             editText.addTextChangedListener(watcher)
             editText.setTag(watcherTag, watcher)
 
-            // Mantener el mismo OnFocusChangeListener que ya tienes
+
             editText.setOnFocusChangeListener { _, hasFocus ->
                 if (isObserverUpdating || isPercentageFormatting || !hasLoadedInitialData) return@setOnFocusChangeListener
 
@@ -372,59 +364,52 @@ class PercentageBudgetFragment : Fragment() {
                         isPercentageFormatting
                     ) { isPercentageFormatting = it }
                 } else {
-                    // Al ganar foco, posiciona el cursor antes del %
+
                     editText.setSelection(editText.text.length - 1)
                 }
             }
         }
     }
 
-    // --- Alarm Data Handling ---
+
     private fun observeAlarmData() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     budgetViewModel.alarmThresholds.collect { thresholds ->
-                        // Guard against internal formatting/observer loops
+
                         if (isCurrencyFormatting || isObserverUpdating) return@collect
 
-                        isObserverUpdating = true // Indicate that update is from observer
+                        isObserverUpdating = true
 
-                        // Iterate over all CategoryTypes to ensure all associated EditTexts are initialized.
-                        // This handles cases where the 'thresholds' map is empty (first launch).
+
                         CategoryType.values().forEach { category ->
                             val etThreshold = categoryAlarmThresholdEditTexts[category]
-                            if (etThreshold == null) return@forEach // Ensure EditText exists for the category
-
-                            // Get the threshold value from the ViewModel's map for this category,
-                            // or default to 0f if not found (for new/empty data).
+                            if (etThreshold == null) return@forEach
                             val value = thresholds[category] ?: 0f
 
                             val formattedValue = formatCurrency(value)
                             val watcher =
                                 etThreshold.getTag(R.id.alarm_threshold_watcher_tag_prefix + category.ordinal) as? TextWatcher
 
-                            // Only update the EditText if its current text does not match the formatted value.
-                            // This will ensure initial setup to "$0" or "$0.00" if it's currently blank or incorrect.
+
                             if (etThreshold.text.toString() != formattedValue) {
                                 safeSetEditText(
                                     etThreshold,
                                     formattedValue,
                                     watcher,
-                                    true, // Set cursor at end, suitable for initial display
+                                    true,
                                     isCurrencyFormatting
                                 ) { isCurrencyFormatting = it }
                             }
                         }
 
-                        // 'hasLoadedInitialData' should now be reliably set by observeTotalBudget after the previous fix.
-                        // This specific line might become less critical here, but doesn't hurt.
                         if (thresholds.isNotEmpty()) hasLoadedInitialData = true
 
-                        isObserverUpdating = false // Release the lock
+                        isObserverUpdating = false
                     }
                 }
-                // The launch block for alarmEnabled remains the same:
+
                 launch {
                     budgetViewModel.alarmEnabled.collect { enabledMap ->
                         if (isObserverUpdating) return@collect
@@ -445,7 +430,6 @@ class PercentageBudgetFragment : Fragment() {
             val etThreshold = categoryAlarmThresholdEditTexts[category] ?: return@forEach
             val switchAlarm = categoryAlarmSwitches[category] ?: return@forEach
 
-            // Observe category budget to update switch enabled state
             budgetViewModel.categoryBudgets.observe(viewLifecycleOwner) { categoryBudgets ->
                 val categoryBudgetAmount = categoryBudgets[category] ?: 0f
                 updateAlarmSwitchEnabledState(
@@ -471,38 +455,37 @@ class PercentageBudgetFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    // Guards against internal formatting/observer updates/initial load
+
                     if (s.toString() == currentText || isCurrencyFormatting || isObserverUpdating || !hasLoadedInitialData) {
                         return
                     }
 
-                    isCurrencyFormatting = true // Lock for this EditText's formatting
+                    isCurrencyFormatting = true
                     etThreshold.removeTextChangedListener(this)
 
                     val userInput = s.toString()
                     val parsedValue =
-                        parseCurrency(userInput).toFloat() // Parses "$1,234.56" to 1234.56f
+                        parseCurrency(userInput).toFloat()
 
                     val categoryBudget = budgetViewModel.categoryBudgets.value?.get(category) ?: 0f
 
-                    // Clamp the threshold value to be non-negative and not exceed category budget
+
                     val clampedValue = parsedValue.coerceAtMost(categoryBudget.takeIf { it > 0 }
                         ?: Float.MAX_VALUE).coerceAtLeast(0f)
 
-                    // Format the clamped value for display *immediately*
+
                     val displayStringToSet = formatCurrency(clampedValue)
 
-                    // Update EditText visually
+
                     currentText = displayStringToSet
                     etThreshold.setText(displayStringToSet)
-                    // Set selection to the end after formatting
+
                     etThreshold.setSelection(etThreshold.text.length.coerceAtMost(displayStringToSet.length))
 
                     etThreshold.addTextChangedListener(this)
-                    isCurrencyFormatting = false // Release the lock
+                    isCurrencyFormatting = false
 
-                    // Update ViewModel and persist changes
-                    // This will trigger the observer, but it's guarded by isCurrencyFormatting
+
                     budgetViewModel.setAlarmThreshold(category, clampedValue)
                     budgetViewModel.persistAlarmThreshold(
                         category,
@@ -510,7 +493,7 @@ class PercentageBudgetFragment : Fragment() {
                         switchAlarm.isChecked
                     )
 
-                    // Provide feedback if clamping occurred
+
                     if (parsedValue > categoryBudget && categoryBudget > 0 && parsedValue != clampedValue) {
                         showToast(
                             requireContext(),
@@ -531,10 +514,10 @@ class PercentageBudgetFragment : Fragment() {
                 val currentValue = parseCurrency(etThreshold.text.toString()).toFloat()
 
 
-                if (!hasFocus) { // Lost focus - format to "$X,YYY.ZZ"
-                    isCurrencyFormatting = true // Lock for formatting
+                if (!hasFocus) {
+                    isCurrencyFormatting = true
                     val vmValue = budgetViewModel.alarmThresholdMap[category]
-                        ?: currentValue // Use VM value if available
+                        ?: currentValue
                     val formattedText = formatCurrency(vmValue.toFloat())
                     safeSetEditText(
                         etThreshold,
@@ -543,11 +526,11 @@ class PercentageBudgetFragment : Fragment() {
                         true,
                         isCurrencyFormatting
                     ) { isCurrencyFormatting = it }
-                    isCurrencyFormatting = false // Release lock
+                    isCurrencyFormatting = false
 
-                } else { // Gained focus - format to raw number "X000.YY" (remove currency/grouping)
-                    isCurrencyFormatting = true // Lock for formatting
-                    // Format without currency symbol and grouping for editing, if value > 0
+                } else {
+                    isCurrencyFormatting = true
+
                     val rawString = if (currentValue > 0) {
                         DecimalFormat(
                             "#0.##",
@@ -556,7 +539,7 @@ class PercentageBudgetFragment : Fragment() {
                     } else {
                         ""
                     }
-                    // Format to raw number, try to keep cursor position
+
                     safeSetEditText(
                         etThreshold,
                         rawString,
@@ -564,7 +547,7 @@ class PercentageBudgetFragment : Fragment() {
                         false,
                         isCurrencyFormatting
                     ) { isCurrencyFormatting = it }
-                    isCurrencyFormatting = false // Release lock
+                    isCurrencyFormatting = false
                 }
             }
 
@@ -574,8 +557,8 @@ class PercentageBudgetFragment : Fragment() {
                 val thresholdValue = parseCurrency(etThreshold.text.toString()).toFloat()
                 val categoryBudget = budgetViewModel.categoryBudgets.value?.get(category) ?: 0f
 
-                // Validation check: cannot activate alarm with 0 threshold or for 0 budget
-                if (isChecked) { // If trying to check
+
+                if (isChecked) {
                     if (thresholdValue <= 0f) {
                         isObserverUpdating = true; switchAlarm.isChecked =
                             false; isObserverUpdating = false
@@ -596,9 +579,9 @@ class PercentageBudgetFragment : Fragment() {
                     }
                 }
 
-                // If unchecked, or valid checks passed for checking
+
                 budgetViewModel.setAlarmEnabled(category, isChecked)
-                // Persist change
+
                 budgetViewModel.persistAlarmThreshold(
                     category,
                     thresholdValue.toDouble(),
@@ -619,7 +602,7 @@ class PercentageBudgetFragment : Fragment() {
         if (currentlyEnabled != shouldBeEnabled) {
             switch.isEnabled = shouldBeEnabled
             if (!shouldBeEnabled && switch.isChecked) {
-                // If switch was checked but budget became 0, uncheck it and persist
+
                 isObserverUpdating = true
                 switch.isChecked = false
                 isObserverUpdating = false
@@ -628,7 +611,7 @@ class PercentageBudgetFragment : Fragment() {
                 budgetViewModel.persistAlarmThreshold(category, thresholdValue.toDouble(), false)
             }
         }
-        // Also disable switch if threshold is 0, even if budget > 0 (handled in check change listener too)
+
         val thresholdValue = parseCurrency(etThreshold.text.toString()).toFloat()
         if (thresholdValue <= 0f && switch.isChecked && categoryBudget > 0f) {
             isObserverUpdating = true
@@ -644,7 +627,7 @@ class PercentageBudgetFragment : Fragment() {
     private fun observeOverviewState() {
         homeViewModel.overviewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is UiState.Loading -> { /* Handle loading */
+                is UiState.Loading -> {
                 }
 
                 is UiState.Success -> {
@@ -652,7 +635,7 @@ class PercentageBudgetFragment : Fragment() {
                     textViewIncome.text = formatCurrency(overview.totalIncome.toFloat())
                     textViewExpense.text = formatCurrency(overview.totalExpenses.toFloat())
                     textViewNetBalance.text = formatCurrency(overview.netBalance.toFloat())
-                    // Mark initial data as loaded once overview is available as well
+
                     hasLoadedInitialData = true
                 }
 
@@ -665,9 +648,7 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-    // --- Formatting & Parsing Utilities ---
 
-    // Reusing the processAndFormatCurrencyInput from the value fragment - slightly adjusted
     private fun processAndFormatCurrencyInput(
         userInput: String,
         formatter: DecimalFormat,
@@ -676,40 +657,40 @@ class PercentageBudgetFragment : Fragment() {
         val localDecimalSeparator = formatter.decimalFormatSymbols.decimalSeparator.toString()
         val localGroupingSeparator = formatter.decimalFormatSymbols.groupingSeparator.toString()
 
-        var cleanString = userInput.replace(formatter.currency.symbol, "") // Remove currency symbol
-        cleanString = cleanString.replace(localGroupingSeparator, "") // Remove grouping separator
+        var cleanString = userInput.replace(formatter.currency.symbol, "")
+        cleanString = cleanString.replace(localGroupingSeparator, "")
 
-        // Standardize decimal separator to '.' for BigDecimal parsing
+
         if (localDecimalSeparator != ".") {
             cleanString = cleanString.replace(localDecimalSeparator, ".")
         }
 
-        // Handle potential multiple decimal points - keep only the last one
+
         val firstDecimalIndex = cleanString.indexOf('.')
         if (firstDecimalIndex != -1) {
             val beforeDecimal = cleanString.substring(0, firstDecimalIndex + 1)
             var afterDecimal = cleanString.substring(firstDecimalIndex + 1).replace(".", "")
-            // Limit fraction digits if needed, though BigDecimal parsing handles this
+
             cleanString = beforeDecimal + afterDecimal
         }
 
 
         val numberToParse = when {
-            cleanString == "." -> "0." // Handle case where user types just a decimal point
-            cleanString.isEmpty() -> "0" // Handle empty string as 0
+            cleanString == "." -> "0."
+            cleanString.isEmpty() -> "0"
             else -> cleanString
         }
 
         val parsedBigDecimal = try {
             BigDecimal(numberToParse).setScale(formatter.maximumFractionDigits, RoundingMode.DOWN)
         } catch (e: NumberFormatException) {
-            previousParsedValueForFallback // Fallback on parse error
+            previousParsedValueForFallback
         }
 
-        // Format for display using the formatter's locale rules
+
         var formattedDisplayString = formatter.format(parsedBigDecimal)
 
-        // Preserve user-typed decimal point if necessary for a more natural input feel
+
         val userTypedDecimalAtEnd = userInput.endsWith(localDecimalSeparator)
         val formattedStringLostDecimal =
             !formattedDisplayString.contains(localDecimalSeparator) && (localDecimalSeparator == "." && !formattedDisplayString.contains(
@@ -720,12 +701,12 @@ class PercentageBudgetFragment : Fragment() {
 
 
         if (userTypedDecimalAtEnd && formattedStringLostDecimal && isWholeNumberBasically) {
-            // If the clean string ended with a decimal point and the formatted string didn't keep it, add it back
+
             if (numberToParse.endsWith(".")) {
                 formattedDisplayString += localDecimalSeparator
             }
         } else if (numberToParse == "0." && !formattedDisplayString.contains(localDecimalSeparator)) {
-            // Specific case for "0." input if formatter formats it as "$0" or similar without decimal
+
             formattedDisplayString = formatter.currency.symbol + "0" + localDecimalSeparator
         }
 
@@ -734,26 +715,26 @@ class PercentageBudgetFragment : Fragment() {
     }
 
 
-    // Refined percentage parsing logic
+
     private fun parsePercentageInput(input: String): Float {
         if (input.isBlank()) return 0f
 
         var cleanString = input.replace("%", "").trim()
 
-        // Use the percentage formatter's decimal separator
+
         val localDecimalSeparator =
             percentageFormatter.decimalFormatSymbols.decimalSeparator.toString()
-        // Standardize decimal separator to '.' for BigDecimal parsing
+
         if (localDecimalSeparator != ".") {
             cleanString = cleanString.replace(localDecimalSeparator, ".")
         }
 
-        // Handle potential multiple decimal points - keep only the last one
+
         val firstDecimalIndex = cleanString.indexOf('.')
         if (firstDecimalIndex != -1) {
             val beforeDecimal = cleanString.substring(0, firstDecimalIndex + 1)
             var afterDecimal = cleanString.substring(firstDecimalIndex + 1).replace(".", "")
-            // Limit fraction digits based on the percentage formatter's precision
+
             if (afterDecimal.length > percentageFormatter.maximumFractionDigits) {
                 afterDecimal = afterDecimal.substring(0, percentageFormatter.maximumFractionDigits)
             }
@@ -761,33 +742,30 @@ class PercentageBudgetFragment : Fragment() {
         }
 
         val numberToParse = when {
-            cleanString == "." -> "0." // Handle case where user types just a decimal point
-            cleanString.isEmpty() -> "0" // Handle empty string as 0
+            cleanString == "." -> "0."
+            cleanString.isEmpty() -> "0"
             else -> cleanString
         }
 
         return try {
-            // Parse as BigDecimal first for precision, then convert to Float
+
             BigDecimal(numberToParse)
                 .setScale(
                     percentageFormatter.maximumFractionDigits,
                     RoundingMode.HALF_UP
-                ) // Match formatter scale
+                )
                 .toFloat()
         } catch (e: NumberFormatException) {
-            0f // Return 0f on parse error
+            0f
         }
     }
 
     private fun formatCurrency(value: Float): String {
-        // Allow negative values for net balance if necessary.
-        // Remove .coerceAtLeast(0f)
         val valueToFormat = if (value.isNaN()) 0f else value
         return currencyFormatter.format(BigDecimal(valueToFormat.toString()))
     }
 
-    private fun formatPercentage(value: Float): String { // value is 0-100
-        // Ensure non-negative and clamp to 100% for display
+    private fun formatPercentage(value: Float): String {
         val valueToFormat = if (value.isNaN()) 0f else value.coerceIn(0f, 100f)
         return percentageFormatter.format(BigDecimal(valueToFormat.toString()))
     }
@@ -810,10 +788,9 @@ class PercentageBudgetFragment : Fragment() {
 
         watcher?.let { editText.addTextChangedListener(it) }
 
-        // Mejor manejo de selección
         when {
             setCursorAtEnd -> editText.setSelection(text.length)
-            editText.hasFocus() -> editText.selectAll() // Seleccionar todo si tiene foco
+            editText.hasFocus() -> editText.selectAll()
             else -> editText.setSelection(text.length)
         }
 
@@ -821,11 +798,11 @@ class PercentageBudgetFragment : Fragment() {
     }
 
     private fun parseCurrency(input: String): BigDecimal {
-        if (input.isBlank()) return BigDecimal.ZERO // Handle blank input explicitly as zero
+        if (input.isBlank()) return BigDecimal.ZERO
         return try {
-            // More robust parsing: remove currency symbol and grouping separators based on formatter's locale
+
             val cleanString = input.replace("$", "").replace(currencyFormatter.decimalFormatSymbols.groupingSeparator.toString(), "")
-            // Replace decimal separator with dot for BigDecimal if it's different
+
             val parsableString = cleanString.replace(currencyFormatter.decimalFormatSymbols.decimalSeparator.toString(), ".")
             BigDecimal(parsableString)
         } catch (e: NumberFormatException) {

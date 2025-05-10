@@ -56,19 +56,19 @@ class BaseBudgetFragment : Fragment() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
-                    // Pass the application and the sharedMovementsViewModel instance
+
                     return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
             }
         })[BudgetViewModel::class.java]
 
-        // Attempt to find existing fragments if BaseBudgetFragment is recreated (e.g., config change)
+
         if (savedInstanceState != null) {
             valueBudgetFragmentInstance = childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
             percentageBudgetFragmentInstance = childFragmentManager.findFragmentByTag(PERCENTAGE_FRAGMENT_TAG) as? PercentageBudgetFragment
         }
-        // Or, if they are already in the FragmentManager from a previous state but not savedInstanceState
+
         if (valueBudgetFragmentInstance == null) {
             valueBudgetFragmentInstance = childFragmentManager.findFragmentByTag(VALUE_FRAGMENT_TAG) as? ValueBudgetFragment
         }
@@ -77,8 +77,7 @@ class BaseBudgetFragment : Fragment() {
         }
 
 
-        // Set initial state based on the switch's current checked status
-        // This ensures the correct fragment is shown and colors are set on initial load or recreation
+
         updateFragmentVisibilityAndColors(switchFormat.isChecked, isInitialSetup = true)
 
         switchFormat.setOnCheckedChangeListener { _, isChecked ->
@@ -90,13 +89,13 @@ class BaseBudgetFragment : Fragment() {
         val transaction = childFragmentManager.beginTransaction()
 
         if (showPercentage) {
-            // Configure UI for Percentage View
-            setTextColor(txtValue, R.color.primary_color) // Set value text to "inactive" color
+
+            setTextColor(txtValue, R.color.primary_color)
             Handler(Looper.getMainLooper()).postDelayed({
-                setTextColor(txtPercentage, R.color.off_white) // Set percentage text to "active" color
+                setTextColor(txtPercentage, R.color.off_white)
             }, 50)
 
-            // Manage PercentageBudgetFragment
+
             if (percentageBudgetFragmentInstance == null) {
                 percentageBudgetFragmentInstance = PercentageBudgetFragment()
                 transaction.add(R.id.fragmentBudgetContainer, percentageBudgetFragmentInstance!!, PERCENTAGE_FRAGMENT_TAG)
@@ -104,20 +103,20 @@ class BaseBudgetFragment : Fragment() {
                 transaction.show(percentageBudgetFragmentInstance!!)
             }
 
-            // Hide ValueBudgetFragment if it exists and is added
+
             valueBudgetFragmentInstance?.let {
                 if (it.isAdded) {
                     transaction.hide(it)
                 }
             }
         } else {
-            // Configure UI for Value View
-            setTextColor(txtPercentage, R.color.primary_color) // Set percentage text to "inactive" color
+
+            setTextColor(txtPercentage, R.color.primary_color)
             Handler(Looper.getMainLooper()).postDelayed({
-                setTextColor(txtValue, R.color.off_white) // Set value text to "active" color
+                setTextColor(txtValue, R.color.off_white)
             }, 50)
 
-            // Manage ValueBudgetFragment
+
             if (valueBudgetFragmentInstance == null) {
                 valueBudgetFragmentInstance = ValueBudgetFragment()
                 transaction.add(R.id.fragmentBudgetContainer, valueBudgetFragmentInstance!!, VALUE_FRAGMENT_TAG)
@@ -125,7 +124,7 @@ class BaseBudgetFragment : Fragment() {
                 transaction.show(valueBudgetFragmentInstance!!)
             }
 
-            // Hide PercentageBudgetFragment if it exists and is added
+
             percentageBudgetFragmentInstance?.let {
                 if (it.isAdded) {
                     transaction.hide(it)
@@ -133,21 +132,17 @@ class BaseBudgetFragment : Fragment() {
             }
         }
 
-        // Commit transaction only if the fragment manager's state is not saved
-        // This prevents "Can not perform this action after onSaveInstanceState"
+
         if (!childFragmentManager.isStateSaved) {
             transaction.commit()
         } else if (isInitialSetup) {
-            // If state is saved during initial setup, try commitAllowingStateLoss
-            // This can happen if onViewCreated is called as part of a state restoration
-            // where the activity is already trying to save its state.
-            // Use with caution, understand implications of state loss if not handled perfectly.
+
             transaction.commitAllowingStateLoss()
         }
     }
 
     private fun setTextColor(textView: TextView, colorResId: Int) {
-        if (isAdded && context != null) { // Ensure fragment is attached and context is available
+        if (isAdded && context != null) {
             textView.setTextColor(ContextCompat.getColor(requireContext(), colorResId))
         }
     }

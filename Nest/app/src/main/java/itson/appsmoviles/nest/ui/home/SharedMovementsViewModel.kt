@@ -10,7 +10,7 @@ class SharedMovementsViewModel : ViewModel() {
     val movementDataChanged: LiveData<Unit> = _movementDataChanged
 
     private val _filterCriteria =
-        MutableLiveData(FilterCriteria()) // Assuming FilterCriteria is defined
+        MutableLiveData(FilterCriteria())
     val filterCriteria: LiveData<FilterCriteria> = _filterCriteria
 
     private val _userNameUpdated = MutableLiveData<Unit>()

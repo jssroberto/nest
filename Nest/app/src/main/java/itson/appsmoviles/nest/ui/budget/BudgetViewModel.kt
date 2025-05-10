@@ -299,10 +299,6 @@ class BudgetViewModel(
 
 
     private fun sendThresholdExceededNotification(category: CategoryType) {
-        Log.d("BudgetViewModel", "Sending notification for category: $category")
-
-        // Mostrar un Toast para verificar que la función se ejecuta
-        Toast.makeText(context, "Notification about $category exceeded", Toast.LENGTH_SHORT).show()
 
         val notificationId = 1
         val notificationManager =
@@ -336,12 +332,12 @@ class BudgetViewModel(
         viewModelScope.launch {
             repository.getCategoryBudget(category) { categoryBudget ->
                 if (categoryBudget != null) {
-                    // Actualiza el LiveData con el presupuesto de la categoría
+
                     val updatedCategoryBudgets = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
                     updatedCategoryBudgets[category] = categoryBudget.categoryBudget
                     categoryBudgets.value = updatedCategoryBudgets
                 } else {
-                    // Maneja el caso en que no se encontró presupuesto
+
                     Log.e("BudgetViewModel", "No se pudo obtener el presupuesto para la categoría: $category")
                 }
             }

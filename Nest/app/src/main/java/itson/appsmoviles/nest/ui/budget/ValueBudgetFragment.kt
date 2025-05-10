@@ -38,8 +38,6 @@ class ValueBudgetFragment : Fragment() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-                    // Ensure sharedMovementsViewModel is initialized before HomeViewModel needs it
-                    // For this example, assuming it's correctly handled by activityViewModels()
                     return HomeViewModel(sharedMovementsViewModel) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
@@ -61,12 +59,12 @@ class ValueBudgetFragment : Fragment() {
         roundingMode = RoundingMode.DOWN
         isGroupingUsed = true
         minimumFractionDigits = 0
-        maximumFractionDigits = 2  // Sin decimales
-        negativePrefix = "-$"     // Formato: -$50
-        negativeSuffix = ""       // Eliminar sufijos
+        maximumFractionDigits = 2
+        negativePrefix = "-$"
+        negativeSuffix = ""
     }
     private var isCurrencyFormatting = false
-    private var isDataLoading = true // Initialize as true, indicates initial data population
+    private var isDataLoading = true
     private var hasLoadedInitialData = false
 
 
@@ -81,7 +79,7 @@ class ValueBudgetFragment : Fragment() {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(BudgetViewModel::class.java)) {
-                    // Pass the application and the sharedMovementsViewModel instance
+
                     return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
@@ -90,10 +88,10 @@ class ValueBudgetFragment : Fragment() {
         initializeViews(view)
         setupTotalBudgetInput()
         observeTotalBudget()
-        observeAlarmData(view) // Ensure this is called before setupAllCategoryInputs if it provides initial values
+        observeAlarmData(view)
         budgetViewModel.loadCategoryAlarms()
         observeCategoryBudgets(view)
-        setupAllCategoryInputs(view) // This will call the new setupCategoryAlarmThresholdInput
+        setupAllCategoryInputs(view)
         observeOverviewState()
     }
 
@@ -102,7 +100,7 @@ class ValueBudgetFragment : Fragment() {
         textViewIncome = view.findViewById(R.id.txt_budget_income)
         textViewExpense = view.findViewById(R.id.txt_budget_expense)
         editTextBudget = view.findViewById(R.id.monthly_budget)
-        editTextBudget.setText("") // Initial state, will be overwritten by observer if budget exists
+        editTextBudget.setText("")
     }
 
     private fun setupTotalBudgetInput() {
@@ -135,27 +133,18 @@ class ValueBudgetFragment : Fragment() {
             }
         }
         editTextBudget.addTextChangedListener(totalBudgetWatcher)
-        editTextBudget.setTag(R.id.monthly_budget_watcher_tag, totalBudgetWatcher) // Ensure this ID is unique and defined in ids.xml if not a view ID
+        editTextBudget.setTag(R.id.monthly_budget_watcher_tag, totalBudgetWatcher)
     }
 
     private fun observeTotalBudget() {
         budgetViewModel.totalBudget.observe(viewLifecycleOwner) { total ->
-            // OLD LOGIC:
-            // if (!hasLoadedInitialData && total == 0f && editTextBudget.text.toString().isBlank()) {
-            //     if (budgetViewModel.totalBudget.value == null) return@observe
-            // }
-            // hasLoadedInitialData = true
-
-            // NEW/IMPROVED LOGIC:
-            // Set hasLoadedInitialData to true if a non-null value has been observed,
-            // regardless of its specific value (0f is a valid initial state).
             if (budgetViewModel.totalBudget.value != null) {
                 hasLoadedInitialData = true
             }
 
-            // Guards to prevent loops/unnecessary updates during formatting or before data is loaded
+
             if (isCurrencyFormatting || !hasLoadedInitialData) {
-                return@observe // Exit early if still formatting or data isn't "loaded" yet
+                return@observe
             }
 
             val currentEditTextValue = parseCurrency(editTextBudget.text.toString()).toFloat()
@@ -172,16 +161,16 @@ class ValueBudgetFragment : Fragment() {
 
     private fun adjustCategoryBudgetsIfExceedTotal(totalBudget: Float) {
         val sumOfCategories = categoryBudgetLocalMap.values.sum()
-        if (sumOfCategories <= totalBudget || totalBudget < 0) return // also guard against negative total budget
+        if (sumOfCategories <= totalBudget || totalBudget < 0) return
 
         val scale = if (sumOfCategories > 0) totalBudget / sumOfCategories else 0f
         categoryBudgetLocalMap.forEach { (category, oldValue) ->
-            val newValue = (oldValue * scale).coerceAtLeast(0f) // Ensure non-negative
-            // Update ViewModel, which should trigger observer for category EditText
+            val newValue = (oldValue * scale).coerceAtLeast(0f)
+
             budgetViewModel.setCategoryBudget(
                 category,
                 newValue,
-                budgetViewModel.alarmThresholdMap[category] ?: 0f, // Keep existing alarm values
+                budgetViewModel.alarmThresholdMap[category] ?: 0f,
                 budgetViewModel.alarmEnabledMap[category] ?: false
             )
         }
@@ -193,7 +182,7 @@ class ValueBudgetFragment : Fragment() {
                 var firstAlarmDataEmission = true
                 launch {
                     budgetViewModel.alarmThresholds.collect { thresholds ->
-                        isDataLoading = true // Indicate that we are programmatically setting data
+                        isDataLoading = true
                         thresholds.forEach { (category, value) ->
                             val etThreshold = view.findViewById<EditText>(
                                 getEditTextIdForCategoryThreshold(category)
@@ -201,11 +190,11 @@ class ValueBudgetFragment : Fragment() {
                             val watcher = etThreshold.getTag(R.id.editTextAlarmFood + category.ordinal) as? TextWatcher
 
                             val currentEditTextVal = parseCurrency(etThreshold.text.toString()).toFloat()
-                            // Update if different, or if not formatted, or if it's the first load and needs formatting (e.g. to $0)
+
                             if (currentEditTextVal != value.toFloat() ||
                                 !etThreshold.text.toString().startsWith("$") ||
                                 (value.toFloat() == 0f && etThreshold.text.toString() != formatCurrency(0f)) ||
-                                (firstAlarmDataEmission && !hasLoadedInitialData) // Ensure initial values are set
+                                (firstAlarmDataEmission && !hasLoadedInitialData)
                             ) {
                                 formatAndSetEditText(etThreshold, value.toFloat(), watcher)
                             }
@@ -228,16 +217,14 @@ class ValueBudgetFragment : Fragment() {
     private fun observeCategoryBudgets(view: View) {
         budgetViewModel.categoryBudgets.observe(viewLifecycleOwner) { categoryMap ->
             if (!hasLoadedInitialData && categoryMap.values.all { it == 0f } && categoryMap.isNotEmpty()) {
-                // If all are zero and it's not an empty map (meaning data has arrived)
-                // and we haven't loaded initial data yet, this might be the initial state.
-                // Proceed if totalBudget has been loaded.
+
                 if (budgetViewModel.totalBudget.value == null) return@observe
             }
             if (categoryMap.isNotEmpty()) hasLoadedInitialData = true
 
 
             categoryMap.forEach { (category, amount) ->
-                categoryBudgetLocalMap[category] = amount // Keep local map in sync
+                categoryBudgetLocalMap[category] = amount
                 val editText = view.findViewById<EditText>(getEditTextIdForCategory(category))
                 val watcher = editText.getTag(R.id.et_food + category.ordinal) as? TextWatcher
 
@@ -253,7 +240,7 @@ class ValueBudgetFragment : Fragment() {
     private fun observeOverviewState() {
         homeViewModel.overviewState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is UiState.Loading -> { /* Handle loading state if needed */ }
+                is UiState.Loading -> { }
                 is UiState.Success -> {
                     val overview = state.data
                     textViewIncome.text = formatCurrency(overview.totalIncome.toFloat())
@@ -270,13 +257,10 @@ class ValueBudgetFragment : Fragment() {
 
     private fun setupAllCategoryInputs(view: View) {
         val categoryFields = getCategoryEditTextMap(view)
-        // isDataLoading is managed by observers primarily.
-        // Initial text for category EditTexts will be set by observeCategoryBudgets
 
         categoryFields.forEach { (category, editText) ->
-            // editText.setText("$0") // Initial text set by observer to avoid conflicts
             setupCategoryEditTextListener(category, editText, categoryFields, view)
-            setupCategoryAlarmThresholdInput(category, view) // This will use the new implementation
+            setupCategoryAlarmThresholdInput(category, view)
             setupCategoryAlarmSwitch(category, view)
         }
     }
@@ -329,12 +313,12 @@ class ValueBudgetFragment : Fragment() {
                 )
 
                 val displayStringToSet: String
-                if (finalClampedBigDecimal.compareTo(valueFromInput) != 0) { // Clamped
+                if (finalClampedBigDecimal.compareTo(valueFromInput) != 0) {
                     displayStringToSet =  currencyFormatter.format(finalClampedBigDecimal)
-                    if (valueFromInput > maxAllowedForThisCategory && totalBudgetNum > 0) { // only show toast if clamping was due to total budget limit
+                    if (valueFromInput > maxAllowedForThisCategory && totalBudgetNum > 0) {
                         showToast(requireContext(), "Valor ajustado para no exceder el presupuesto total o suma de otras categorías.")
                     }
-                } else { // Not clamped or clamped to itself (e.g. negative to zero)
+                } else {
                     displayStringToSet = processed.displayString
                 }
 
@@ -351,21 +335,21 @@ class ValueBudgetFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
         editText.addTextChangedListener(watcher)
-        editText.setTag(R.id.et_food + category.ordinal, watcher) // Make sure these R.id tags are correct and unique per category type
+        editText.setTag(R.id.et_food + category.ordinal, watcher)
     }
 
     private fun updateAlarmSwitchState(category: CategoryType, budgetValue: Float, view: View) {
         val switchCategoryAlarm: MaterialCheckBox = view.findViewById(getSwitchIdForCategory(category))
         switchCategoryAlarm.isEnabled = budgetValue > 0f
-        if (budgetValue <= 0f) { // Also ensure it's disabled if budget becomes 0 or less
+        if (budgetValue <= 0f) {
             switchCategoryAlarm.isChecked = false
-            // Persist this change if needed, or let setAlarmEnabled handle it
+
             budgetViewModel.setAlarmEnabled(category, false)
             persistAlarmChanges(category, budgetViewModel.alarmThresholdMap[category] ?: 0f, view, false)
         }
     }
 
-    // --- REFACTORED METHOD ---
+
     private fun setupCategoryAlarmThresholdInput(category: CategoryType, view: View) {
         val etCategoryAlarmThreshold: EditText = view.findViewById(getEditTextIdForCategoryThreshold(category))
 
@@ -397,15 +381,15 @@ class ValueBudgetFragment : Fragment() {
                 budgetViewModel.setAlarmThreshold(category, clampedFinalValue.toFloat())
 
                 val displayStringToSet: String
-                if (clampedFinalValue.compareTo(parsedValueFromInput) != 0) { // Value was clamped
+                if (clampedFinalValue.compareTo(parsedValueFromInput) != 0) {
                     displayStringToSet = "$" + currencyFormatter.format(clampedFinalValue)
-                    if (originalInputExceededBudget) { // Show toast only if clamping was due to exceeding category budget
+                    if (originalInputExceededBudget) {
                         showToast(
                             requireContext(),
                             "El umbral no puede superar el presupuesto de la categoría. Ajustado al máximo."
                         )
                     }
-                } else { // Value not meaningfully clamped from user's valid input perspective
+                } else {
                     displayStringToSet = processedInput.displayString
                 }
 
@@ -418,15 +402,15 @@ class ValueBudgetFragment : Fragment() {
             }
         }
         etCategoryAlarmThreshold.addTextChangedListener(alarmThresholdWatcher)
-        // Ensure this ID is unique and defined, e.g. in an ids.xml if not a view ID
+
         etCategoryAlarmThreshold.setTag(R.id.editTextAlarmFood + category.ordinal, alarmThresholdWatcher)
 
 
         etCategoryAlarmThreshold.setOnFocusChangeListener { v, hasFocus ->
-            // isDataLoading check might be redundant if hasLoadedInitialData is robustly handled by watchers
+
             if (isDataLoading || !hasLoadedInitialData) return@setOnFocusChangeListener
 
-            if (!hasFocus) { // Focus Lost
+            if (!hasFocus) {
                 val editText = v as EditText
                 val currentTextInEditText = editText.text.toString()
                 var valueFromEditText = parseCurrency(currentTextInEditText).toFloat()
@@ -434,21 +418,20 @@ class ValueBudgetFragment : Fragment() {
                 val categoryBudget = categoryBudgetLocalMap[category] ?: budgetViewModel.categoryBudgets.value?.get(category) ?: 0f
                 var finalClampedValue = valueFromEditText.coerceAtMost(categoryBudget).coerceAtLeast(0f)
 
-                // Ensure EditText visually reflects the final clamped value, especially if it was blank or invalid
-                // The watcher associated with the EditText
+
                 val watcher = editText.getTag(R.id.editTextAlarmFood + category.ordinal) as? TextWatcher
 
-                // If the text needs reformatting (e.g. "" -> "$0") or value changed by clamp
+
                 if (currentTextInEditText != formatCurrency(finalClampedValue) || valueFromEditText != finalClampedValue) {
-                    formatAndSetEditText(editText, finalClampedValue, watcher) // This will format and set text
-                    budgetViewModel.setAlarmThreshold(category, finalClampedValue) // Ensure VM is updated
+                    formatAndSetEditText(editText, finalClampedValue, watcher)
+                    budgetViewModel.setAlarmThreshold(category, finalClampedValue)
                 }
 
-                // Persist the value that's confirmed in the VM (or finalClampedValue as best effort)
+
                 val valueToPersist = budgetViewModel.alarmThresholdMap[category] ?: finalClampedValue
                 persistAlarmChanges(category, valueToPersist, view)
             }
-            // No special behavior for gaining focus, to match other EditTexts
+
         }
     }
 
@@ -457,24 +440,24 @@ class ValueBudgetFragment : Fragment() {
         val etCategoryAlarmThreshold: EditText = view.findViewById(getEditTextIdForCategoryThreshold(category))
 
         switchCategoryAlarm.setOnCheckedChangeListener { _, isChecked ->
-            if (isDataLoading || !hasLoadedInitialData) return@setOnCheckedChangeListener // Guard against programmatic changes during load
+            if (isDataLoading || !hasLoadedInitialData) return@setOnCheckedChangeListener
 
             val thresholdValueString = etCategoryAlarmThreshold.text.toString()
             var thresholdValue = parseCurrency(thresholdValueString).toFloat()
             val categoryBudget = categoryBudgetLocalMap[category] ?: budgetViewModel.categoryBudgets.value?.get(category) ?: 0f
 
             if (thresholdValue <= 0f && isChecked) {
-                switchCategoryAlarm.isChecked = false // Revert check
+                switchCategoryAlarm.isChecked = false
                 showToast(requireContext(), "No puedes activar una alarma con umbral 0 o inválido.")
                 return@setOnCheckedChangeListener
             }
 
-            // Ensure threshold is valid and clamped before enabling
+
             if (thresholdValue > categoryBudget || thresholdValue < 0f || thresholdValueString != formatCurrency(thresholdValue) ) {
                 thresholdValue = thresholdValue.coerceAtMost(categoryBudget).coerceAtLeast(0f)
                 val watcher = etCategoryAlarmThreshold.getTag(R.id.editTextAlarmFood + category.ordinal) as? TextWatcher
-                formatAndSetEditText(etCategoryAlarmThreshold, thresholdValue, watcher) // Update EditText if clamped
-                budgetViewModel.setAlarmThreshold(category, thresholdValue) // Update VM
+                formatAndSetEditText(etCategoryAlarmThreshold, thresholdValue, watcher)
+                budgetViewModel.setAlarmThreshold(category, thresholdValue)
             }
 
 
@@ -486,7 +469,7 @@ class ValueBudgetFragment : Fragment() {
     private fun persistAlarmChanges(
         category: CategoryType,
         threshold: Float,
-        view: View, // View might not be needed if switch state comes from ViewModel
+        view: View,
         isEnabledOverride: Boolean? = null
     ) {
         val isEnabled = isEnabledOverride ?: budgetViewModel.alarmEnabledMap[category] ?: view.findViewById<MaterialCheckBox>(
@@ -496,11 +479,11 @@ class ValueBudgetFragment : Fragment() {
     }
 
     private fun parseCurrency(input: String): BigDecimal {
-        if (input.isBlank()) return BigDecimal.ZERO // Handle blank input explicitly as zero
+        if (input.isBlank()) return BigDecimal.ZERO
         return try {
-            // More robust parsing: remove currency symbol and grouping separators based on formatter's locale
+
             val cleanString = input.replace("$", "").replace(currencyFormatter.decimalFormatSymbols.groupingSeparator.toString(), "")
-            // Replace decimal separator with dot for BigDecimal if it's different
+
             val parsableString = cleanString.replace(currencyFormatter.decimalFormatSymbols.decimalSeparator.toString(), ".")
             BigDecimal(parsableString)
         } catch (e: NumberFormatException) {
@@ -526,12 +509,9 @@ class ValueBudgetFragment : Fragment() {
         if (currentText != formatted) {
             watcherToRemoveTemporarily?.let { editText.removeTextChangedListener(it) }
             editText.setText(formatted)
-            // Set selection after text is fully set
             editText.setSelection(formatted.length.coerceAtMost(editText.text.length))
             watcherToRemoveTemporarily?.let { editText.addTextChangedListener(it) }
         } else if (editText.selectionStart != formatted.length && editText.isFocused) {
-            // Only adjust selection if text is same AND field is focused (to avoid issues during initial load)
-            // Or, more simply, always try to set selection if text is already correct
             editText.setSelection(formatted.length.coerceAtMost(editText.text.length))
         }
     }

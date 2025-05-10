@@ -6,6 +6,12 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
+import android.text.Spanned
+import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +39,14 @@ import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
 import itson.appsmoviles.nest.ui.util.showToast
+import java.util.regex.Pattern
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
 
     private val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
+    private lateinit var viewModel: AddExpenseViewModel
+    private lateinit var budgetViewModel: BudgetViewModel
 
     private lateinit var edtAmount: EditText
     private lateinit var edtDescription: EditText
@@ -46,25 +55,26 @@ class AddExpenseFragment : Fragment() {
     private lateinit var spinner: Spinner
     private lateinit var radioCash: RadioButton
     private lateinit var radioCard: RadioButton
+
     private var selectedTimestamp: Long? = null
 
-    private lateinit var viewModel: AddExpenseViewModel
-    private lateinit var budgetViewModel: BudgetViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_add_expense, container, false)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(this)[AddExpenseViewModel::class.java]
         budgetViewModel = ViewModelProvider(requireActivity())[BudgetViewModel::class.java]
+        bindViews(view)
+        setUpSpinner(requireContext(), spinner)
+        setUpCurrencyField()
+        setUpListeners()
+        viewModel.fetchExpenses()
+    }
 
+    private fun bindViews(view: View) {
         edtAmount = view.findViewById(R.id.edt_amount_expense)
         edtDescription = view.findViewById(R.id.edt_description_expense)
         btnDate = view.findViewById(R.id.btn_date_expense)
@@ -72,113 +82,100 @@ class AddExpenseFragment : Fragment() {
         radioCash = view.findViewById(R.id.radio_cash)
         radioCard = view.findViewById(R.id.radio_card)
         btnAddExpense = view.findViewById(R.id.btn_add_expense)
-
-        // Configuración inicial
-        setUpSpinner(requireContext(), spinner)
-        addDollarSign(edtAmount)
-        setUpClickListeners()
-        setRadioColors()
-
-        // Observar gastos (debug)
-        viewModel.fetchExpenses()
-        viewModel.expenses.observe(viewLifecycleOwner) { expenses ->
-            Log.d("AddExpenseFragment", "Expenses: $expenses")
-        }
     }
 
-    private fun setUpClickListeners() {
+    private fun setUpListeners() {
         btnDate.setOnClickListener {
-            showDatePicker(
-                context = requireContext(),
-                onDateSelected = { timestampMillis ->
-                    selectedTimestamp = timestampMillis
-                    btnDate.text = formatDateLongForm(timestampMillis)
-                }
-            )
+            showDatePicker(requireContext()) {
+                selectedTimestamp = it
+                btnDate.text = formatDateLongForm(it)
+            }
         }
 
         btnAddExpense.setOnClickListener {
-            addExpense()
+            if (!areFieldsValid()) return@setOnClickListener
+            val expense = Expense(
+                id = "",
+                description = edtDescription.text.toString().trim(),
+                amount = getAmount(),
+                date = selectedTimestamp ?: 0L,
+                category = CategoryType.fromDisplayName(spinner.selectedItem.toString()),
+                paymentMethod = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
+            )
+
+            val category = expense.category
+            val exceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, expense.amount.toFloat())
+
+            viewModel.addExpense(
+                expense,
+                requireContext().applicationContext,
+                budgetViewModel.alarmThresholdMap[category]?.toDouble() ?: 0.0,
+                budgetViewModel.alarmEnabledMap[category] == true,
+                onSuccess = {
+                    sharedMovementsViewModel.notifyMovementDataChanged()
+                    requireActivity().supportFragmentManager.popBackStack()
+                },
+                onFailure = { }
+            )
         }
-    }
 
-    private fun addExpense() {
-        if (!areFieldsValid()) return
-
-        val expense = Expense(
-            id = "",
-            description = edtDescription.text.toString().trim(),
-            amount = getAmount(),
-            date = selectedTimestamp ?: 0L,
-            category = CategoryType.fromDisplayName(spinner.selectedItem.toString()),
-            paymentMethod = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
-        )
-
-        val category = expense.category
-        val newExpense = expense.amount
-
-
-        val thresholdExceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
-
-        if (thresholdExceeded) {
-
-        }
-
-        viewModel.addExpense(
-            expense = expense,
-            context = requireContext().applicationContext,
-            alarmThreshold = (budgetViewModel.alarmThresholdMap[category] ?: 0f).toDouble(),
-            enabled = (budgetViewModel.alarmEnabledMap[category] == true),
-            onSuccess = {
-                sharedMovementsViewModel.notifyMovementDataChanged()
-                requireActivity().supportFragmentManager.popBackStack()
-            },
-            onFailure = { e ->
-
-            }
-        )
-
-    }
-
-
-    private fun setRadioColors() {
-        radioCash.buttonTintList =
-            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
-        radioCard.buttonTintList =
-            ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
+        radioCash.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
+        radioCard.buttonTintList = ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_card)
     }
 
     private fun getAmount(): Double {
-        return edtAmount.text.toString().replace("$", "").replace(",", ".").toDouble()
+        return edtAmount.text.toString().replace("$", "").replace(",", ".").toDoubleOrNull() ?: 0.0
     }
 
     private fun areFieldsValid(): Boolean {
-        if (edtAmount.text.isNullOrEmpty()) {
-            Toast.makeText(context, "Please enter an amount.", Toast.LENGTH_SHORT).show()
-            return false
+        return when {
+            edtAmount.text.isNullOrEmpty() -> show("Please enter an amount.").let { false }
+            spinner.selectedItemPosition == 0 -> show("Please select a category.").let { false }
+            edtDescription.text.isNullOrEmpty() -> show("Please enter a description.").let { false }
+            selectedTimestamp == null -> show("Please select a date.").let { false }
+            !radioCash.isChecked && !radioCard.isChecked -> show("Please select a payment method.").let { false }
+            else -> true
         }
+    }
 
-        if (spinner.selectedItemPosition == 0) {
-            Toast.makeText(context, "Please select a category.", Toast.LENGTH_SHORT).show()
-            return false
-        }
+    private fun show(msg: String) = Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 
-        if (edtDescription.text.isNullOrEmpty()) {
-            Toast.makeText(context, "Please enter a description.", Toast.LENGTH_SHORT).show()
-            return false
-        }
+    private fun setUpCurrencyField() {
+        edtAmount.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        edtAmount.keyListener = DigitsKeyListener.getInstance("0123456789.")
 
-        if (selectedTimestamp == null) {
-            Toast.makeText(context, "Please select a date.", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        val maxBefore = 7
+        val maxAfter = 2
 
-        if (!radioCash.isChecked && !radioCard.isChecked) {
-            Toast.makeText(context, "Please select a payment method.", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        edtAmount.filters = arrayOf(InputFilter.LengthFilter(maxBefore + maxAfter + 2))
 
-        return true
+        edtAmount.addTextChangedListener(object : TextWatcher {
+            private var isEditing = false
+
+            override fun afterTextChanged(s: Editable?) {
+                if (isEditing) return
+                isEditing = true
+
+                val clean = s.toString().replace("[^\\d.]".toRegex(), "")
+                val parts = clean.split('.')
+
+                val integerPart = parts.getOrNull(0)?.take(maxBefore) ?: ""
+                val decimalPart = parts.getOrNull(1)?.take(maxAfter) ?: ""
+
+                val formatted = when {
+                    decimalPart.isNotEmpty() -> "$$integerPart.$decimalPart"
+                    clean.contains(".") -> "$$integerPart."
+                    else -> "$$integerPart"
+                }
+
+                edtAmount.setText(formatted)
+                edtAmount.setSelection(formatted.length)
+                isEditing = false
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
 

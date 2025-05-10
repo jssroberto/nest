@@ -82,15 +82,15 @@ class ExpensesDrawable(
         val currentText = "$${"%.2f".format(current)}"
         val totalTextWidth = textPaint.measureText(totalText)
 
-        // Draw background (budget bar)
+
         canvas.drawRect(0f, 0f, width, height, backgroundPaint)
 
-        // Draw current expense bar (animated)
+
         val ratio = if (total == 0f) 1f else (current / total).coerceAtMost(1f)
         val progressWidth = animatedProgress * ratio * width
         canvas.drawRect(0f, 0f, progressWidth, height, progressPaint)
 
-        // Draw texts
+
         canvas.drawText(currentText, margin, textY, textPaint)
         canvas.drawText(totalText, width - totalTextWidth - margin, textY, textPaint)
     }
