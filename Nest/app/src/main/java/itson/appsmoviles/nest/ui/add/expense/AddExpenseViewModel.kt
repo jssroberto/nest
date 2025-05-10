@@ -30,13 +30,14 @@ class AddExpenseViewModel : ViewModel() {
         expense: Expense,
         context: Context,
         alarmThreshold: Double,
+        enabled: Boolean,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         viewModelScope.launch {
             try {
                 repository.addExpense(expense, {
-                    checkAndNotifyIfOverThreshold(context, expense.amount, alarmThreshold)
+                    checkAndNotifyIfOverThreshold(context, expense.amount, alarmThreshold, enabled)
 
                     onSuccess()
                 }, onFailure)
@@ -49,12 +50,13 @@ class AddExpenseViewModel : ViewModel() {
     private fun checkAndNotifyIfOverThreshold(
         context: Context,
         amountAdded: Double,
-        alarmThreshold: Double
+        alarmThreshold: Double,
+        enabled: Boolean
     ) {
         val totalSpent = _expenses.value?.sumOf { it.amount } ?: 0.0
         val newTotal = totalSpent + amountAdded
 
-        if (newTotal >= alarmThreshold) {
+        if (newTotal >= alarmThreshold && enabled) {
             showNotification(context, newTotal, alarmThreshold)
         }
     }

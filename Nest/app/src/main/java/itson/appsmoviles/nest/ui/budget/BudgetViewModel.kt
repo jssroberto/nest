@@ -280,16 +280,17 @@ class BudgetViewModel(
         if (!isAlarmEnabled) {
             Log.d("BudgetViewModel", "Alarm not enabled for category: $category")
             return false
-        }
+        }else {
 
-        val currentSpent = categoryBudgets.value?.get(category) ?: 0f
-        val newTotal = currentSpent + newExpense
-        Log.d("BudgetViewModel", "Current spent: $currentSpent, New total: $newTotal")
+            val currentSpent = categoryBudgets.value?.get(category) ?: 0f
+            val newTotal = currentSpent + newExpense
+            Log.d("BudgetViewModel", "Current spent: $currentSpent, New total: $newTotal")
 
-        if (newTotal > threshold) {
-            Log.d("BudgetViewModel", "Threshold exceeded for category: $category")
-            sendThresholdExceededNotification(category)
-            return true
+            if (newTotal > threshold) {
+                Log.d("BudgetViewModel", "Threshold exceeded for category: $category")
+                sendThresholdExceededNotification(category)
+                return true
+            }
         }
 
         Log.d("BudgetViewModel", "No threshold exceeded for category: $category")

@@ -16,6 +16,7 @@ import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -26,10 +27,12 @@ import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
 import itson.appsmoviles.nest.ui.budget.BudgetViewModel
 import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
+import itson.appsmoviles.nest.ui.main.MainActivity
 import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
+import itson.appsmoviles.nest.ui.util.showToast
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
@@ -114,27 +117,24 @@ class AddExpenseFragment : Fragment() {
         val category = expense.category
         val newExpense = expense.amount
 
-        // Verificar si el umbral de la categoría se ha excedido
-        val thresholdExceeded =
-            budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
+
+        val thresholdExceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(category, newExpense.toFloat())
 
         if (thresholdExceeded) {
-            // Si el umbral ha sido excedido, ya se envió la notificación en el ViewModel
-            // Aquí puedes manejar otros casos si es necesario
+
         }
 
-        // Añadir el gasto al ViewModel
         viewModel.addExpense(
             expense = expense,
             context = requireContext().applicationContext,
-            alarmThreshold = (budgetViewModel.alarmThresholdMap[category]
-                ?: 0f).toDouble(),  // Conversión a Double
+            alarmThreshold = (budgetViewModel.alarmThresholdMap[category] ?: 0f).toDouble(),
+            enabled = (budgetViewModel.alarmEnabledMap[category] == true),
             onSuccess = {
                 sharedMovementsViewModel.notifyMovementDataChanged()
                 requireActivity().supportFragmentManager.popBackStack()
             },
             onFailure = { e ->
-                // manejar el error
+
             }
         )
 
@@ -181,35 +181,5 @@ class AddExpenseFragment : Fragment() {
         return true
     }
 
-    private fun sendNotification(expenseAmount: Double, alarmThreshold: Double) {
-        val context = requireContext()
-
-        // Crear el canal de notificación (para API 26 y superior)
-        val channelId = "expense_alarm_channel"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Expense Alarm"
-            val importance =
-                NotificationManager.IMPORTANCE_HIGH  // Importancia alta para mostrar notificación
-            val channel = NotificationChannel(channelId, name, importance)
-            val notificationManager = context.getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-        }
-
-        val notificationTitle = "Alerta de Gasto"
-        val notificationText =
-            "El gasto de $expenseAmount ha excedido el umbral de $alarmThreshold."
-
-        // Crear la notificación
-        val builder = Notification.Builder(context, channelId)
-            .setContentTitle(notificationTitle)
-            .setContentText(notificationText)
-            .setSmallIcon(R.drawable.alert_circle)
-            .setPriority(Notification.PRIORITY_HIGH) // Usamos la nueva constante
-
-        // Mostrar la notificación
-        val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, builder.build())
-    }
 
 }

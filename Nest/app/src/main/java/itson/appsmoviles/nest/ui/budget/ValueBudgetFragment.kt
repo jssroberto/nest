@@ -330,7 +330,7 @@ class ValueBudgetFragment : Fragment() {
 
                 val displayStringToSet: String
                 if (finalClampedBigDecimal.compareTo(valueFromInput) != 0) { // Clamped
-                    displayStringToSet = "$" + currencyFormatter.format(finalClampedBigDecimal)
+                    displayStringToSet =  currencyFormatter.format(finalClampedBigDecimal)
                     if (valueFromInput > maxAllowedForThisCategory && totalBudgetNum > 0) { // only show toast if clamping was due to total budget limit
                         showToast(requireContext(), "Valor ajustado para no exceder el presupuesto total o suma de otras categorías.")
                     }

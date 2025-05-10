@@ -14,15 +14,6 @@ import itson.appsmoviles.nest.data.enum.CategoryType
 
 class ExpenseProgressManager(private val context: Context) {
 
-    private val colorMapping = mapOf(
-        "Food" to R.color.category_food,
-        "Transport" to R.color.category_transport,
-        "Health" to R.color.category_health,
-        "Others" to R.color.category_other,
-        "Living" to R.color.category_living,
-        "Recreation" to R.color.category_recreation
-    )
-
     fun updateProgressBars(
         rootView: View,
         expenseSums: Map<CategoryType, Float>,
