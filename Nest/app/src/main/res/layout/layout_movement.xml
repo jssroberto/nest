@@ -1,61 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/movement_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="12dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/movement_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp">
 
     <ImageView
-            android:id="@+id/movement_icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_category_food"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="10dp"
-            android:layout_weight="0.1"
-            app:tint="@color/primary_color" />
+        android:id="@+id/movement_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_category_food"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:layout_weight="0.1"
+        app:tint="@color/primary_color" />
 
 
     <LinearLayout
-            android:layout_width="0dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.60">
+
+        <TextView
+            android:id="@+id/movement_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.60"
-            >
-
-        <TextView
-                android:id="@+id/movement_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Coke without sugar"
-                android:maxLines="1"
-                android:ellipsize="end"
-                />
+            android:text="Coke without sugar"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
 
         <TextView
-                android:id="@+id/movement_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="martes 20/02/2025"
-                android:textSize="@dimen/text_size_small"
-                android:textColor="@color/txt_secondary"
+            android:id="@+id/movement_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="martes 20/02/2025"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@color/txt_secondary"
 
-                />
+            />
 
     </LinearLayout>
 
     <TextView
-            android:id="@+id/movement_amount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="$9999.99"
-            android:gravity="end"
-            android:textSize="18sp"
-            android:layout_gravity="center"
-            android:layout_weight="0.30"
-            android:paddingEnd="5dp"
-            />
+        android:id="@+id/movement_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="$9999.99"
+        android:gravity="end"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:layout_weight="0.30"
+        android:paddingEnd="5dp" />
 </LinearLayout>

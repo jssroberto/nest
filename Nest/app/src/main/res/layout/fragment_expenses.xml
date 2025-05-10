@@ -103,16 +103,15 @@
             android:id="@+id/graph"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:layout_gravity="center_horizontal"
-            />
+            android:layout_gravity="center_horizontal" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:orientation="vertical"
             android:layout_gravity="end"
-            >
+            android:layout_marginStart="35dp"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -330,7 +329,6 @@
             android:layout_marginBottom="16dp"
             android:orientation="vertical"
             android:paddingHorizontal="16dp" />
-
 
 
         <View

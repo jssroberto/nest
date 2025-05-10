@@ -2,17 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingVertical="10dp">
 
 
     <TextView
         android:id="@+id/textViewCategoryName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/lexend_medium"
         android:paddingStart="7dp"
         android:text="Food"
-        android:fontFamily="@font/lexend_medium"
         android:textColor="@color/dateButtonLetters"
         android:textSize="@dimen/text_size_medium_large" />
 
@@ -20,8 +20,8 @@
         android:id="@+id/progressBarCategory"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:paddingHorizontal="9dp"
         android:layout_height="15dp"
+        android:paddingHorizontal="9dp"
         android:progress="30"
         android:progressBackgroundTint="@color/light_blue"
         android:progressTint="@color/darker_blue" />
@@ -29,8 +29,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="7dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="7dp">
 
         <TextView
             android:id="@+id/textViewSpentBudget"
@@ -58,7 +58,6 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,10 +69,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="0dp"
+            android:buttonTint="@color/dateButtonLetters"
             android:checked="false"
             android:text="Set Alarm At: "
             android:textColor="@color/dateButtonLetters"
-            android:buttonTint="@color/dateButtonLetters"
             android:textSize="@dimen/text_size_medium" />
 
 
@@ -82,10 +81,10 @@
             android:layout_width="80dp"
             android:layout_height="25dp"
             android:layout_gravity="center"
-            android:gravity="center"
             android:background="@drawable/edittext_rounded"
-            android:inputType="number"
+            android:gravity="center"
             android:hint="$600"
+            android:inputType="number"
             android:paddingVertical="2dp" />
 
 

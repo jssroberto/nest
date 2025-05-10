@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".ui.add.expense.AddExpenseFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.add.expense.AddExpenseFragment">
 
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/amount"
-            android:layout_marginStart="7dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:text="@string/amount" />
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_rounded"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="7dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/edittext_rounded"
+        android:orientation="vertical">
 
 
         <EditText
-                android:id="@+id/edt_amount_expense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/amount_hint"
-                android:background="@color/edt_text"
-                android:textSize="@dimen/text_size_x_large"
-                android:gravity="center"
-                android:autofillHints=""
-                android:inputType="numberDecimal" />
+            android:id="@+id/edt_amount_expense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:background="@color/edt_text"
+            android:gravity="center"
+            android:hint="@string/amount_hint"
+            android:inputType="numberDecimal"
+            android:textSize="@dimen/text_size_x_large" />
 
 
     </LinearLayout>
 
 
     <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:text="@string/category"
-            android:layout_marginStart="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="15dp"
+        android:gravity="top"
+        android:text="@string/category"
 
-            />
+        />
 
     <Spinner
-            android:id="@+id/spinner_categories_expense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/edittext_rounded"
-            android:backgroundTint="@color/edt_text"
-            android:paddingVertical="3dp"
+        android:id="@+id/spinner_categories_expense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/edittext_rounded"
+        android:backgroundTint="@color/edt_text"
+        android:paddingVertical="3dp"
 
-            />
+        />
 
     <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:text="@string/description"
-            android:layout_marginStart="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="15dp"
+        android:gravity="top"
+        android:text="@string/description"
 
-            />
+        />
 
     <EditText
         android:id="@+id/edt_description_expense"
@@ -75,78 +75,74 @@
         android:autofillHints=""
         android:background="@drawable/edittext_rounded"
         android:gravity="start"
-        android:maxLength="50"
         android:hint="@string/description_hint_expense"
         android:inputType="textMultiLine"
-        android:minHeight="90dp"
-            />
+        android:maxLength="50"
+        android:minHeight="90dp" />
 
     <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:text="@string/date"
-            android:layout_marginStart="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="15dp"
+        android:gravity="top"
+        android:text="@string/date"
 
-            />
+        />
 
     <Button
-            android:id="@+id/btn_date_expense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
-            android:drawableEnd="@drawable/calendar"
-            android:gravity="fill_vertical"
-            android:hint="@string/select_date"
-            android:paddingHorizontal="14dp"
-            android:layout_gravity="center"
-            style="@style/Nest.Selectable" />
+        android:id="@+id/btn_date_expense"
+        style="@style/Nest.Selectable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="7dp"
+        android:drawableEnd="@drawable/calendar"
+        android:gravity="fill_vertical"
+        android:hint="@string/select_date"
+        android:paddingHorizontal="14dp" />
 
 
     <TextView
-            android:layout_marginTop="15dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:text="@string/payment_method"
-            android:layout_marginStart="7dp"
-            />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="15dp"
+        android:gravity="top"
+        android:text="@string/payment_method" />
 
     <RadioGroup
-            android:id="@+id/radio_payment_method"
-            android:layout_width="match_parent"
+        android:id="@+id/radio_payment_method"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_cash"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="7dp">
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/background_color_radio_cash"
+            android:buttonTint="@color/txt_color_radio_cash"
+            android:gravity="start|center"
+            android:text="@string/cash"
+            android:textColor="@color/txt_color_radio_cash" />
 
         <RadioButton
-                android:id="@+id/radio_cash"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/button"
-                android:backgroundTint="@color/background_color_radio_cash"
-                android:text="@string/cash"
-                android:layout_marginEnd="5dp"
-                android:textColor="@color/txt_color_radio_cash"
-                android:gravity="start|center"
-                android:buttonTint="@color/txt_color_radio_cash"
-                />
-
-        <RadioButton
-                android:id="@+id/radio_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/button"
-                android:backgroundTint="@color/background_color_radio_card"
-                android:text="@string/card"
-                android:textColor="@color/txt_color_radio_card"
-                android:gravity="start|center"
-                android:buttonTint="@color/txt_color_radio_card"
-                />
+            android:id="@+id/radio_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button"
+            android:backgroundTint="@color/background_color_radio_card"
+            android:buttonTint="@color/txt_color_radio_card"
+            android:gravity="start|center"
+            android:text="@string/card"
+            android:textColor="@color/txt_color_radio_card" />
 
     </RadioGroup>
 
