@@ -31,12 +31,12 @@ class ExpensesBarPainter(
         if (newBudget >= 0) { // Basic validation
             this.totalBudget = newBudget
             if (repaintNow && lastExpensesMap != null) {
-                paintBudget(lastExpensesMap!!) // Repaint with the new budget
+                paintExpenses(lastExpensesMap!!) // Repaint with the new budget
             }
         }
     }
 
-    fun paintBudget(expenses: Map<CategoryType, Double>) {
+    fun paintExpenses(expenses: Map<CategoryType, Double>) {
         // Store the latest expenses map
         this.lastExpensesMap = expenses
 

@@ -337,12 +337,6 @@ class ValueBudgetFragment : Fragment() {
                 val displayStringToSet: String
                 if (finalClampedBigDecimal.compareTo(valueFromInput) != 0) {
                     displayStringToSet = currencyFormatter.format(finalClampedBigDecimal)
-                    if (valueFromInput > maxAllowedForThisCategory && totalBudgetNum > 0) {
-                        showToast(
-                            requireContext(),
-                            "Valor ajustado para no exceder el presupuesto total o suma de otras categorías."
-                        )
-                    }
                 } else {
                     displayStringToSet = processed.displayString
                 }
@@ -425,12 +419,6 @@ class ValueBudgetFragment : Fragment() {
                 val displayStringToSet: String
                 if (clampedFinalValue.compareTo(parsedValueFromInput) != 0) {
                     displayStringToSet =   currencyFormatter.format(clampedFinalValue)
-                    if (originalInputExceededBudget) {
-                        showToast(
-                            requireContext(),
-                            "El umbral no puede superar el presupuesto de la categoría. Ajustado al máximo."
-                        )
-                    }
                 } else {
                     displayStringToSet = processedInput.displayString
                 }

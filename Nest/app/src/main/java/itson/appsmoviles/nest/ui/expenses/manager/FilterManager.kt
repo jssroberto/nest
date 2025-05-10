@@ -29,6 +29,7 @@ class FilterManager(
                 onDateSelected = { timestampMillis ->
                     startTimestamp = timestampMillis
                     startDateButton.text = formatDateShortForm(timestampMillis)
+                    startDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
                 }
             )
         }
@@ -39,6 +40,7 @@ class FilterManager(
                 onDateSelected = { timestampMillis ->
                     endTimestamp = timestampMillis
                     endDateButton.text = formatDateShortForm(timestampMillis)
+                    endDateButton.setTextColor(ContextCompat.getColor(context, R.color.txt_color))
                 }
             )
         }

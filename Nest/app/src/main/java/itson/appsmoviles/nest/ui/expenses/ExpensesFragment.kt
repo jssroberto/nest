@@ -58,7 +58,6 @@ class ExpensesFragment : Fragment() {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                // Necesitas pasar también el SharedMovementsViewModel aquí
                 val sharedMovementsViewModel: SharedMovementsViewModel by activityViewModels()
                 return BudgetViewModel(requireActivity().application, sharedMovementsViewModel) as T
             }
@@ -73,8 +72,6 @@ class ExpensesFragment : Fragment() {
             }
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,9 +88,7 @@ class ExpensesFragment : Fragment() {
         val scrollView = requireView().findViewById<NestedScrollView>(R.id.scrollView)
         val graph =  requireView().findViewById<ConstraintLayout>(R.id.graph)
 
-
         graph.setOnTouchListener { v, event ->
-
             scrollView.requestDisallowInterceptTouchEvent(false)
             false
         }

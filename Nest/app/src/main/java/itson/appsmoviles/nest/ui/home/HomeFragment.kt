@@ -162,7 +162,7 @@ class HomeFragment : Fragment() {
                         expensesBarPainter =
                             ExpensesBarPainter(requireContext(), expensesBar, overview.budget)
                         lastExpensesData?.let { cachedData ->
-                            expensesBarPainter.paintBudget(cachedData.categoryTotals)
+                            expensesBarPainter.paintExpenses(cachedData.categoryTotals)
                         }
 
                     } else {
@@ -187,7 +187,7 @@ class HomeFragment : Fragment() {
                     val movementsData = state.data
                     movementAdapter.updateData(movementsData.displayedExpenses)
                     if (::expensesBarPainter.isInitialized) {
-                        expensesBarPainter.paintBudget(movementsData.categoryTotals)
+                        expensesBarPainter.paintExpenses(movementsData.categoryTotals)
                     } else {
                         viewModel.overviewState.value?.let { overviewState ->
                             if (overviewState is UiState.Success) {
@@ -196,7 +196,7 @@ class HomeFragment : Fragment() {
                                     expensesBar,
                                     overviewState.data.budget
                                 )
-                                expensesBarPainter.paintBudget(movementsData.categoryTotals)
+                                expensesBarPainter.paintExpenses(movementsData.categoryTotals)
                             }
                         }
                     }

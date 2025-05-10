@@ -56,8 +56,8 @@
     <string name="other">Other</string>
     <string name="living">Living</string>
     <string name="select_date">Select Date</string>
-    <string name="end_date">End date</string>
-    <string name="start_date">Start date</string>
+    <string name="end_date">End Date</string>
+    <string name="start_date">Start Date</string>
     <string name="apply_filters">Apply Filters</string>
     <string name="date">Date</string>
     <string name="amount">Amount</string>

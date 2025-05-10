@@ -17,6 +17,7 @@ import itson.appsmoviles.nest.ui.home.state.HomeOverviewState
 import itson.appsmoviles.nest.ui.home.state.MovementsState
 import itson.appsmoviles.nest.ui.util.unaccent
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Locale
 
 class HomeViewModel(
@@ -100,7 +101,7 @@ class HomeViewModel(
     }
 
     private fun applyFilterAndSearch() {
-        if (fullMovementsList.isEmpty() && _fetchedMovements.value !is UiState.Success) {
+        if (fullMovementsList.isEmpty() && fullExpensesList.isEmpty()) {
             return
         }
 
@@ -138,7 +139,23 @@ class HomeViewModel(
             }
         }
 
-        val categoryTotals = calculateCategoryTotals(fullExpensesList)
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfMonth = calendar.timeInMillis
+
+        calendar.add(Calendar.MONTH, 1)
+        calendar.add(Calendar.MILLISECOND, -1)
+        val endOfMonth = calendar.timeInMillis
+
+        val currentMonthExpenses = fullExpensesList.filter { expense ->
+            expense.date in startOfMonth..endOfMonth
+        }
+
+        val categoryTotals = calculateCategoryTotals(currentMonthExpenses)
 
         _movementsState.value = UiState.Success(
             MovementsState(

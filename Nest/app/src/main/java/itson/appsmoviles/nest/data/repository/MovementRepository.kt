@@ -16,6 +16,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.util.Calendar
 
 class MovementRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -24,16 +25,27 @@ class MovementRepository {
     private val budgetRepository = BudgetRepository()
 
     suspend fun getOverviewData(): HomeOverviewState? = withContext(Dispatchers.IO) {
-        val userId = auth.currentUser?.uid
-        if (userId == null) {
-            Log.e("ExpenseRepository", "getOverviewData: User not authenticated")
+        val userId = auth.currentUser?.uid ?: run {
             return@withContext null
         }
 
         return@withContext try {
             val userName = auth.currentUser?.displayName ?: "User"
-            val totalIncome = fetchTotalForNode(userId, "incomes")
-            val totalExpenses = fetchTotalForNode(userId, "expenses")
+
+            val calendar = Calendar.getInstance()
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            calendar.set(Calendar.MILLISECOND, 0)
+            val startOfMonth = calendar.timeInMillis
+
+            calendar.add(Calendar.MONTH, 1)
+            calendar.add(Calendar.MILLISECOND, -1)
+            val endOfMonth = calendar.timeInMillis
+
+            val totalIncome = fetchTotalForNode(userId, "incomes", startOfMonth, endOfMonth)
+            val totalExpenses = fetchTotalForNode(userId, "expenses", startOfMonth, endOfMonth)
             val budget = budgetRepository.getBudgetDataSuspend()?.totalBudget ?: 0f
 
             HomeOverviewState(
@@ -43,23 +55,30 @@ class MovementRepository {
                 budget = budget.toDouble()
             )
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error fetching overview data", e)
             null
         }
     }
 
-
-    private suspend fun fetchTotalForNode(userId: String, nodeName: String): Double {
+    private suspend fun fetchTotalForNode(
+        userId: String,
+        nodeName: String,
+        startTime: Long,
+        endTime: Long
+    ): Double {
         return try {
             val path = database.child("users").child(userId).child("movements").child(nodeName)
             val snapshot = path.get().await()
             if (!snapshot.exists()) return 0.0
 
             snapshot.children.sumOf { itemSnapshot ->
-                getAmountFromSnapshot(itemSnapshot) ?: 0.0
+                val itemDate = itemSnapshot.child("date").getValue(Long::class.java) ?: 0L
+                if (itemDate in startTime..endTime) {
+                    getAmountFromSnapshot(itemSnapshot) ?: 0.0
+                } else {
+                    0.0
+                }
             }
         } catch (e: Exception) {
-            Log.e("ExpenseRepository", "Error fetching total for $nodeName", e)
             throw IOException("Error fetching total for $nodeName", e)
         }
     }
@@ -68,6 +87,7 @@ class MovementRepository {
         return snapshot.child("amount").getValue(Double::class.java)
             ?: snapshot.child("amount").getValue(Long::class.java)?.toDouble()
     }
+
 
     private suspend fun fetchExpenses(queryModifier: (Query) -> Query = { it }): List<Expense> {
         val userId = auth.currentUser?.uid ?: return emptyList()

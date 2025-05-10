@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+        android:background="@color/background"
     tools:context=".ui.expenses.ExpensesFragment">
 
 
@@ -333,7 +334,7 @@
 
         <View
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:backgroundTint="@color/black" />
     </LinearLayout>
 

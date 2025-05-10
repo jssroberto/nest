@@ -25,8 +25,6 @@ class ExpenseProgressManager(private val context: Context) {
         val sortedCategories = targets.keys
             .sortedByDescending { expenseSums[it] ?: 0f }
 
-
-
         for (category in sortedCategories) {
                 val total = expenseSums[category] ?: 0f
                 val target = targets[category] ?: 1f
@@ -70,6 +68,5 @@ class ExpenseProgressManager(private val context: Context) {
             container.addView(bar)
         }
     }
-
 
 }

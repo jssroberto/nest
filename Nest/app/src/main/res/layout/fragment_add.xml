@@ -1,56 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
-    tools:context=".ui.add.AddFragment">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        tools:context=".ui.add.AddFragment"
+        android:background="@color/background">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="center_horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal">
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_add"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:checked="false"
-            android:thumb="@drawable/thumb_selector"
-            app:switchMinWidth="100dp"
-            app:thumbTint="@color/primary_color"
-            app:track="@drawable/track_selector"
-            app:trackTint="@color/edt_text" />
+                android:id="@+id/switch_add"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="false"
+                android:thumb="@drawable/thumb_selector"
+                app:switchMinWidth="100dp"
+                app:thumbTint="@color/primary_color"
+                app:track="@drawable/track_selector"
+                app:trackTint="@color/edt_text" />
 
 
         <LinearLayout
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
+                android:layout_width="240dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
             <TextView
-                android:id="@+id/txt_income"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/income"
-                android:textColor="@color/off_white"
-                android:textSize="@dimen/text_size_large" />
+                    android:id="@+id/txt_income"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/income"
+                    android:textColor="@color/off_white"
+                    android:textSize="@dimen/text_size_large" />
 
             <TextView
-                android:id="@+id/txt_expense"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/expense"
-                android:textColor="@color/primary_color"
-                android:textSize="@dimen/text_size_large" />
+                    android:id="@+id/txt_expense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/expense"
+                    android:textColor="@color/primary_color"
+                    android:textSize="@dimen/text_size_large" />
 
 
         </LinearLayout>
@@ -58,9 +59,9 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/fragment_add_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="60dp" />
+            android:id="@+id/fragment_add_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60dp" />
 
 </FrameLayout>
