@@ -56,7 +56,7 @@ class ValueBudgetFragment : Fragment() {
     private lateinit var editTextBudget: EditText
 
     private val currencyFormatter =
-        DecimalFormat("$#,##0", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
+        DecimalFormat("$###0", DecimalFormatSymbols.getInstance(Locale.getDefault())).apply {
             roundingMode = RoundingMode.DOWN
             isGroupingUsed = true
             minimumFractionDigits = 0

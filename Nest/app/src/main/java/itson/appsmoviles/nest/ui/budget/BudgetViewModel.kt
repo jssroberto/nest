@@ -82,12 +82,12 @@ class BudgetViewModel(
         alarmThreshold: Float? = null,
         alarmEnabled: Boolean? = null
     ) {
-        // Actualiza el presupuesto localmente
+
         val updatedMap = categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
         updatedMap[category] = amount
         categoryBudgets.value = updatedMap
 
-        // Recalcular porcentajes
+
         val total = totalBudget.value ?: 0f
         _categoryPercentages.value = if (total > 0f) {
             updatedMap.mapValues { it.value * 100f / total }
@@ -95,14 +95,14 @@ class BudgetViewModel(
             updatedMap.mapValues { 0f }
         }
 
-        // Mantener los valores anteriores si no se pasa un nuevo umbral o estado
+
         val threshold = alarmThreshold ?: alarmThresholdMap[category]
         val enabled = alarmEnabled ?: alarmEnabledMap[category] ?: false
 
         if (threshold != null) alarmThresholdMap[category] = threshold
         alarmEnabledMap[category] = enabled
 
-        // Persistir en base de datos
+
         repository.updateCategoryBudgetAmount(
             category,
             amount,
@@ -114,13 +114,13 @@ class BudgetViewModel(
     }
 
 
-    // Método para observar los Flows de umbrales de alarma
+
     private fun observeAlarmThresholds() {
         viewModelScope.launch {
             alarmThresholds.collect { thresholds ->
                 alarmThresholdMap.clear()
                 alarmThresholdMap.putAll(thresholds)
-                // Puedes actualizar LiveData si es necesario
+
             }
         }
     }
@@ -130,7 +130,7 @@ class BudgetViewModel(
             alarmEnabled.collect { enabledMap ->
                 alarmEnabledMap.clear()
                 alarmEnabledMap.putAll(enabledMap)
-                // Puedes actualizar LiveData si es necesario
+
             }
         }
     }
@@ -159,14 +159,12 @@ class BudgetViewModel(
                 }
 
                 categoryBudgets.value = categoryMap
-                _alarmThresholds.value = alarmThresholdsMap // Use StateFlow direct update
-                _alarmEnabled.value = alarmEnabledMapLocal // Use StateFlow direct update
+                _alarmThresholds.value = alarmThresholdsMap
+                _alarmEnabled.value = alarmEnabledMapLocal
             } ?: run {
-                // If no budget data is found (e.g., first sign-up),
-                // explicitly set LiveData values to their initial state.
                 totalBudget.value = 0f
                 categoryBudgets.value = CategoryType.values()
-                    .associateWith { 0f } // Initialize with all categories at 0f
+                    .associateWith { 0f }
                 _alarmThresholds.value = CategoryType.values().associateWith { 0f }
                 _alarmEnabled.value = CategoryType.values().associateWith { false }
             }
@@ -174,32 +172,21 @@ class BudgetViewModel(
     }
 
 
-    // Método para actualizar el umbral de la alarma de una categoría
     fun setAlarmThreshold(category: CategoryType, threshold: Float) {
-        // Update the StateFlow
         val updatedThresholdMap = _alarmThresholds.value.toMutableMap()
         updatedThresholdMap[category] = threshold
         _alarmThresholds.value = updatedThresholdMap
 
-        // Update the local mutable map (if still used for synchronous reads elsewhere)
-        alarmThresholdMap[category] = threshold
 
-        // The fragment will typically call persistAlarmThreshold separately to save to DB.
-        // Or, you could trigger persistence from here if this is the sole point of change.
+        alarmThresholdMap[category] = threshold
     }
 
-    // For Alarm Enabled state
     fun setAlarmEnabled(category: CategoryType, enabled: Boolean) {
-        // Update the StateFlow
         val updatedEnabledMap = _alarmEnabled.value.toMutableMap()
         updatedEnabledMap[category] = enabled
         _alarmEnabled.value = updatedEnabledMap
 
-        // Update the local mutable map
         alarmEnabledMap[category] = enabled
-
-        // The fragment will typically call persistAlarmThreshold (which includes enabled state)
-        // or a specific persistence method for the enabled state.
     }
 
     // Método para actualizar el presupuesto total
@@ -241,9 +228,7 @@ class BudgetViewModel(
                     alarmThreshold = threshold,
                     alarmEnabled = isEnabled
                 )
-                // Optional: If repository.updateCategoryAlarmThreshold has a callback for success/failure,
-                // you could use it to trigger a fresh loadCategoryAlarms() on failure to revert optimistic update,
-                // or just rely on the next scheduled loadCategoryAlarms().
+
             }
         }
     }
@@ -254,14 +239,12 @@ class BudgetViewModel(
             val thresholdMap = alarmData.mapValues { it.value.first }
             val enabledMap = alarmData.mapValues { it.value.second }
 
-            // Check if the new maps are actually different before assigning to avoid unnecessary emissions
             if (_alarmThresholds.value != thresholdMap) {
                 _alarmThresholds.value = thresholdMap
             }
             if (_alarmEnabled.value != enabledMap) {
                 _alarmEnabled.value = enabledMap
             }
-            // Also update local mutable maps if they are meant to be strict copies
             alarmThresholdMap.clear()
             alarmThresholdMap.putAll(thresholdMap)
             alarmEnabledMap.clear()
@@ -327,26 +310,6 @@ class BudgetViewModel(
         Log.d("BudgetViewModel", "Notification sent successfully for category: $category")
     }
 
-
-    fun getCategoryBudget(category: CategoryType) {
-        viewModelScope.launch {
-            repository.getCategoryBudget(category) { categoryBudget ->
-                if (categoryBudget != null) {
-
-                    val updatedCategoryBudgets =
-                        categoryBudgets.value?.toMutableMap() ?: mutableMapOf()
-                    updatedCategoryBudgets[category] = categoryBudget.categoryBudget
-                    categoryBudgets.value = updatedCategoryBudgets
-                } else {
-
-                    Log.e(
-                        "BudgetViewModel",
-                        "No se pudo obtener el presupuesto para la categoría: $category"
-                    )
-                }
-            }
-        }
-    }
 
 
 }

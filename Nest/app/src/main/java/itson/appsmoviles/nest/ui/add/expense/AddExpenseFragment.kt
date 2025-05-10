@@ -1,15 +1,10 @@
 package itson.appsmoviles.nest.ui.add.expense
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
-import android.text.Spanned
 import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.util.Log
@@ -22,24 +17,21 @@ import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import itson.appsmoviles.nest.R
 import itson.appsmoviles.nest.data.enum.CategoryType
 import itson.appsmoviles.nest.data.enum.PaymentMethod
 import itson.appsmoviles.nest.data.model.Expense
+import itson.appsmoviles.nest.ui.add.AddFragment
 import itson.appsmoviles.nest.ui.budget.BudgetViewModel
 import itson.appsmoviles.nest.ui.home.SharedMovementsViewModel
-import itson.appsmoviles.nest.ui.main.MainActivity
-import itson.appsmoviles.nest.ui.util.addDollarSign
 import itson.appsmoviles.nest.ui.util.formatDateLongForm
 import itson.appsmoviles.nest.ui.util.setUpSpinner
 import itson.appsmoviles.nest.ui.util.showDatePicker
-import itson.appsmoviles.nest.ui.util.showToast
-import java.util.regex.Pattern
 
 @RequiresApi(Build.VERSION_CODES.O)
 class AddExpenseFragment : Fragment() {
@@ -65,6 +57,16 @@ class AddExpenseFragment : Fragment() {
     ): View {
         return inflater.inflate(R.layout.fragment_add_expense, container, false)
     }
+    private fun bindViews(view: View) {
+
+        edtAmount = view.findViewById(R.id.edt_amount_expense)
+        edtDescription = view.findViewById(R.id.edt_description_expense)
+        btnDate = view.findViewById(R.id.btn_date_expense)
+        spinner = view.findViewById(R.id.spinner_categories_expense)
+        radioCash = view.findViewById(R.id.radio_cash)
+        radioCard = view.findViewById(R.id.radio_card)
+        btnAddExpense = view.findViewById(R.id.btn_add_expense)
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -78,15 +80,6 @@ class AddExpenseFragment : Fragment() {
         viewModel.fetchExpenses()
     }
 
-    private fun bindViews(view: View) {
-        edtAmount = view.findViewById(R.id.edt_amount_expense)
-        edtDescription = view.findViewById(R.id.edt_description_expense)
-        btnDate = view.findViewById(R.id.btn_date_expense)
-        spinner = view.findViewById(R.id.spinner_categories_expense)
-        radioCash = view.findViewById(R.id.radio_cash)
-        radioCard = view.findViewById(R.id.radio_card)
-        btnAddExpense = view.findViewById(R.id.btn_add_expense)
-    }
 
     private fun setUpListeners() {
         btnDate.setOnClickListener {
@@ -98,33 +91,56 @@ class AddExpenseFragment : Fragment() {
 
         btnAddExpense.setOnClickListener {
             if (!areFieldsValid()) return@setOnClickListener
+
+
+            val newExpenseAmount = getAmount()
+            if (newExpenseAmount <= 0) {
+                show("Amount must be greater than zero.")
+                return@setOnClickListener
+            }
+
+            val selectedCategoryString = spinner.selectedItem.toString()
+            val category = CategoryType.fromDisplayName(selectedCategoryString)
+
             val expense = Expense(
                 id = "",
                 description = edtDescription.text.toString().trim(),
-                amount = getAmount(),
-                date = selectedTimestamp ?: 0L,
-                category = CategoryType.fromDisplayName(spinner.selectedItem.toString()),
+                amount = newExpenseAmount,
+                date = selectedTimestamp
+                    ?: System.currentTimeMillis(),
+                category = category,
                 paymentMethod = if (radioCash.isChecked) PaymentMethod.CASH else PaymentMethod.CARD
             )
 
-            val category = expense.category
-            val exceeded = budgetViewModel.checkAndNotifyIfThresholdExceeded(
-                category,
-                expense.amount.toFloat()
-            )
+
+            val alarmThresholdForCategory =
+                budgetViewModel.alarmThresholdMap[category]?.toDouble() ?: 0.0
+            val isAlarmEnabledForCategory = budgetViewModel.alarmEnabledMap[category] == true
+            val currentSpentInCategory = viewModel.expenses.value
+                ?.filter { it.category == category }
+                ?.sumOf { it.amount } ?: 0.0
+
+
 
             viewModel.addExpense(
-                expense,
-                requireContext().applicationContext,
-                budgetViewModel.alarmThresholdMap[category]?.toDouble() ?: 0.0,
-                budgetViewModel.alarmEnabledMap[category] == true,
+                expense = expense,
+                context = requireContext().applicationContext,
+                currentSpentInCategory = currentSpentInCategory,
+                alarmThreshold = alarmThresholdForCategory,
+                isAlarmEnabled = isAlarmEnabledForCategory,
                 onSuccess = {
                     sharedMovementsViewModel.notifyMovementDataChanged()
-                    requireActivity().supportFragmentManager.popBackStack()
+                    requireActivity().supportFragmentManager.popBackStack(
+                        AddFragment.TAG,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
                 },
-                onFailure = { }
+                onFailure = { exception ->
+                    show("Error adding expense: ${exception.message}")
+                }
             )
         }
+
 
         radioCash.buttonTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.txt_color_radio_cash)
@@ -147,8 +163,14 @@ class AddExpenseFragment : Fragment() {
         }
     }
 
-    private fun show(msg: String) = Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    private fun show(msg: String) {
+        if (isAdded && activity != null) {
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        } else {
 
+            Log.w("AddExpenseFragment", "Cannot show toast, fragment not added or activity is null: $msg")
+        }
+    }
     private fun setUpCurrencyField() {
         edtAmount.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         edtAmount.keyListener = DigitsKeyListener.getInstance("0123456789.")
