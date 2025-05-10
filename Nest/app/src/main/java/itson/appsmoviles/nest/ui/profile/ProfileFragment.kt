@@ -324,20 +324,6 @@ class ProfileFragment : Fragment() {
             if (success) successfulTasks++
             if (pendingTasks == 0) {
                 when {
-                    successfulTasks == operations.size -> showToast(
-                        requireContext(),
-                        "All changes saved successfully."
-                    )
-
-                    successfulTasks > 0 -> showToast(
-                        requireContext(),
-                        "Some changes saved successfully."
-                    )
-
-                    else -> showToast(
-                        requireContext(),
-                        "Failed to save changes after re-authentication."
-                    )
                 }
                 clearPasswordFields()
             }
@@ -409,11 +395,6 @@ class ProfileFragment : Fragment() {
         callback: (Boolean) -> Unit
     ) {
         currentUser.updatePassword(newPass).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                showToast(requireContext(), "Password updated successfully.")
-            } else {
-                showToast(requireContext(), "Failed to update password: ${task.exception?.message}")
-            }
             callback(task.isSuccessful)
         }
     }

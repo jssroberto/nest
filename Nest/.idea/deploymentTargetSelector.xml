@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Nest">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-10T05:37:46.558779300Z">
+        <DropdownSelection timestamp="2025-05-10T06:04:45.799969500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.100.20:38847;connection=c11e586c" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\rover\.android\avd\Medium_Phone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
