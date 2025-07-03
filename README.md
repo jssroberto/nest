@@ -4,14 +4,14 @@ A native Android application, built with Kotlin, designed for simple and effecti
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 *   **User Authentication:** Secure sign-up and login functionality.
 *   **Expense Tracking:** Easily add, view, and manage your daily expenses.
 *   **Budget Management:** Set and monitor budgets to stay on top of your finances.
 *   **Real-time Sync:** Powered by Firebase Realtime Database, all your data is instantly synchronized across any device you're logged into.
 
-## 🏛️ Architecture & Tech Stack
+## Architecture & Tech Stack
 
 This project is built following the **MVVM (Model-View-ViewModel)** design pattern. This architecture was chosen to create a clear separation of concerns, making the app more scalable, maintainable, and testable.
 
@@ -28,7 +28,7 @@ This project is built following the **MVVM (Model-View-ViewModel)** design patte
 *   **UI:** Android XML Layouts with Material Design Components
 *   **Build System:** Gradle
 
-## 📂 Project Structure
+## Project Structure
 
 The project's structure is organized around the MVVM pattern to ensure a clean and logical codebase.
 
@@ -54,7 +54,7 @@ Generated code
 *   The **`data`** package contains all the data-handling logic, acting as the "Model" part of MVVM.
 *   The **`ui`** package is organized by feature. Each feature sub-package (e.g., `expenses`) contains the corresponding `Activity` or `Fragment` (the View) and its `ViewModel`.
 
-## 🚀 Getting Started
+## Getting Started
 
 To get a local copy up and running, follow these steps.
 
@@ -84,12 +84,12 @@ To get a local copy up and running, follow these steps.
     *   Sync the project with Gradle files in Android Studio.
     *   Select a device or emulator and click the "Run" button.
 
-## 🤝 Contributing
+## Contributing
 
 This project was developed for academic and portfolio purposes. Therefore, active development or acceptance of feature pull requests is not planned.
 
 However, if you find a bug or have a suggestion, feel free to open an issue!
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
